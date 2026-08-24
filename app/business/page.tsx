@@ -23,6 +23,13 @@ const calculators = [
     status: "Live",
   },
   {
+    title: "Business Pricing Calculator",
+    description:
+      "Build defensible product, service, wholesale, and project prices from true costs, overhead, payment fees, target margin, discounts, and quantity scenarios.",
+    href: "/business/pricing-calculator",
+    status: "Live",
+  },
+  {
     title: "Sales Tax Calculator",
     description:
       "Calculate tax, pre-tax price, and final price for business transactions.",
