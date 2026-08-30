@@ -32,9 +32,9 @@ const calculators = [
   {
     title: "Sales Tax Calculator",
     description:
-      "Calculate tax, pre-tax price, and final price for business transactions.",
+      "Add or extract sales tax across taxable and non-taxable line items, combined jurisdiction rates, discounts, shipping, and tax-inclusive totals.",
     href: "/business/sales-tax-calculator",
-    status: "Planned",
+    status: "Live",
   },
 ];
 

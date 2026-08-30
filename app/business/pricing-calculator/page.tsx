@@ -145,6 +145,7 @@ export default function Page() {
             <Related href="/business/profit-margin-calculator">Profit Margin Calculator</Related>
             <Related href="/business/markup-calculator">Markup Calculator</Related>
             <Related href="/business/break-even-calculator">Break-Even Calculator</Related>
+            <Related href="/business/sales-tax-calculator">Sales Tax Calculator</Related>
             <Related href="/business">All Business Calculators</Related>
           </div>
         </section>
