@@ -94,7 +94,7 @@ export default function SalesTaxCalculatorPage() {
 
         <section className="mt-10 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
           <h2 className="text-2xl font-bold">Related business calculators</h2>
-          <div className="mt-5 flex flex-wrap gap-3"><Related href="/business/pricing-calculator">Business Pricing Calculator</Related><Related href="/business/profit-margin-calculator">Profit Margin Calculator</Related><Related href="/business/markup-calculator">Markup Calculator</Related><Related href="/business/break-even-calculator">Break-Even Calculator</Related><Related href="/business">All Business Calculators</Related></div>
+          <div className="mt-5 flex flex-wrap gap-3"><Related href="/business/pricing-calculator">Business Pricing Calculator</Related><Related href="/business/profit-margin-calculator">Profit Margin Calculator</Related><Related href="/business/markup-calculator">Markup Calculator</Related><Related href="/business/break-even-calculator">Break-Even Calculator</Related><Related href="/business/contractor-job-profit-calculator">Contractor Job Profit Calculator</Related><Related href="/business">All Business Calculators</Related></div>
         </section>
       </div>
     </main>

@@ -30,6 +30,13 @@ const calculators = [
     status: "Live",
   },
   {
+    title: "Contractor Job Profit Calculator",
+    description:
+      "Compare estimated and actual job costs, revenue, profit, margin, change orders, overhead, fees, cost variance, target pricing, and break-even revenue.",
+    href: "/business/contractor-job-profit-calculator",
+    status: "Live",
+  },
+  {
     title: "Sales Tax Calculator",
     description:
       "Add or extract sales tax across taxable and non-taxable line items, combined jurisdiction rates, discounts, shipping, and tax-inclusive totals.",
