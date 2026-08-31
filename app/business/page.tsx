@@ -37,6 +37,13 @@ const calculators = [
     status: "Live",
   },
   {
+    title: "Contractor Overhead Calculator",
+    description:
+      "Calculate monthly and annual overhead, overhead rates, cost per billable hour, cost per job, break-even revenue, and target-profit revenue.",
+    href: "/business/contractor-overhead-calculator",
+    status: "Live",
+  },
+  {
     title: "Sales Tax Calculator",
     description:
       "Add or extract sales tax across taxable and non-taxable line items, combined jurisdiction rates, discounts, shipping, and tax-inclusive totals.",
