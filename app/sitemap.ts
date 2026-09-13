@@ -90,6 +90,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/business/contractor-job-profit-calculator",
     "/business/contractor-overhead-calculator",
     "/business/contractor-labor-burden-calculator",
+    "/business/contractor-estimate-calculator",
     "/business/sales-tax-calculator",
     "/converters",
     "/tools",
@@ -137,6 +138,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
               route.includes("contractor-job-profit-calculator") ||
               route.includes("contractor-overhead-calculator") ||
               route.includes("contractor-labor-burden-calculator") ||
+              route.includes("contractor-estimate-calculator") ||
               route.includes("sales-tax-calculator") ||
               route.includes("concrete-slab-calculator") ||
               route.includes("concrete-footing-calculator") ||

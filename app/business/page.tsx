@@ -51,6 +51,13 @@ const calculators = [
     status: "Live",
   },
   {
+    title: "Contractor Estimate Calculator",
+    description:
+      "Build contractor estimates from materials, labor, equipment, subcontractors, overhead, contingency, markup, sales tax, and deposit requirements.",
+    href: "/business/contractor-estimate-calculator",
+    status: "Live",
+  },
+  {
     title: "Sales Tax Calculator",
     description:
       "Add or extract sales tax across taxable and non-taxable line items, combined jurisdiction rates, discounts, shipping, and tax-inclusive totals.",
