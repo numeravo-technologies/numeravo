@@ -44,6 +44,13 @@ const calculators = [
     status: "Live",
   },
   {
+    title: "Contractor Labor Burden Calculator",
+    description:
+      "Calculate fully burdened labor cost, employer payroll taxes, workers’ compensation, benefits, billable-hour cost, and a target-margin billing rate.",
+    href: "/business/contractor-labor-burden-calculator",
+    status: "Live",
+  },
+  {
     title: "Sales Tax Calculator",
     description:
       "Add or extract sales tax across taxable and non-taxable line items, combined jurisdiction rates, discounts, shipping, and tax-inclusive totals.",

@@ -115,7 +115,7 @@ export default function ContractorJobProfitCalculatorPage() {
             <Related href="/business/markup-calculator">Markup Calculator</Related>
             <Related href="/business/break-even-calculator">Break-Even Calculator</Related>
             <Related href="/business/sales-tax-calculator">Sales Tax Calculator</Related>
-            <Related href="/business/contractor-overhead-calculator">Contractor Overhead Calculator</Related><Related href="/business">All Business Calculators</Related>
+            <Related href="/business/contractor-overhead-calculator">Contractor Overhead Calculator</Related><Related href="/business/contractor-labor-burden-calculator">Contractor Labor Burden Calculator</Related><Related href="/business">All Business Calculators</Related>
           </div>
         </section>
       </div>
