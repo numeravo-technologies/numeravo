@@ -79,7 +79,7 @@ export default function ContractorEstimateCalculatorPage() {
             <Related href="/business/pricing-calculator">Business Pricing Calculator</Related>
             <Related href="/business/profit-margin-calculator">Profit Margin Calculator</Related>
             <Related href="/business/sales-tax-calculator">Sales Tax Calculator</Related>
-            <Related href="/business">All Business Calculators</Related>
+            <Related href="/business/contractor-hourly-rate-calculator">Contractor Hourly Rate Calculator</Related><Related href="/business">All Business Calculators</Related>
           </div>
         </section>
       </div>

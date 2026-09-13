@@ -51,6 +51,13 @@ const calculators = [
     status: "Live",
   },
   {
+    title: "Contractor Hourly Rate Calculator",
+    description:
+      "Calculate a sustainable contractor billing rate from labor cost, labor burden, overhead, billable utilization, target profit margin, and payment processing fees.",
+    href: "/business/contractor-hourly-rate-calculator",
+    status: "Live",
+  },
+  {
     title: "Contractor Estimate Calculator",
     description:
       "Build contractor estimates from materials, labor, equipment, subcontractors, overhead, contingency, markup, sales tax, and deposit requirements.",
@@ -67,16 +74,16 @@ const calculators = [
 ];
 
 export const metadata = {
-  title: "Business Calculators | Profit, Margin, Markup & Tax Tools",
+  title: "Business Calculators | Contractor Pricing, Profit & Margin Tools",
   description:
-    "Use Numeravo business calculators to estimate profit margin, markup, break-even points, pricing, sales tax, revenue, and business planning numbers.",
+    "Use Numeravo business calculators for contractor pricing, hourly rates, estimates, labor burden, overhead, profit margin, markup, break-even analysis, and sales tax.",
   alternates: {
     canonical: "https://numeravo.com/business",
   },
   openGraph: {
     title: "Business Calculators | Numeravo",
     description:
-      "Calculate profit margin, markup, break-even points, sales tax, pricing, and business numbers with Numeravo.",
+      "Calculate contractor pricing, hourly rates, estimates, profit margin, markup, break-even points, overhead, labor burden, and sales tax with Numeravo.",
     url: "https://numeravo.com/business",
     siteName: "Numeravo",
     type: "website",
@@ -85,7 +92,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Business Calculators | Numeravo",
     description:
-      "Fast business calculators for profit, margin, markup, break-even analysis, and sales tax.",
+      "Business calculators for contractor pricing, hourly rates, profit, margin, markup, break-even analysis, overhead, labor burden, and sales tax.",
   },
 };
 
