@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const calculators = [
   {
     title: "Percentage Calculator",
@@ -67,9 +65,8 @@ export default function ToolsPage() {
 
         <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {calculators.map((calculator) => (
-            <Link
+            <div
               key={calculator.href}
-              href={calculator.href}
               className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6 transition hover:border-[#FACC15]"
             >
               <div className="mb-4 h-2 w-12 rounded-full bg-[#FACC15]" />
@@ -87,7 +84,7 @@ export default function ToolsPage() {
               <p className="mt-4 text-sm leading-6 text-[#A0AEC0]">
                 {calculator.description}
               </p>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
