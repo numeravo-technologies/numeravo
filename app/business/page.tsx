@@ -96,9 +96,34 @@ export const metadata = {
   },
 };
 
+const businessCollectionSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Numeravo Business Calculators",
+  url: "https://numeravo.com/business",
+  description:
+    "Business calculators for contractor pricing, hourly rates, estimates, labor burden, overhead, profit margin, markup, break-even analysis, and sales tax.",
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: calculators.length,
+    itemListElement: calculators.map((calculator, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: calculator.title,
+      url: `https://numeravo.com${calculator.href}`,
+    })),
+  },
+};
+
 export default function BusinessPage() {
   return (
     <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(businessCollectionSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <section className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#06B6D4]">

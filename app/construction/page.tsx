@@ -610,9 +610,41 @@ export const metadata = {
   },
 };
 
+const constructionCollectionItems = calculatorSections.flatMap(
+  (section) => section.calculators,
+);
+
+const constructionCollectionSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Numeravo Construction Calculators",
+  url: "https://numeravo.com/construction",
+  description:
+    "Construction calculators and guides for concrete, lumber, gravel, rebar, square footage, materials, delivery, labor, demolition, and project costs.",
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: constructionCollectionItems.length,
+    itemListElement: constructionCollectionItems.map((calculator, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: calculator.title,
+      url: `https://numeravo.com${calculator.href}`,
+    })),
+  },
+};
+
 export default function ConstructionPage() {
   return (
     <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(constructionCollectionSchema).replace(
+            /</g,
+            "\\u003c",
+          ),
+        }}
+      />
       <section className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
           <Link
