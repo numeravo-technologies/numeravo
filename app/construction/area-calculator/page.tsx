@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import AreaCalculatorClient from "./AreaCalculatorClient";
 
+const url = "https://numeravo.com/construction/area-calculator";
+const description =
+  "Use the Numeravo area calculator to calculate square feet, square yards, square meters, acres, waste-adjusted area, and material cost for rectangles, triangles, circles, and trapezoids.";
+
 export const metadata: Metadata = {
   title: "Area Calculator | Square Feet, Square Yards, Acres & Square Meters",
-  description:
-    "Use the Numeravo area calculator to calculate square feet, square yards, square meters, acres, waste-adjusted area, and material cost for rectangles, triangles, circles, and trapezoids.",
+  description,
   alternates: {
-    canonical: "https://numeravo.com/construction/area-calculator",
+    canonical: url,
   },
   openGraph: {
     title: "Area Calculator | Square Feet, Square Yards, Acres & Square Meters",
     description:
       "Calculate area for flooring, roofing, drywall, paint, decking, concrete slabs, landscaping, tile, and carpet projects.",
-    url: "https://numeravo.com/construction/area-calculator",
+    url,
     siteName: "Numeravo",
     type: "website",
   },
@@ -24,6 +27,43 @@ export const metadata: Metadata = {
   },
 };
 
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Numeravo Area Calculator",
+  url,
+  description,
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  featureList: [
+    "Rectangle area",
+    "Triangle area",
+    "Circle area",
+    "Trapezoid area",
+    "Square feet",
+    "Square yards",
+    "Square meters",
+    "Acres",
+    "Waste adjustment",
+    "Material cost estimate",
+  ],
+};
+
 export default function AreaCalculatorPage() {
-  return <AreaCalculatorClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
+        }}
+      />
+      <AreaCalculatorClient />
+    </>
+  );
 }

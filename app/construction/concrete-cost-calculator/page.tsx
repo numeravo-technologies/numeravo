@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import ConcreteCostCalculatorClient from "./ConcreteCostCalculatorClient";
 
+const url = "https://numeravo.com/construction/concrete-cost-calculator";
+const description =
+  "Use the Numeravo concrete cost calculator to estimate concrete cubic yards, ready-mix cost, gravel base, reinforcement, labor, delivery fees, and total project cost.";
+
 export const metadata: Metadata = {
   title: "Concrete Cost Calculator | Estimate Concrete Price, Base, Rebar & Labor",
-  description:
-    "Use the Numeravo concrete cost calculator to estimate concrete cubic yards, ready-mix cost, gravel base, reinforcement, labor, delivery fees, and total project cost.",
+  description,
   alternates: {
-    canonical: "https://numeravo.com/construction/concrete-cost-calculator",
+    canonical: url,
   },
   openGraph: {
     title: "Concrete Cost Calculator | Numeravo",
     description:
       "Estimate concrete cost by cubic yard, slab area, gravel base, reinforcement, labor, delivery, and total installed project cost.",
-    url: "https://numeravo.com/construction/concrete-cost-calculator",
+    url,
     siteName: "Numeravo",
     type: "website",
   },
@@ -24,6 +27,40 @@ export const metadata: Metadata = {
   },
 };
 
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Numeravo Concrete Cost Calculator",
+  url,
+  description,
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  featureList: [
+    "Concrete cubic yards",
+    "Ready-mix concrete cost",
+    "Gravel base cost",
+    "Reinforcement cost",
+    "Labor cost",
+    "Delivery fees",
+    "Total project cost",
+  ],
+};
+
 export default function ConcreteCostCalculatorPage() {
-  return <ConcreteCostCalculatorClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
+        }}
+      />
+      <ConcreteCostCalculatorClient />
+    </>
+  );
 }
