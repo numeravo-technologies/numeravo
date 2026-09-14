@@ -68,9 +68,37 @@ export const metadata = {
   },
 };
 
+const financeCollectionSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Numeravo Finance Calculators",
+  url: "https://numeravo.com/finance",
+  description:
+    "Finance calculators for compound interest, loans, mortgages, auto financing, credit-card payoff, savings, and personal finance planning.",
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: calculators.length,
+    itemListElement: calculators.map((calculator, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: calculator.title,
+      url: `https://numeravo.com${calculator.href}`,
+    })),
+  },
+};
+
 export default function FinancePage() {
   return (
     <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(financeCollectionSchema).replace(
+            /</g,
+            "\\u003c",
+          ),
+        }}
+      />
       <section className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#22C55E]">
