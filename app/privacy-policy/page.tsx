@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Privacy Policy | Numeravo",
+  title: "Privacy Policy",
   description:
     "Read the Numeravo privacy policy to understand how we handle information, analytics, cookies, affiliate links, and user contact.",
   alternates: {

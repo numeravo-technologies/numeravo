@@ -6,12 +6,43 @@ import Footer from "@/components/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://numeravo.com"),
   title: {
-    default: "Numeravo | Smart Calculators, Tools, and Guides",
+    default: "Numeravo | Practical Calculators for Construction, Business & Finance",
     template: "%s | Numeravo",
   },
   description:
-    "Numeravo provides smart calculators, tools, and guides for everyday decisions across construction, finance, student work, business, conversions, and utility tools.",
+    "Free practical calculators for construction, contractor pricing, business, finance, conversions, and everyday decisions.",
+  applicationName: "Numeravo",
+  authors: [{ name: "Numeravo Technologies LLC" }],
+  creator: "Numeravo Technologies LLC",
+  publisher: "Numeravo Technologies LLC",
+  openGraph: {
+    type: "website",
+    siteName: "Numeravo",
+    title: "Numeravo | Practical Calculators for Construction, Business & Finance",
+    description:
+      "Free practical calculators for construction, contractor pricing, business, finance, conversions, and everyday decisions.",
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Numeravo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Numeravo | Practical Calculators",
+    description:
+      "Free practical calculators for construction, business, finance, conversions, and everyday decisions.",
+    images: ["/icon.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -23,6 +54,31 @@ export const metadata: Metadata = {
   },
 };
 
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Numeravo",
+  url: "https://numeravo.com",
+  description:
+    "Practical calculators for construction, contractor pricing, business, finance, conversions, and everyday decisions.",
+  publisher: {
+    "@type": "Organization",
+    name: "Numeravo Technologies LLC",
+  },
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Numeravo Technologies LLC",
+  url: "https://numeravo.com",
+  brand: {
+    "@type": "Brand",
+    name: "Numeravo",
+  },
+  logo: "https://numeravo.com/icon.png",
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -31,6 +87,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c"),
+          }}
+        />
         <Header />
         {children}
         <Footer />

@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Terms of Use | Numeravo",
+  title: "Terms of Use",
   description:
     "Read the Numeravo terms of use for calculators, tools, estimates, affiliate links, and website usage.",
   alternates: {

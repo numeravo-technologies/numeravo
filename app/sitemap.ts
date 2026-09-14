@@ -101,103 +101,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/terms",
   ];
 
+  const categoryRoutes = new Set([
+    "/construction",
+    "/finance",
+    "/student",
+    "/business",
+    "/converters",
+    "/tools",
+  ]);
+
+  const legalRoutes = new Set([
+    "/privacy-policy",
+    "/terms",
+  ]);
+
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
     changeFrequency: route === "" ? "weekly" : "monthly",
     priority:
       route === ""
         ? 1
-        : route.includes("concrete-short-load-fee-calculator") ||
-          route.includes("concrete-delivery-cost-calculator") ||
-          route.includes("concrete-psi-calculator") ||
-          route.includes("concrete-labor-cost-calculator") ||
-          route.includes("concrete-finishing-cost-calculator") ||
-          route.includes("concrete-pump-truck-cost-calculator") ||
-          route.includes("concrete-saw-cut-calculator") ||
-          route.includes("concrete-expansion-joint-spacing") ||
-          route.includes("concrete-control-joint-spacing") ||
-          route.includes("concrete-demolition-calculator") ||
-          route.includes("concrete-removal-cost-calculator") ||
-          route.includes("concrete-formwork-calculator") ||
-          route.includes("concrete-waste-calculator") ||
-          route.includes("concrete-weight-calculator") ||
-          route.includes("concrete-yard-calculator") ||
-          route.includes("how-much-concrete-do-i-need") ||
-          route.includes("concrete-calculator")
+        : categoryRoutes.has(route)
           ? 0.9
-          : route.includes("loan-calculator") ||
-              route.includes("mortgage-calculator") ||
-              route.includes("compound-interest-calculator") ||
-              route.includes("auto-loan-calculator") ||
-              route.includes("credit-card-payoff-calculator") ||
-              route.includes("savings-calculator") ||
-              route.includes("profit-margin-calculator") ||
-              route.includes("markup-calculator") ||
-              route.includes("break-even-calculator") ||
-              route.includes("pricing-calculator") ||
-              route.includes("contractor-job-profit-calculator") ||
-              route.includes("contractor-overhead-calculator") ||
-              route.includes("contractor-labor-burden-calculator") ||
-              route.includes("contractor-hourly-rate-calculator") ||
-              route.includes("contractor-estimate-calculator") ||
-              route.includes("sales-tax-calculator") ||
-              route.includes("concrete-slab-calculator") ||
-              route.includes("concrete-footing-calculator") ||
-              route.includes("sonotube-concrete-calculator") ||
-              route.includes("concrete-wall-calculator") ||
-              route.includes("concrete-cost-calculator") ||
-              route.includes("concrete-bag-calculator") ||
-              route.includes("rebar-calculator") ||
-              route.includes("rebar-lap-splice-calculator") ||
-              route.includes("rebar-spacing-for-concrete-slab") ||
-              route.includes("rebar-weight-calculator") ||
-              route.includes("wire-mesh-calculator") ||
-              route.includes("lumber-calculator") ||
-              route.includes("stud-calculator") ||
-              route.includes("wall-sheathing-calculator") ||
-              route.includes("roof-pitch-calculator") ||
-              route.includes("roofing-calculator") ||
-              route.includes("shingle-calculator") ||
-              route.includes("drywall-calculator") ||
-              route.includes("paint-calculator") ||
-              route.includes("flooring-calculator") ||
-              route.includes("tile-calculator") ||
-              route.includes("deck-materials-calculator") ||
-              route.includes("fence-calculator") ||
-              route.includes("concrete-driveway-calculator") ||
-              route.includes("concrete-patio-calculator") ||
-              route.includes("concrete-sidewalk-calculator") ||
-              route.includes("concrete-pad-calculator") ||
-              route.includes("concrete-stairs-calculator") ||
-              route.includes("concrete-truckload-calculator") ||
-              route.includes("concrete-mix-ratio") ||
-              route.includes("concrete-slab-thickness") ||
-              route.includes("concrete-cure-time") ||
-              route.includes("concrete-cost-per-yard") ||
-              route.includes("10x10-concrete-slab-cost") ||
-              route.includes("12x12-concrete-slab-cost") ||
-              route.includes("gravel-calculator") ||
-              route.includes("gravel-driveway-calculator") ||
-              route.includes("gravel-driveway-cost") ||
-              route.includes("gravel-cost-calculator") ||
-              route.includes("how-much-gravel-do-i-need") ||
-              route.includes("gravel-cost-per-ton") ||
-              route.includes("pea-gravel-calculator") ||
-              route.includes("river-rock-calculator") ||
-              route.includes("drainage-rock-calculator") ||
-              route.includes("decomposed-granite-calculator") ||
-route.includes("crushed-stone-vs-gravel") ||
-route.includes("crushed-stone-calculator") ||
-route.includes("road-base-calculator") ||
-              route.includes("paver-base-calculator") ||
-route.includes("base-for-concrete-slab-depth") ||
-route.includes("how-to-prepare-ground-for-concrete-slab")
-            ? 0.85
-            : route === "/about" ||
-                route === "/contact" ||
-                route === "/privacy-policy" ||
-                route === "/terms"
+          : legalRoutes.has(route)
+            ? 0.3
+            : route === "/about" || route === "/contact"
               ? 0.5
               : 0.8,
   }));

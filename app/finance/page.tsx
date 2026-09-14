@@ -46,16 +46,16 @@ const calculators = [
 ];
 
 export const metadata = {
-  title: "Finance Calculators | Loans, Interest, Mortgage & ROI Tools",
+  title: "Finance Calculators | Loans, Interest, Mortgage & Savings",
   description:
-    "Use Numeravo finance calculators to estimate compound interest, loan payments, mortgage costs, ROI, savings, and personal finance planning numbers.",
+    "Use Numeravo finance calculators to estimate compound interest, loan payments, mortgage costs, auto financing, credit-card payoff, savings, and personal finance planning numbers.",
   alternates: {
     canonical: "https://numeravo.com/finance",
   },
   openGraph: {
     title: "Finance Calculators | Numeravo",
     description:
-      "Calculate compound interest, loans, mortgages, ROI, savings, and personal finance numbers with Numeravo.",
+      "Calculate compound interest, loans, mortgages, auto financing, credit-card payoff, savings, and personal finance numbers with Numeravo.",
     url: "https://numeravo.com/finance",
     siteName: "Numeravo",
     type: "website",
@@ -64,7 +64,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Finance Calculators | Numeravo",
     description:
-      "Fast finance calculators for loans, interest, mortgages, ROI, and savings.",
+      "Fast finance calculators for loans, interest, mortgages, auto financing, credit-card payoff, and savings.",
   },
 };
 
@@ -82,7 +82,7 @@ export default function FinancePage() {
           </h1>
 
           <p className="mt-6 text-lg leading-8 text-[#A0AEC0]">
-            Plan loans, savings, interest, mortgages, and investment scenarios
+            Plan loans, savings, interest, mortgages, auto financing, and debt payoff
             with practical finance calculators.
           </p>
         </div>

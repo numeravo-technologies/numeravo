@@ -30,6 +30,10 @@ export default function Header() {
             Finance
           </Link>
 
+          <Link href="/business" className="transition hover:text-white">
+            Business
+          </Link>
+
           <Link href="/tools" className="transition hover:text-white">
             Tools
           </Link>

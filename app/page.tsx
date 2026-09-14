@@ -1,5 +1,28 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "Practical Calculators for Construction, Business & Finance",
+  description:
+    "Free practical calculators for construction, contractor pricing, business, finance, conversions, and everyday decisions.",
+  alternates: {
+    canonical: "https://numeravo.com",
+  },
+  openGraph: {
+    title: "Numeravo | Practical Calculators for Construction, Business & Finance",
+    description:
+      "Free practical calculators for construction, contractor pricing, business, finance, conversions, and everyday decisions.",
+    url: "https://numeravo.com",
+    siteName: "Numeravo",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Numeravo | Practical Calculators",
+    description:
+      "Free practical calculators for construction, business, finance, conversions, and everyday decisions.",
+  },
+};
+
 const categories = [
   {
     title: "Construction Calculators",
@@ -13,14 +36,14 @@ const categories = [
     href: "/finance",
     accent: "bg-[#22C55E]",
     description:
-      "Loans, savings, interest, payoff, ROI, budgeting, and personal finance tools.",
+      "Loans, mortgages, savings, compound interest, auto financing, credit-card payoff, and personal finance calculators.",
   },
   {
     title: "Student Calculators",
     href: "/student",
     accent: "bg-[#8B5CF6]",
     description:
-      "Math, grades, percentages, academic planning, study helpers, and classroom calculators.",
+      "Student-focused tools and calculators as the Numeravo academic library expands.",
   },
   {
     title: "Unit Converters",
@@ -34,7 +57,7 @@ const categories = [
     href: "/business",
     accent: "bg-[#EAB308]",
     description:
-      "Business planning, operating numbers, margins, pricing, and decision-support calculators.",
+      "Contractor pricing, estimates, overhead, labor burden, hourly rates, profit, margin, markup, and business planning calculators.",
   },
   {
     title: "All Tools",
@@ -55,14 +78,14 @@ export default function HomePage() {
           </p>
 
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            Smart calculators for construction, finance, students, and everyday planning.
+            Practical calculators for construction, business, finance, and everyday decisions.
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-8 text-[#A0AEC0]">
-            Numeravo helps people quickly solve practical calculation problems
-            with clean, focused tools for construction estimates, financial
-            planning, student work, business decisions, conversions, and general
-            utility calculations.
+            Numeravo helps contractors, businesses, homeowners, and individuals solve
+            practical calculation problems with focused tools for construction,
+            pricing, estimating, financial planning, conversions, and everyday
+            decisions.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

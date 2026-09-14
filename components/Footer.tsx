@@ -22,9 +22,8 @@ export default function Footer() {
           </Link>
 
           <p className="mt-5 max-w-md text-sm leading-7 text-[#A0AEC0]">
-            Smart calculators, tools, and guides for everyday decisions across
-            construction, finance, student work, business, conversions, and
-            general utility tools.
+            Practical calculators and tools for construction, contractor pricing,
+            business, finance, conversions, and everyday decisions.
           </p>
         </div>
 
@@ -62,7 +61,7 @@ export default function Footer() {
       </div>
 
       <div className="mx-auto mt-10 flex max-w-6xl flex-col gap-3 border-t border-[#1F2937] pt-6 text-sm text-[#A0AEC0] sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 Numeravo. All rights reserved.</p>
+        <p>© 2026 Numeravo Technologies LLC. All rights reserved.</p>
 
         <p>Calculator results are estimates for planning purposes.</p>
       </div>

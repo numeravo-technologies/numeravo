@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+const url = "https://numeravo.com/construction/concrete-calculator";
+
 export const metadata: Metadata = {
-  title: "Concrete Calculator | Slabs, Footings, Piers & Cost Estimator",
+  title: "Concrete Calculator | Yards, Bags, Slabs & Cost",
   description:
-    "Use the Numeravo concrete calculator to estimate cubic feet, cubic yards, concrete with waste, and material cost for slabs, footings, trenches, piers, posts, and columns.",
+    "Calculate concrete volume, cubic yards, cubic meters, bags, waste, and estimated material cost for slabs, footings, piers, walls, stairs, curbs, and other projects.",
   alternates: {
-    canonical: "https://numeravo.com/construction/concrete-calculator",
+    canonical: url,
   },
   openGraph: {
-    title: "Concrete Calculator | Numeravo",
+    title: "Concrete Calculator | Yards, Bags, Slabs & Cost",
     description:
-      "Estimate concrete volume and material cost for slabs, footings, trenches, piers, posts, sonotubes, and columns.",
-    url: "https://numeravo.com/construction/concrete-calculator",
+      "Estimate concrete volume, waste, bags, and material cost for slabs, footings, piers, walls, stairs, curbs, and other concrete projects.",
+    url,
     siteName: "Numeravo",
     type: "website",
   },
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Concrete Calculator | Numeravo",
     description:
-      "Estimate concrete volume, cubic yards, waste, and concrete material cost.",
+      "Estimate concrete yards, meters, bags, waste, and material cost for common concrete projects.",
   },
 };
 
