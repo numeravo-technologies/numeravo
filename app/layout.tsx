@@ -25,7 +25,7 @@ export const metadata: Metadata = {
       "Free practical calculators for construction, contractor pricing, business, finance, conversions, and everyday decisions.",
     images: [
       {
-        url: "/icon.png",
+        url: "/brand/icon-512.png",
         width: 512,
         height: 512,
         alt: "Numeravo",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: "Numeravo | Practical Calculators",
     description:
       "Free practical calculators for construction, business, finance, conversions, and everyday decisions.",
-    images: ["/icon.png"],
+    images: ["/brand/icon-512.png"],
   },
   robots: {
     index: true,
@@ -46,10 +46,33 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico" },
-      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      {
+        url: "/brand/favicon-16x16.png",
+        type: "image/png",
+        sizes: "16x16",
+      },
+      {
+        url: "/brand/favicon-32x32.png",
+        type: "image/png",
+        sizes: "32x32",
+      },
+      {
+        url: "/brand/icon-192.png",
+        type: "image/png",
+        sizes: "192x192",
+      },
+      {
+        url: "/brand/icon-512.png",
+        type: "image/png",
+        sizes: "512x512",
+      },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      {
+        url: "/brand/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
     ],
   },
 };
@@ -76,7 +99,7 @@ const organizationSchema = {
     "@type": "Brand",
     name: "Numeravo",
   },
-  logo: "https://numeravo.com/icon.png",
+  logo: "https://numeravo.com/brand/icon-512.png",
 };
 
 export default function RootLayout({

@@ -7,12 +7,12 @@ export default function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/numeravo-logo.png"
-            alt="Numeravo logo"
+            src="/brand/numeravo-mark-master-512.png"
+            alt="Numeravo"
             width={44}
             height={44}
             priority
-            className="rounded-full object-cover"
+            className="shrink-0"
           />
 
           <div>

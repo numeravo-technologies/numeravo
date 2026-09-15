@@ -8,11 +8,11 @@ export default function Footer() {
         <div>
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/numeravo-logo.png"
-              alt="Numeravo logo"
+              src="/brand/numeravo-mark-master-512.png"
+              alt="Numeravo"
               width={44}
               height={44}
-              className="rounded-full object-cover"
+              className="shrink-0"
             />
 
             <div>
