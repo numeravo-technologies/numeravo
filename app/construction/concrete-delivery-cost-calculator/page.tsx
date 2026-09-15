@@ -5,7 +5,7 @@ import ConcreteDeliveryCostCalculatorClient from "./ConcreteDeliveryCostCalculat
 export const metadata: Metadata = {
   title: "Concrete Delivery Cost Calculator | Ready-Mix Delivery Fees",
   description:
-    "Free concrete delivery cost calculator. Estimate ready-mix concrete delivery fees, short-load fees, fuel charges, distance charges, waiting time, tax, total delivered cost, and delivered cost per yard.",
+    "Estimate ready-mix concrete delivery fees, short-load charges, fuel and distance fees, waiting time, tax, total delivered cost, and cost per cubic yard.",
   alternates: {
     canonical: "https://numeravo.com/construction/concrete-delivery-cost-calculator",
   },

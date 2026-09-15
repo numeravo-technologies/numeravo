@@ -3,7 +3,7 @@ import Link from "next/link";
 import ConcreteCureTimeClient from "./ConcreteCureTimeClient";
 
 export const metadata: Metadata = {
-  title: "Concrete Cure Time Calculator | When Can You Walk or Drive on Concrete?",
+  title: "Concrete Cure Time Calculator | Walk, Drive & Full Cure",
   description:
     "Free concrete cure time calculator. Estimate when concrete is ready for foot traffic, forms, light use, vehicles, sealing, and full cure based on slab type, thickness, temperature, and weather.",
   alternates: {

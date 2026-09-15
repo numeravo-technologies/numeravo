@@ -5,7 +5,7 @@ import ConcretePsiCalculatorClient from "./ConcretePsiCalculatorClient";
 export const metadata: Metadata = {
   title: "Concrete PSI Calculator | Choose Concrete Strength by Project Type",
   description:
-    "Free concrete PSI calculator. Estimate recommended concrete strength for slabs, driveways, patios, sidewalks, garage floors, footings, and pads based on project use, thickness, load, exposure, and reinforcement.",
+    "Estimate recommended concrete PSI for slabs, driveways, patios, sidewalks, garage floors, footings, and pads based on use, load, exposure, and reinforcement.",
   alternates: {
     canonical: "https://numeravo.com/construction/concrete-psi-calculator",
   },

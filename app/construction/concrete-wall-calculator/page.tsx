@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Concrete Wall Calculator | Estimate Walls, Stem Walls & Retaining Walls",
+  title: "Concrete Wall Calculator | Walls, Stem Walls & Retaining Walls",
   description:
     "Use the Numeravo concrete wall calculator guide to estimate concrete for walls, foundation walls, retaining walls, stem walls, and landscape walls.",
   alternates: {

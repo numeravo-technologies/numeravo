@@ -5,7 +5,7 @@ import ConcreteSlabThicknessClient from "./ConcreteSlabThicknessClient";
 export const metadata: Metadata = {
   title: "Concrete Slab Thickness Calculator | Slab Depth Guide",
   description:
-    "Free concrete slab thickness calculator and guide. Estimate recommended slab thickness, concrete yards, base depth, reinforcement notes, and cost for patios, driveways, sidewalks, pads, and garage slabs.",
+    "Estimate recommended slab thickness, concrete yards, base depth, reinforcement notes, and cost for patios, driveways, sidewalks, pads, and garage slabs.",
   alternates: {
     canonical: "https://numeravo.com/construction/concrete-slab-thickness",
   },

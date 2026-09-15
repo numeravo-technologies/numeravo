@@ -6,7 +6,7 @@ const description =
   "Use the Numeravo concrete cost calculator to estimate concrete cubic yards, ready-mix cost, gravel base, reinforcement, labor, delivery fees, and total project cost.";
 
 export const metadata: Metadata = {
-  title: "Concrete Cost Calculator | Estimate Concrete Price, Base, Rebar & Labor",
+  title: "Concrete Cost Calculator | Price, Base, Rebar & Labor",
   description,
   alternates: {
     canonical: url,

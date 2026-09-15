@@ -5,7 +5,7 @@ import ConcreteFormworkCalculatorClient from "./ConcreteFormworkCalculatorClient
 export const metadata: Metadata = {
   title: "Concrete Formwork Calculator | Forms, Stakes & Cost",
   description:
-    "Free concrete formwork calculator. Estimate form boards, stakes, bracing, screws, form oil, linear feet, labor, material cost, and total formwork cost for slabs, patios, driveways, pads, and footings.",
+    "Estimate concrete form boards, stakes, bracing, screws, form oil, labor, material cost, and total formwork cost for slabs, patios, driveways, pads, and footings.",
   alternates: {
     canonical: "https://numeravo.com/construction/concrete-formwork-calculator",
   },
