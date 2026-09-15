@@ -3,9 +3,9 @@ import Link from "next/link";
 import ConcreteControlJointSpacingClient from "./ConcreteControlJointSpacingClient";
 
 export const metadata: Metadata = {
-  title: "Concrete Control Joint Spacing Calculator | Slab Saw Cut Layout",
+  title: "Concrete Control Joint Spacing Calculator | Slab Joint Guide",
   description:
-    "Free concrete control joint spacing calculator. Estimate saw cut spacing, panel layout, joint depth, number of cuts, and crack-control guidance for slabs, driveways, patios, sidewalks, and pads.",
+    "Calculate concrete control joint spacing, saw cut depth, and panel layout. For a 4-inch slab, a common rule of thumb is about 8–10 ft spacing and a 1-inch cut depth.",
   alternates: {
     canonical: "https://numeravo.com/construction/concrete-control-joint-spacing",
   },
@@ -111,9 +111,10 @@ export default function ConcreteControlJointSpacingPage() {
               Concrete Control Joint Spacing Calculator
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-[#A0AEC0]">
-              Estimate concrete control joint spacing, saw cut depth, panel
-              layout, number of cuts, and recommended joint placement for slabs,
-              driveways, patios, sidewalks, and pads.
+              For a 4-inch concrete slab, control joints are commonly spaced
+              about 8 to 10 feet apart. Use the calculator to estimate joint
+              spacing, saw cut depth, panel layout, number of cuts, and recommended
+              joint placement for slabs, driveways, patios, sidewalks, and pads.
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
