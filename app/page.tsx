@@ -125,6 +125,43 @@ export default function HomePage() {
           ))}
         </div>
 
+        <section className="w-full">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#3B82F6]">
+              Practical by design
+            </p>
+
+            <h2 className="mt-3 text-3xl font-bold tracking-tight">
+              Built for real calculations and better planning.
+            </h2>
+
+            <p className="mt-5 leading-7 text-[#A0AEC0]">
+              Numeravo organizes practical calculators around the decisions people
+              actually need to make. Construction tools help estimate materials,
+              quantities, project costs, labor, concrete, rebar, gravel, roofing,
+              framing, and other job-planning inputs. Business calculators support
+              contractor pricing, estimates, overhead, labor burden, profit, margin,
+              markup, and hourly-rate decisions.
+            </p>
+
+            <p className="mt-4 leading-7 text-[#A0AEC0]">
+              Finance calculators cover common planning questions such as loan
+              payments, mortgages, auto financing, savings, compound interest, and
+              credit-card payoff. Each calculator is designed to keep the inputs,
+              assumptions, and results understandable so you can review the numbers
+              instead of relying on a single unexplained answer.
+            </p>
+
+            <p className="mt-4 leading-7 text-[#A0AEC0]">
+              Calculator results are intended for planning and comparison. Actual
+              project costs, material requirements, financing terms, taxes, codes,
+              and professional requirements can vary, so important decisions should
+              be verified against current project documents, supplier information,
+              local requirements, or qualified professional advice when appropriate.
+            </p>
+          </div>
+        </section>
+
         <section className="w-full rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
           <div className="grid gap-6 md:grid-cols-[1fr_1.4fr] md:items-center">
             <div>
