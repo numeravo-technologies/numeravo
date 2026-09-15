@@ -323,6 +323,10 @@ export default function DrywallCalculatorPage() {
               label="Stud Calculator"
             />
             <RelatedLink
+              href="/construction/wall-sheathing-calculator"
+              label="Wall Sheathing Calculator"
+            />
+            <RelatedLink
               href="/construction/lumber-calculator"
               label="Lumber Calculator"
             />

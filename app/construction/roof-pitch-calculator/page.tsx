@@ -469,6 +469,11 @@ export default function RoofPitchCalculatorPage() {
             />
 
             <RelatedLink
+              href="/construction/shingle-calculator"
+              label="Shingle Calculator"
+            />
+
+            <RelatedLink
               href="/construction/area-calculator"
               label="Area Calculator"
             />

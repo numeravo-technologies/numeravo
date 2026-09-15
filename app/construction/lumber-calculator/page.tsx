@@ -303,10 +303,14 @@ export default function LumberCalculatorPage() {
               href="/construction/stud-calculator"
               label="Stud Calculator"
             />
-        <RelatedLink
-          href="/construction/roof-pitch-calculator"
-          label="Roof Pitch Calculator"
-        />
+            <RelatedLink
+              href="/construction/wall-sheathing-calculator"
+              label="Wall Sheathing Calculator"
+            />
+            <RelatedLink
+              href="/construction/roof-pitch-calculator"
+              label="Roof Pitch Calculator"
+            />
             <RelatedLink
               href="/construction/deck-materials-calculator"
               label="Deck Materials Calculator"
