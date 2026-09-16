@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ConcreteCostPerYardClient from "./ConcreteCostPerYardClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Concrete Cost Per Yard Calculator | Ready-Mix Price Estimator",
@@ -74,7 +75,7 @@ export default function ConcreteCostPerYardPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -84,7 +85,6 @@ export default function ConcreteCostPerYardPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-8">
           <Link
             href="/construction"
@@ -199,8 +199,7 @@ export default function ConcreteCostPerYardPage() {
             <RelatedLink href="/construction/concrete-bag-calculator" label="Concrete Bag Calculator" />
           </div>
         </section>
-      </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 
