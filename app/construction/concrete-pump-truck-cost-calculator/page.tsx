@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ConcretePumpTruckCostCalculatorClient from "./ConcretePumpTruckCostCalculatorClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Concrete Pump Truck Cost Calculator | Pumping Estimate",
@@ -86,7 +87,7 @@ const appJsonLd = {
 
 export default function ConcretePumpTruckCostCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell contained={false}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -223,7 +224,7 @@ export default function ConcretePumpTruckCostCalculatorPage() {
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 

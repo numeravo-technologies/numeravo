@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ConcreteLaborCostCalculatorClient from "./ConcreteLaborCostCalculatorClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Concrete Labor Cost Calculator | Crew Hours & Labor Estimate",
@@ -86,7 +87,7 @@ const appJsonLd = {
 
 export default function ConcreteLaborCostCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell contained={false}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -221,7 +222,7 @@ export default function ConcreteLaborCostCalculatorPage() {
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 
