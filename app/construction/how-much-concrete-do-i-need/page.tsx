@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import HowMuchConcreteClient from "./HowMuchConcreteClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "How Much Concrete Do I Need? | Concrete Yardage Calculator",
@@ -82,7 +83,7 @@ export default function HowMuchConcreteDoINeedPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -92,7 +93,7 @@ export default function HowMuchConcreteDoINeedPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+
         <div className="mb-8">
           <Link
             href="/construction"
@@ -259,8 +260,7 @@ export default function HowMuchConcreteDoINeedPage() {
             <RelatedLink href="/construction/concrete-pad-calculator" label="Concrete Pad Calculator" />
           </div>
         </section>
-      </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 

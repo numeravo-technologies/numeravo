@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ConcreteFormworkCalculatorClient from "./ConcreteFormworkCalculatorClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Concrete Formwork Calculator | Forms, Stakes & Cost",
@@ -82,7 +83,7 @@ export default function ConcreteFormworkCalculatorPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -92,7 +93,7 @@ export default function ConcreteFormworkCalculatorPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+
         <div className="mb-8">
           <Link
             href="/construction"
@@ -248,8 +249,7 @@ export default function ConcreteFormworkCalculatorPage() {
             <RelatedLink href="/construction/concrete-control-joint-spacing" label="Concrete Control Joint Spacing" />
           </div>
         </section>
-      </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 
