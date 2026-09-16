@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ConcreteDrivewayCalculatorClient from "./ConcreteDrivewayCalculatorClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Concrete Driveway Calculator | Cost, Yards, Rebar & Base",
@@ -74,7 +75,7 @@ export default function ConcreteDrivewayCalculatorPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -84,7 +85,7 @@ export default function ConcreteDrivewayCalculatorPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+
         <div className="mb-8">
           <Link
             href="/construction"
@@ -217,8 +218,7 @@ export default function ConcreteDrivewayCalculatorPage() {
             <RelatedLink href="/construction/how-to-prepare-ground-for-concrete-slab" label="How to Prepare Ground for Concrete Slab" />
           </div>
         </section>
-      </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 
