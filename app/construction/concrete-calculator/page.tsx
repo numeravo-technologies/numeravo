@@ -687,7 +687,14 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <main
+      className="min-h-screen bg-[#090D14] text-white"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(249,115,22,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.035) 1px, transparent 1px), radial-gradient(circle at 50% 0%, rgba(249,115,22,0.10), transparent 34rem)",
+        backgroundSize: "32px 32px, 32px 32px, auto",
+      }}
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -797,24 +804,24 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
         }}
       />
 
-      <section className="mx-auto max-w-6xl">
+      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
         <div className="max-w-3xl">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#F97316]">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-[#F97316] sm:mb-4 sm:text-sm">
             Construction Calculator
           </p>
 
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
             Concrete Calculator
           </h1>
 
-          <p className="mt-6 text-lg leading-8 text-[#A0AEC0]">
+          <p className="mt-4 max-w-2xl text-base leading-7 text-[#A0AEC0] sm:mt-6 sm:text-lg sm:leading-8">
             Calculate concrete volume, waste-adjusted order amount, and material
             cost for slabs, pads, footings, trenches, piers, sonotubes, walls,
             stairs, curbs, and columns.
           </p>
         </div>
 
-        <div className="mt-10 rounded-2xl border border-[#1F2937] bg-[#121826] p-4">
+        <div className="mt-8 rounded-2xl border border-[#2A3444] bg-[#111823]/95 p-4 shadow-[0_18px_50px_-30px_rgba(249,115,22,0.35)] backdrop-blur sm:mt-10 sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-semibold text-white">Unit System</p>
@@ -823,7 +830,7 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               <ToggleButton
                 isActive={unitSystem === "imperial"}
                 label="Imperial"
@@ -841,12 +848,12 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
           </div>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-[#1F2937] bg-[#121826] p-4">
+        <div className="mt-4 rounded-2xl border border-[#2A3444] bg-[#111823]/95 p-4 backdrop-blur sm:mt-6 sm:p-5">
           <p className="mb-4 text-sm font-semibold text-white">
             Choose project type
           </p>
 
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3">
             {projectTypes.map((type) => {
               const isActive = projectType === type.id;
 
@@ -857,15 +864,15 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
                   onClick={() => setProjectType(type.id)}
                   className={
                     isActive
-                      ? "rounded-xl border border-[#F97316] bg-[#1C2433] p-4 text-left"
-                      : "rounded-xl border border-[#1F2937] bg-[#0B0F19] p-4 text-left hover:border-[#F97316]"
+                      ? "min-h-14 rounded-xl border border-[#F97316] bg-[#2A1A10] p-3 text-left shadow-[0_0_0_1px_rgba(249,115,22,0.12)] sm:min-h-0 sm:p-4"
+                      : "min-h-14 rounded-xl border border-[#263041] bg-[#0C121C] p-3 text-left transition hover:border-[#F97316]/70 hover:bg-[#111925] sm:min-h-0 sm:p-4"
                   }
                 >
                   <span className="block text-sm font-semibold text-white">
                     {type.label}
                   </span>
 
-                  <span className="mt-2 block text-sm leading-6 text-[#A0AEC0]">
+                  <span className="mt-2 hidden text-sm leading-6 text-[#A0AEC0] sm:block">
                     {type.description}
                   </span>
                 </button>
@@ -904,8 +911,8 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
           </div>
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
+        <div className="mt-5 grid gap-5 md:grid-cols-[1.08fr_0.92fr] lg:mt-6 lg:gap-6">
+          <div className="rounded-2xl border border-[#2A3444] bg-[#111823]/95 p-4 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.9)] backdrop-blur sm:p-6">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-2xl font-semibold">Project Inputs</h2>
@@ -1456,7 +1463,7 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
+          <div className="rounded-2xl border border-[#3A2A20] bg-[#121923]/95 p-4 shadow-[0_24px_70px_-40px_rgba(249,115,22,0.28)] backdrop-blur sm:p-6 md:sticky md:top-4 md:self-start">
             <div className="flex items-start justify-between gap-4">
               <h2 className="text-2xl font-semibold">Results</h2>
 
@@ -1469,14 +1476,14 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
               </button>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-[#F97316] bg-[#0B0F19] p-5">
+            <div className="sticky top-2 z-20 mt-5 rounded-2xl border border-[#F97316]/80 bg-gradient-to-br from-[#2B190F] to-[#0C121B] p-4 shadow-[0_16px_45px_-28px_rgba(249,115,22,0.65)] backdrop-blur sm:mt-6 sm:p-5 md:relative md:top-auto md:z-auto">
               <p className="text-sm text-[#A0AEC0]">
                 {concreteOrderMode === "bags"
                   ? "Recommended bag estimate"
                   : "Recommended order amount"}
               </p>
 
-              <p className="mt-2 text-4xl font-bold text-[#F97316]">
+              <p className="mt-2 text-3xl font-bold tracking-tight text-[#F97316] sm:text-4xl">
                 {concreteOrderMode === "bags"
                   ? `${results.eightyLbBags} 80 lb bags`
                   : `${formatNumber(results.recommendedOrder)} ${unitLabels.volumePrimary}`}
@@ -2000,12 +2007,12 @@ function ToggleButton({
       onClick={onClick}
       className={
         isActive
-          ? "rounded-xl border border-[#F97316] bg-[#1C2433] px-4 py-3 text-left"
-          : "rounded-xl border border-[#1F2937] bg-[#0B0F19] px-4 py-3 text-left hover:border-[#F97316]"
+          ? "min-h-14 rounded-xl border border-[#F97316] bg-[#2A1A10] px-3 py-3 text-left shadow-[0_0_0_1px_rgba(249,115,22,0.10)] sm:px-4"
+          : "min-h-14 rounded-xl border border-[#263041] bg-[#0C121C] px-3 py-3 text-left transition hover:border-[#F97316]/70 hover:bg-[#111925] sm:px-4"
       }
     >
       <span className="block text-sm font-semibold text-white">{label}</span>
-      <span className="mt-1 block text-xs text-[#A0AEC0]">{description}</span>
+      <span className="mt-1 hidden text-xs text-[#A0AEC0] sm:block">{description}</span>
     </button>
   );
 }
@@ -2029,14 +2036,14 @@ function MeasurementInput({
     <label className="block">
       <span className="text-sm font-medium text-[#A0AEC0]">{label}</span>
 
-      <div className="mt-2 flex overflow-hidden rounded-xl border border-[#1F2937] bg-[#0B0F19] focus-within:border-[#F97316]">
+      <div className="mt-2 flex min-h-12 overflow-hidden rounded-xl border border-[#2A3444] bg-[#090F18] transition focus-within:border-[#F97316] focus-within:ring-2 focus-within:ring-[#F97316]/10">
         <input
           type="number"
           min="0"
           step="any"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="min-w-0 flex-1 bg-transparent px-4 py-3 text-white outline-none"
+          className="min-w-0 flex-1 bg-transparent px-4 py-3.5 text-base text-white outline-none"
         />
 
         <select
@@ -2045,7 +2052,7 @@ function MeasurementInput({
           onChange={(event) =>
             onUnitChange(event.target.value as MeasurementUnit)
           }
-          className="border-l border-[#1F2937] bg-[#121826] px-3 py-3 text-sm font-semibold text-white outline-none"
+          className="border-l border-[#2A3444] bg-[#151D29] px-3 py-3.5 text-sm font-semibold text-white outline-none"
         >
           {units.map((option) => (
             <option key={option} value={option}>
@@ -2077,7 +2084,7 @@ function NumberInput({
     <label className={wide ? "block sm:col-span-2" : "block"}>
       <span className="text-sm font-medium text-[#A0AEC0]">{label}</span>
 
-      <div className="mt-2 flex overflow-hidden rounded-xl border border-[#1F2937] bg-[#0B0F19]">
+      <div className="mt-2 flex min-h-12 overflow-hidden rounded-xl border border-[#2A3444] bg-[#090F18] transition focus-within:border-[#F97316] focus-within:ring-2 focus-within:ring-[#F97316]/10">
         {prefix && (
           <span className="border-r border-[#1F2937] px-4 py-3 text-sm text-[#A0AEC0]">
             {prefix}
@@ -2089,7 +2096,7 @@ function NumberInput({
           min="0"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full bg-transparent px-4 py-3 text-white outline-none"
+          className="w-full bg-transparent px-4 py-3.5 text-base text-white outline-none"
         />
 
         {suffix && (
@@ -2112,7 +2119,7 @@ function ResultRow({
   highlight?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl border border-[#1F2937] bg-[#0B0F19] p-4">
+    <div className="flex items-center justify-between gap-4 rounded-xl border border-[#263041] bg-[#0C121C] p-3.5 sm:p-4">
       <span className="text-sm text-[#A0AEC0]">{label}</span>
 
       <span
