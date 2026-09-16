@@ -211,12 +211,12 @@ Cost per cubic yard: ${formatCurrency(results.costPerYard)}`;
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
+      <div className="rounded-2xl border border-[#3A2A20] bg-[#121923]/95 p-6 shadow-[0_24px_70px_-40px_rgba(249,115,22,0.28)] backdrop-blur">
         <h3 className="text-xl font-semibold text-white">Mix estimate</h3>
 
-        <div className="mt-5 rounded-2xl border border-[#1F2937] bg-[#0B0F19] p-5">
+        <div className="mt-5 rounded-2xl border border-[#F97316]/80 bg-gradient-to-br from-[#2B190F] to-[#0C121B] p-5 shadow-[0_16px_45px_-28px_rgba(249,115,22,0.65)]">
           <p className="text-sm text-[#A0AEC0]">Estimated material cost</p>
-          <p className="mt-2 text-5xl font-bold text-white">
+          <p className="mt-2 text-5xl font-bold tracking-tight text-[#F97316]">
             {formatCurrency(results.totalCost)}
           </p>
           <p className="mt-2 text-sm text-[#A0AEC0]">

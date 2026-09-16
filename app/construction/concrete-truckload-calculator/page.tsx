@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ConcreteTruckloadCalculatorClient from "./ConcreteTruckloadCalculatorClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Concrete Truckload Calculator | Ready-Mix Loads, Yards & Cost",
@@ -74,7 +75,7 @@ export default function ConcreteTruckloadCalculatorPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -84,7 +85,7 @@ export default function ConcreteTruckloadCalculatorPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+
         <div className="mb-8">
           <Link
             href="/construction"
@@ -205,8 +206,7 @@ export default function ConcreteTruckloadCalculatorPage() {
             <RelatedLink href="/construction/concrete-bag-calculator" label="Concrete Bag Calculator" />
           </div>
         </section>
-      </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 

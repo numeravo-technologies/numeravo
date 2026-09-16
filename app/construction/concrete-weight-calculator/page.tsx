@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ConcreteWeightCalculatorClient from "./ConcreteWeightCalculatorClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Concrete Weight Calculator | Weight of Concrete by Yard, Foot, or Slab",
@@ -82,7 +83,7 @@ export default function ConcreteWeightCalculatorPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -92,7 +93,7 @@ export default function ConcreteWeightCalculatorPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+
         <div className="mb-8">
           <Link
             href="/construction"
@@ -251,8 +252,7 @@ export default function ConcreteWeightCalculatorPage() {
             <RelatedLink href="/construction/concrete-wall-calculator" label="Concrete Wall Calculator" />
           </div>
         </section>
-      </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 
