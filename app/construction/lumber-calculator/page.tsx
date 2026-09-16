@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import LumberCalculatorClient from "./LumberCalculatorClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Lumber Calculator | Quantity, Board Feet & Cost",
@@ -95,7 +96,7 @@ const appJsonLd = {
 
 export default function LumberCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorPageShell contained={false}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -354,7 +355,7 @@ export default function LumberCalculatorPage() {
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 

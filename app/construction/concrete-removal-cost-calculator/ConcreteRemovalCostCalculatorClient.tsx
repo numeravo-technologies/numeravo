@@ -274,7 +274,7 @@ export default function ConcreteRemovalCostCalculatorClient() {
 
   return (
     <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-      <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
+      <div className="rounded-3xl border border-[#3A2A20] bg-[#121923]/95 p-6 shadow-[0_24px_70px_-40px_rgba(249,115,22,0.28)] backdrop-blur md:p-8">
         <div className="flex flex-col gap-2">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">
             Inputs
@@ -501,14 +501,20 @@ function ResultCard({
     <div
       className={`rounded-2xl border p-5 ${
         highlight
-          ? "border-orange-400 bg-orange-400 text-[#0B0F19]"
+          ? "border-[#F97316]/80 bg-gradient-to-br from-[#2B190F] to-[#0C121B] text-white shadow-[0_16px_45px_-28px_rgba(249,115,22,0.65)]"
           : "border-[#1F2937] bg-[#0B0F19] text-white"
       }`}
     >
-      <p className={`text-sm ${highlight ? "text-[#0B0F19]/70" : "text-[#A0AEC0]"}`}>
+      <p className="text-sm text-[#A0AEC0]">
         {label}
       </p>
-      <p className="mt-2 text-2xl font-bold">{value}</p>
+      <p
+        className={`mt-2 text-2xl font-bold ${
+          highlight ? "tracking-tight text-[#F97316]" : "text-white"
+        }`}
+      >
+        {value}
+      </p>
     </div>
   );
 }

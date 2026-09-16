@@ -413,7 +413,7 @@ export default function StudCalculatorClient() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
+      <div className="rounded-3xl border border-[#3A2A20] bg-[#121923]/95 p-6 shadow-[0_24px_70px_-40px_rgba(249,115,22,0.28)] backdrop-blur md:p-8">
         <div className="flex flex-col gap-2">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">
             Results
