@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DrainageRockCalculatorClient from "./DrainageRockCalculatorClient";
+import CalculatorPageShell from "../../../components/calculators/CalculatorPageShell";
 
 export const metadata: Metadata = {
   title: "Drainage Rock Calculator | French Drain Rock, Tons & Cost",
@@ -105,7 +106,7 @@ export default function DrainageRockCalculatorPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <main className="min-h-screen bg-[#0B0F19] text-white">
+      <CalculatorPageShell contained={false}>
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-8">
             <Link href="/construction" className="text-sm font-medium text-[#F97316] hover:underline">
@@ -277,7 +278,7 @@ export default function DrainageRockCalculatorPage() {
             </div>
           </div>
         </section>
-      </main>
+      </CalculatorPageShell>
     </>
   );
 }
