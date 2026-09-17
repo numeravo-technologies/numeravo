@@ -334,9 +334,10 @@ export default function GravelDrivewayCalculatorPage() {
               answer="Gravel driveway delivery cost depends on supplier distance, truck size, fuel charges, minimum order rules, dump location access, and local pricing. This calculator lets you enter a delivery fee so you can estimate material plus delivery total."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );

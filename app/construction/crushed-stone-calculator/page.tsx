@@ -449,9 +449,10 @@ export default function CrushedStoneCalculatorPage() {
               answer="Use both. Project volume is usually calculated in cubic yards, but suppliers commonly sell crushed stone by the ton."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );

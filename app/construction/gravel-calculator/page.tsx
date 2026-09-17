@@ -980,9 +980,10 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
               answer="No. This calculator estimates material cost based on price per ton or tonne. Delivery, taxes, labor, equipment, and supplier fees are separate."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );

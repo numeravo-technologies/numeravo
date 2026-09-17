@@ -301,9 +301,10 @@ export default function RiverRockCalculatorPage() {
               answer="River rock can work well in decorative drainage areas, dry creek beds, and runoff zones, but proper slope, fabric, base preparation, and outlet design still matter."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );

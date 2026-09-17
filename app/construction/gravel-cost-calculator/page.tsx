@@ -413,9 +413,10 @@ export default function GravelCostCalculatorPage() {
               answer="A gravel cost estimate may include material cost, delivery, labor or spreading, site prep, grading, waste allowance, and truckload planning. Final cost can change based on supplier pricing, access, moisture, and project conditions."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );

@@ -295,9 +295,10 @@ export default function DecomposedGraniteCalculatorPage() {
               answer="Stabilized decomposed granite can be useful for paths, patios, and areas where erosion or loose material movement is a concern."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );

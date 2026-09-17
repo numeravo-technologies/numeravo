@@ -302,9 +302,10 @@ export default function PeaGravelCalculatorPage() {
               answer="Many suppliers sell by the ton, while calculators often start with cubic yards. Convert cubic yards to tons using the supplier density."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );

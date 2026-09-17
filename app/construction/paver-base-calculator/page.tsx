@@ -256,9 +256,10 @@ export default function PaverBaseCalculatorPage() {
               text="Estimate concrete slab volume, yards, cost, and material needs."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );

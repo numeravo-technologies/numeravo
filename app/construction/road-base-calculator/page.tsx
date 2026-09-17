@@ -425,9 +425,10 @@ export default function RoadBaseCalculatorPage() {
               answer="Yes. A 5% to 10% waste allowance helps account for compaction, uneven grade, spreading loss, and measurement differences."
             />
 
-        <ConstructionCalculatorSearchSection />
       </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </section>
     </main>
   );
