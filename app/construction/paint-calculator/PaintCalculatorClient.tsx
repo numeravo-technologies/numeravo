@@ -4,6 +4,47 @@ import { useMemo, useState } from "react";
 
 type CalculationMode = "interior" | "exterior" | "known-area";
 
+type Opening = {
+  id: string;
+  width: number;
+  height: number;
+  quantity: number;
+};
+
+type PaintRoom = {
+  id: string;
+  name: string;
+  length: number;
+  width: number;
+  wallHeight: number;
+  includeCeiling: boolean;
+  doors: Opening[];
+  windows: Opening[];
+};
+
+const createOpening = (
+  width: number,
+  height: number,
+): Opening => ({
+  id: crypto.randomUUID(),
+  width,
+  height,
+  quantity: 1,
+});
+
+const createRoom = (
+  name: string,
+): PaintRoom => ({
+  id: crypto.randomUUID(),
+  name,
+  length: 12,
+  width: 12,
+  wallHeight: 8,
+  includeCeiling: true,
+  doors: [createOpening(3, 7)],
+  windows: [createOpening(3, 4)],
+});
+
 type PurchaseQuantity = {
   exactGallons: number;
   gallons: number;
@@ -63,11 +104,32 @@ export default function PaintCalculatorClient() {
   const [calculationMode, setCalculationMode] =
     useState<CalculationMode>("interior");
 
-  const [roomLength, setRoomLength] = useState(12);
-  const [roomWidth, setRoomWidth] = useState(12);
-  const [wallHeight, setWallHeight] = useState(8);
-  const [numberOfRooms, setNumberOfRooms] = useState(1);
-  const [includeCeiling, setIncludeCeiling] = useState(true);
+  const [rooms, setRooms] = useState<PaintRoom[]>([
+    {
+      id: "room-1",
+      name: "Room 1",
+      length: 12,
+      width: 12,
+      wallHeight: 8,
+      includeCeiling: true,
+      doors: [
+        {
+          id: "room-1-door-1",
+          width: 3,
+          height: 7,
+          quantity: 1,
+        },
+      ],
+      windows: [
+        {
+          id: "room-1-window-1",
+          width: 3,
+          height: 4,
+          quantity: 2,
+        },
+      ],
+    },
+  ]);
 
   const [buildingLength, setBuildingLength] = useState(40);
   const [buildingWidth, setBuildingWidth] = useState(30);
@@ -113,12 +175,155 @@ export default function PaintCalculatorClient() {
   const [additionalFees, setAdditionalFees] = useState(0);
   const [salesTaxRate, setSalesTaxRate] = useState(0);
 
+  const updateRoom = (
+    roomId: string,
+    changes: Partial<Omit<PaintRoom, "id" | "doors" | "windows">>,
+  ) => {
+    setRooms((currentRooms) =>
+      currentRooms.map((room) =>
+        room.id === roomId
+          ? { ...room, ...changes }
+          : room,
+      ),
+    );
+  };
+
+  const addRoom = () => {
+    setRooms((currentRooms) => [
+      ...currentRooms,
+      createRoom(`Room ${currentRooms.length + 1}`),
+    ]);
+  };
+
+  const removeRoom = (roomId: string) => {
+    setRooms((currentRooms) => {
+      if (currentRooms.length <= 1) {
+        return currentRooms;
+      }
+
+      return currentRooms.filter((room) => room.id !== roomId);
+    });
+  };
+
+  const addOpening = (
+    roomId: string,
+    openingType: "doors" | "windows",
+  ) => {
+    setRooms((currentRooms) =>
+      currentRooms.map((room) => {
+        if (room.id !== roomId) {
+          return room;
+        }
+
+        const opening =
+          openingType === "doors"
+            ? createOpening(3, 7)
+            : createOpening(3, 4);
+
+        return {
+          ...room,
+          [openingType]: [...room[openingType], opening],
+        };
+      }),
+    );
+  };
+
+  const updateOpening = (
+    roomId: string,
+    openingType: "doors" | "windows",
+    openingId: string,
+    changes: Partial<Omit<Opening, "id">>,
+  ) => {
+    setRooms((currentRooms) =>
+      currentRooms.map((room) => {
+        if (room.id !== roomId) {
+          return room;
+        }
+
+        return {
+          ...room,
+          [openingType]: room[openingType].map((opening) =>
+            opening.id === openingId
+              ? { ...opening, ...changes }
+              : opening,
+          ),
+        };
+      }),
+    );
+  };
+
+  const removeOpening = (
+    roomId: string,
+    openingType: "doors" | "windows",
+    openingId: string,
+  ) => {
+    setRooms((currentRooms) =>
+      currentRooms.map((room) => {
+        if (room.id !== roomId) {
+          return room;
+        }
+
+        return {
+          ...room,
+          [openingType]: room[openingType].filter(
+            (opening) => opening.id !== openingId,
+          ),
+        };
+      }),
+    );
+  };
+
   const result = useMemo(() => {
-    const safeRoomLength = clampNumber(roomLength);
-    const safeRoomWidth = clampNumber(roomWidth);
-    const safeWallHeight = clampNumber(wallHeight);
-    const safeNumberOfRooms = Math.floor(
-      clampNumber(numberOfRooms),
+    const interiorSummary = rooms.reduce(
+      (summary, room) => {
+        const safeLength = clampNumber(room.length);
+        const safeWidth = clampNumber(room.width);
+        const safeWallHeight = clampNumber(room.wallHeight);
+
+        const roomGrossWallArea =
+          2 * (safeLength + safeWidth) * safeWallHeight;
+
+        const doorArea = room.doors.reduce(
+          (total, door) =>
+            total +
+            Math.floor(clampNumber(door.quantity)) *
+              clampNumber(door.width) *
+              clampNumber(door.height),
+          0,
+        );
+
+        const windowArea = room.windows.reduce(
+          (total, window) =>
+            total +
+            Math.floor(clampNumber(window.quantity)) *
+              clampNumber(window.width) *
+              clampNumber(window.height),
+          0,
+        );
+
+        const roomOpeningArea = Math.min(
+          doorArea + windowArea,
+          roomGrossWallArea,
+        );
+
+        const roomCeilingArea = room.includeCeiling
+          ? safeLength * safeWidth
+          : 0;
+
+        return {
+          grossWallArea:
+            summary.grossWallArea + roomGrossWallArea,
+          grossCeilingArea:
+            summary.grossCeilingArea + roomCeilingArea,
+          openingArea:
+            summary.openingArea + roomOpeningArea,
+        };
+      },
+      {
+        grossWallArea: 0,
+        grossCeilingArea: 0,
+        openingArea: 0,
+      },
     );
 
     const safeBuildingLength = clampNumber(buildingLength);
@@ -147,39 +352,32 @@ export default function PaintCalculatorClient() {
     const safeTrimLength = clampNumber(trimLength);
     const safeTrimCoats = Math.floor(clampNumber(trimCoats));
 
-    const openingArea =
+    const exteriorOpeningArea =
       safeDoorCount * safeDoorWidth * safeDoorHeight +
       safeWindowCount * safeWindowWidth * safeWindowHeight;
 
     let grossWallArea = 0;
     let grossCeilingArea = 0;
+    let applicableOpeningArea = 0;
 
     if (calculationMode === "interior") {
-      grossWallArea =
-        2 *
-        (safeRoomLength + safeRoomWidth) *
-        safeWallHeight *
-        safeNumberOfRooms;
-
-      grossCeilingArea = includeCeiling
-        ? safeRoomLength *
-          safeRoomWidth *
-          safeNumberOfRooms
-        : 0;
+      grossWallArea = interiorSummary.grossWallArea;
+      grossCeilingArea = interiorSummary.grossCeilingArea;
+      applicableOpeningArea = interiorSummary.openingArea;
     } else if (calculationMode === "exterior") {
       grossWallArea =
         2 *
         (safeBuildingLength + safeBuildingWidth) *
         safeExteriorWallHeight;
+
+      applicableOpeningArea = Math.min(
+        exteriorOpeningArea,
+        grossWallArea,
+      );
     } else {
       grossWallArea = safeKnownWallArea;
       grossCeilingArea = safeKnownCeilingArea;
     }
-
-    const applicableOpeningArea =
-      calculationMode === "known-area"
-        ? 0
-        : Math.min(openingArea, grossWallArea);
 
     const netWallArea = Math.max(
       grossWallArea - applicableOpeningArea,
@@ -357,11 +555,7 @@ export default function PaintCalculatorClient() {
     };
   }, [
     calculationMode,
-    roomLength,
-    roomWidth,
-    wallHeight,
-    numberOfRooms,
-    includeCeiling,
+    rooms,
     buildingLength,
     buildingWidth,
     exteriorWallHeight,
@@ -401,7 +595,7 @@ export default function PaintCalculatorClient() {
       "Numeravo Paint Calculator",
       `Calculation mode: ${
         calculationMode === "interior"
-          ? "Interior room"
+          ? "Interior rooms"
           : calculationMode === "exterior"
             ? "Exterior building"
             : "Known paintable area"
@@ -448,7 +642,7 @@ export default function PaintCalculatorClient() {
               setCalculationMode(value as CalculationMode)
             }
             options={[
-              { value: "interior", label: "Interior room" },
+              { value: "interior", label: "Interior rooms" },
               { value: "exterior", label: "Exterior building" },
               { value: "known-area", label: "Known paintable area" },
             ]}
@@ -456,46 +650,306 @@ export default function PaintCalculatorClient() {
         </div>
 
         {calculationMode === "interior" ? (
-          <InputSection title="Interior room dimensions">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <NumberInput
-                label="Room length"
-                value={roomLength}
-                onChange={setRoomLength}
-                suffix="ft"
-              />
-              <NumberInput
-                label="Room width"
-                value={roomWidth}
-                onChange={setRoomWidth}
-                suffix="ft"
-              />
-              <NumberInput
-                label="Wall height"
-                value={wallHeight}
-                onChange={setWallHeight}
-                suffix="ft"
-              />
-              <NumberInput
-                label="Identical rooms"
-                value={numberOfRooms}
-                onChange={setNumberOfRooms}
-                suffix="rooms"
-                integer
-              />
-            </div>
+          <InputSection title="Interior rooms">
+            <div className="space-y-6">
+              {rooms.map((room, roomIndex) => (
+                <section
+                  key={room.id}
+                  className="rounded-2xl border border-[#273244] bg-[#0B0F19] p-5"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#F97316]">
+                        Room {roomIndex + 1}
+                      </p>
+                      <h3 className="mt-1 text-lg font-semibold text-white">
+                        {room.name.trim() || `Room ${roomIndex + 1}`}
+                      </h3>
+                    </div>
 
-            <label className="mt-4 flex items-center gap-3 text-sm text-[#A0AEC0]">
-              <input
-                type="checkbox"
-                checked={includeCeiling}
-                onChange={(event) =>
-                  setIncludeCeiling(event.target.checked)
-                }
-                className="h-4 w-4 accent-orange-500"
-              />
-              Include ceiling
-            </label>
+                    {rooms.length > 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => removeRoom(room.id)}
+                        className="rounded-xl border border-red-500/40 px-3 py-2 text-sm font-semibold text-red-300 transition hover:border-red-400 hover:bg-red-500/10"
+                      >
+                        Remove room
+                      </button>
+                    ) : null}
+                  </div>
+
+                  <label className="mt-5 block">
+                    <span className="text-sm font-medium text-[#CBD5E1]">
+                      Room name
+                    </span>
+                    <input
+                      type="text"
+                      value={room.name}
+                      onChange={(event) =>
+                        updateRoom(room.id, {
+                          name: event.target.value,
+                        })
+                      }
+                      placeholder={`Room ${roomIndex + 1}`}
+                      className="mt-2 w-full rounded-xl border border-[#273244] bg-[#111827] px-4 py-3 text-white outline-none transition placeholder:text-[#64748B] focus:border-[#F97316]"
+                    />
+                  </label>
+
+                  <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                    <NumberInput
+                      label="Room length"
+                      value={room.length}
+                      onChange={(value) =>
+                        updateRoom(room.id, { length: value })
+                      }
+                      suffix="ft"
+                    />
+
+                    <NumberInput
+                      label="Room width"
+                      value={room.width}
+                      onChange={(value) =>
+                        updateRoom(room.id, { width: value })
+                      }
+                      suffix="ft"
+                    />
+
+                    <NumberInput
+                      label="Wall height"
+                      value={room.wallHeight}
+                      onChange={(value) =>
+                        updateRoom(room.id, { wallHeight: value })
+                      }
+                      suffix="ft"
+                    />
+                  </div>
+
+                  <label className="mt-4 flex items-center gap-3 text-sm text-[#A0AEC0]">
+                    <input
+                      type="checkbox"
+                      checked={room.includeCeiling}
+                      onChange={(event) =>
+                        updateRoom(room.id, {
+                          includeCeiling: event.target.checked,
+                        })
+                      }
+                      className="h-4 w-4 accent-orange-500"
+                    />
+                    Include this room's ceiling
+                  </label>
+
+                  <div className="mt-6 border-t border-[#1F2937] pt-5">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <h4 className="font-semibold text-white">
+                          Doors
+                        </h4>
+                        <p className="mt-1 text-sm text-[#94A3B8]">
+                          Door area is deducted from this room's walls.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => addOpening(room.id, "doors")}
+                        className="shrink-0 rounded-xl border border-orange-500/50 bg-orange-500/10 px-3 py-2 text-sm font-semibold text-orange-300 transition hover:border-orange-400 hover:bg-orange-500/20"
+                      >
+                        + Add door
+                      </button>
+                    </div>
+
+                    {room.doors.length > 0 ? (
+                      <div className="mt-4 space-y-3">
+                        {room.doors.map((door, doorIndex) => (
+                          <div
+                            key={door.id}
+                            className="rounded-xl border border-[#1F2937] bg-[#111827] p-4"
+                          >
+                            <div className="flex items-center justify-between gap-4">
+                              <p className="text-sm font-semibold text-[#CBD5E1]">
+                                Door {doorIndex + 1}
+                              </p>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeOpening(
+                                    room.id,
+                                    "doors",
+                                    door.id,
+                                  )
+                                }
+                                className="text-sm font-semibold text-red-300 transition hover:text-red-200"
+                              >
+                                Remove
+                              </button>
+                            </div>
+
+                            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                              <NumberInput
+                                label="Width"
+                                value={door.width}
+                                onChange={(value) =>
+                                  updateOpening(
+                                    room.id,
+                                    "doors",
+                                    door.id,
+                                    { width: value },
+                                  )
+                                }
+                                suffix="ft"
+                              />
+
+                              <NumberInput
+                                label="Height"
+                                value={door.height}
+                                onChange={(value) =>
+                                  updateOpening(
+                                    room.id,
+                                    "doors",
+                                    door.id,
+                                    { height: value },
+                                  )
+                                }
+                                suffix="ft"
+                              />
+
+                              <NumberInput
+                                label="Quantity"
+                                value={door.quantity}
+                                onChange={(value) =>
+                                  updateOpening(
+                                    room.id,
+                                    "doors",
+                                    door.id,
+                                    { quantity: value },
+                                  )
+                                }
+                                integer
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-4 text-sm text-[#64748B]">
+                        No doors added.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mt-6 border-t border-[#1F2937] pt-5">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <h4 className="font-semibold text-white">
+                          Windows
+                        </h4>
+                        <p className="mt-1 text-sm text-[#94A3B8]">
+                          Window area is deducted from this room's walls.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          addOpening(room.id, "windows")
+                        }
+                        className="shrink-0 rounded-xl border border-orange-500/50 bg-orange-500/10 px-3 py-2 text-sm font-semibold text-orange-300 transition hover:border-orange-400 hover:bg-orange-500/20"
+                      >
+                        + Add window
+                      </button>
+                    </div>
+
+                    {room.windows.length > 0 ? (
+                      <div className="mt-4 space-y-3">
+                        {room.windows.map((window, windowIndex) => (
+                          <div
+                            key={window.id}
+                            className="rounded-xl border border-[#1F2937] bg-[#111827] p-4"
+                          >
+                            <div className="flex items-center justify-between gap-4">
+                              <p className="text-sm font-semibold text-[#CBD5E1]">
+                                Window {windowIndex + 1}
+                              </p>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeOpening(
+                                    room.id,
+                                    "windows",
+                                    window.id,
+                                  )
+                                }
+                                className="text-sm font-semibold text-red-300 transition hover:text-red-200"
+                              >
+                                Remove
+                              </button>
+                            </div>
+
+                            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                              <NumberInput
+                                label="Width"
+                                value={window.width}
+                                onChange={(value) =>
+                                  updateOpening(
+                                    room.id,
+                                    "windows",
+                                    window.id,
+                                    { width: value },
+                                  )
+                                }
+                                suffix="ft"
+                              />
+
+                              <NumberInput
+                                label="Height"
+                                value={window.height}
+                                onChange={(value) =>
+                                  updateOpening(
+                                    room.id,
+                                    "windows",
+                                    window.id,
+                                    { height: value },
+                                  )
+                                }
+                                suffix="ft"
+                              />
+
+                              <NumberInput
+                                label="Quantity"
+                                value={window.quantity}
+                                onChange={(value) =>
+                                  updateOpening(
+                                    room.id,
+                                    "windows",
+                                    window.id,
+                                    { quantity: value },
+                                  )
+                                }
+                                integer
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-4 text-sm text-[#64748B]">
+                        No windows added.
+                      </p>
+                    )}
+                  </div>
+                </section>
+              ))}
+
+              <button
+                type="button"
+                onClick={addRoom}
+                className="w-full rounded-2xl border border-dashed border-orange-500/60 bg-orange-500/5 px-5 py-4 font-semibold text-orange-300 transition hover:border-orange-400 hover:bg-orange-500/10"
+              >
+                + Add another room
+              </button>
+            </div>
           </InputSection>
         ) : null}
 
@@ -543,7 +997,7 @@ export default function PaintCalculatorClient() {
           </InputSection>
         ) : null}
 
-        {calculationMode !== "known-area" ? (
+        {calculationMode === "exterior" ? (
           <InputSection title="Door and window deductions">
             <div className="grid gap-4 sm:grid-cols-2">
               <NumberInput
