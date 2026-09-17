@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import CalculatorSearch from "@/components/calculators/CalculatorSearch";
+
 type UnitSystem = "imperial" | "metric";
 type ConcreteOrderMode = "readyMix" | "bags";
 type MeasurementUnit = "ft" | "in" | "m" | "cm";
@@ -1785,6 +1787,14 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
             </div>
           </div>
         </section>
+
+        <div className="mt-8">
+          <CalculatorSearch
+            currentHref="/construction/concrete-calculator"
+            category="construction"
+            placeholder="Search construction calculators..."
+          />
+        </div>
 
         <section className="mt-8 rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
           <div className="max-w-3xl">
