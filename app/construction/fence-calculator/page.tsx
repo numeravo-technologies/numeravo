@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FenceCalculatorClient from "./FenceCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Fence Calculator | Posts, Pickets, Panels & Cost",
@@ -94,6 +95,8 @@ export default function FenceCalculatorPage() {
             <Related href="/construction/area-calculator" label="Area Calculator" />
           </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </div>
     </main>
   );

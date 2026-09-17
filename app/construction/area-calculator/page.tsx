@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AreaCalculatorClient from "./AreaCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 const url = "https://numeravo.com/construction/area-calculator";
 const description =
@@ -64,6 +65,10 @@ export default function AreaCalculatorPage() {
         }}
       />
       <AreaCalculatorClient />
+
+      <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6 sm:pb-12 lg:pb-16">
+        <ConstructionCalculatorSearchSection />
+      </div>
     </>
   );
 }

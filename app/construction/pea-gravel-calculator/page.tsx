@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PeaGravelCalculatorClient from "./PeaGravelCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Pea Gravel Calculator | Cubic Yards, Tons & Cost",
@@ -300,7 +301,9 @@ export default function PeaGravelCalculatorPage() {
               question="Should I order pea gravel by the ton or cubic yard?"
               answer="Many suppliers sell by the ton, while calculators often start with cubic yards. Convert cubic yards to tons using the supplier density."
             />
-          </div>
+
+        <ConstructionCalculatorSearchSection />
+      </div>
         </section>
       </section>
     </main>

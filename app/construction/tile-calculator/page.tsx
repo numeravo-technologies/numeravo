@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import TileCalculatorClient from "./TileCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 const canonicalUrl =
   "https://numeravo.com/construction/tile-calculator";
@@ -315,6 +316,8 @@ export default function TileCalculatorPage() {
             />
           </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </div>
     </main>
   );

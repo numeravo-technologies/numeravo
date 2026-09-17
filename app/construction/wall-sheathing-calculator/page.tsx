@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import WallSheathingCalculatorClient from "./WallSheathingCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Wall Sheathing Calculator | Panels, Fasteners & Cost",
@@ -33,7 +34,9 @@ export default function WallSheathingCalculatorPage() {
     <Section title="Wall sheathing formulas"><div className="grid gap-4 md:grid-cols-2"><Formula title="Gross wall area" text="Length × height × wall quantity" /><Formula title="Net sheathing area" text="Gross wall area − door and window area" /><Formula title="Panels to purchase" text="Net area × waste factor ÷ panel coverage" /><Formula title="Whole-panel overage" text="Purchased panel coverage − net wall area" /></div></Section>
     <Section title="Wall sheathing planning FAQs"><div className="space-y-4">{faqs.map(([question, answer]) => <article key={question} className="rounded-2xl border border-[#1F2937] bg-[#0B0F19] p-5"><h3 className="font-semibold">{question}</h3><p className="mt-3 text-sm leading-7 text-[#A0AEC0]">{answer}</p></article>)}</div></Section>
     <Section title="Related construction calculators"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><Related href="/construction/stud-calculator" label="Stud Calculator" /><Related href="/construction/lumber-calculator" label="Lumber Calculator" /><Related href="/construction/area-calculator" label="Area Calculator" /><Related href="/construction/drywall-calculator" label="Drywall Calculator" /><Related href="/construction/paint-calculator" label="Paint Calculator" /><Related href="/construction/fence-calculator" label="Fence Calculator" /></div></Section>
-  </div></main>;
+
+        <ConstructionCalculatorSearchSection />
+      </div></main>;
 }
 
 function Card({ label, value }: { label: string; value: string }) { return <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5"><p className="text-sm text-[#A0AEC0]">{label}</p><p className="mt-2 text-lg font-bold">{value}</p></div>; }

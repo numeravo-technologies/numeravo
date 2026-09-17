@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PaverBaseCalculatorClient from "./PaverBaseCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Paver Base Calculator | Gravel Base, Sand, Tons & Cost",
@@ -254,7 +255,9 @@ export default function PaverBaseCalculatorPage() {
               title="Concrete Slab Calculator"
               text="Estimate concrete slab volume, yards, cost, and material needs."
             />
-          </div>
+
+        <ConstructionCalculatorSearchSection />
+      </div>
         </section>
       </section>
     </main>

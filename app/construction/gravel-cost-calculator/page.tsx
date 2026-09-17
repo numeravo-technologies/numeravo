@@ -1,6 +1,7 @@
 import Link from "next/link";
 import GravelCostCalculatorClient from "./GravelCostCalculatorClient";
 import type { Metadata } from "next";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Gravel Cost Calculator | Estimate Tons, Yards & Total Cost",
@@ -411,7 +412,9 @@ export default function GravelCostCalculatorPage() {
               question="What is included in a gravel cost estimate?"
               answer="A gravel cost estimate may include material cost, delivery, labor or spreading, site prep, grading, waste allowance, and truckload planning. Final cost can change based on supplier pricing, access, moisture, and project conditions."
             />
-          </div>
+
+        <ConstructionCalculatorSearchSection />
+      </div>
         </section>
       </section>
     </main>

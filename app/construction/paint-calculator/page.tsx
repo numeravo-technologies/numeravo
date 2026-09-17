@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PaintCalculatorClient from "./PaintCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 const canonicalUrl =
   "https://numeravo.com/construction/paint-calculator";
@@ -330,6 +331,8 @@ export default function PaintCalculatorPage() {
             />
           </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </div>
     </main>
   );

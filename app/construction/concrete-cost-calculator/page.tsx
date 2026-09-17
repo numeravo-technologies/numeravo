@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ConcreteCostCalculatorClient from "./ConcreteCostCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 const url = "https://numeravo.com/construction/concrete-cost-calculator";
 const description =
@@ -61,6 +62,10 @@ export default function ConcreteCostCalculatorPage() {
         }}
       />
       <ConcreteCostCalculatorClient />
+
+      <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6 sm:pb-12 lg:pb-16">
+        <ConstructionCalculatorSearchSection />
+      </div>
     </>
   );
 }

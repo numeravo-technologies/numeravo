@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CrushedStoneCalculatorClient from "./CrushedStoneCalculatorClient";
 import type { Metadata } from "next";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Crushed Stone Calculator | Estimate Tons, Yards & Cost",
@@ -447,7 +448,9 @@ export default function CrushedStoneCalculatorPage() {
               question="Is crushed stone calculated by ton or cubic yard?"
               answer="Use both. Project volume is usually calculated in cubic yards, but suppliers commonly sell crushed stone by the ton."
             />
-          </div>
+
+        <ConstructionCalculatorSearchSection />
+      </div>
         </section>
       </section>
     </main>

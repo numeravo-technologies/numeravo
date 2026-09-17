@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DeckMaterialsCalculatorClient from "./DeckMaterialsCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 const canonicalUrl =
   "https://numeravo.com/construction/deck-materials-calculator";
@@ -319,6 +320,8 @@ export default function DeckMaterialsCalculatorPage() {
             />
           </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </div>
     </main>
   );

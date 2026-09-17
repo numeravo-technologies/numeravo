@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DrywallCalculatorClient from "./DrywallCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 const canonicalUrl =
   "https://numeravo.com/construction/drywall-calculator";
@@ -336,6 +337,8 @@ export default function DrywallCalculatorPage() {
             />
           </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </div>
     </main>
   );

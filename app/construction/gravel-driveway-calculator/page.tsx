@@ -1,6 +1,7 @@
 import Link from "next/link";
 import GravelDrivewayCalculatorClient from "./GravelDrivewayCalculatorClient";
 import type { Metadata } from "next";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Gravel Driveway Calculator | Estimate Tons, Yards & Cost",
@@ -332,7 +333,9 @@ export default function GravelDrivewayCalculatorPage() {
               question="How much does gravel driveway delivery cost?"
               answer="Gravel driveway delivery cost depends on supplier distance, truck size, fuel charges, minimum order rules, dump location access, and local pricing. This calculator lets you enter a delivery fee so you can estimate material plus delivery total."
             />
-          </div>
+
+        <ConstructionCalculatorSearchSection />
+      </div>
         </section>
       </section>
     </main>

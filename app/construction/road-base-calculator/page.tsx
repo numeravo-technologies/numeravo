@@ -1,6 +1,7 @@
 import Link from "next/link";
 import RoadBaseCalculatorClient from "./RoadBaseCalculatorClient";
 import type { Metadata } from "next";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Road Base Calculator | Estimate Tons, Yards & Cost",
@@ -423,7 +424,9 @@ export default function RoadBaseCalculatorPage() {
               question="Should I include waste for road base?"
               answer="Yes. A 5% to 10% waste allowance helps account for compaction, uneven grade, spreading loss, and measurement differences."
             />
-          </div>
+
+        <ConstructionCalculatorSearchSection />
+      </div>
         </section>
       </section>
     </main>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import RiverRockCalculatorClient from "./RiverRockCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "River Rock Calculator | Cubic Yards, Tons & Cost",
@@ -299,7 +300,9 @@ export default function RiverRockCalculatorPage() {
               question="Is river rock good for drainage?"
               answer="River rock can work well in decorative drainage areas, dry creek beds, and runoff zones, but proper slope, fabric, base preparation, and outlet design still matter."
             />
-          </div>
+
+        <ConstructionCalculatorSearchSection />
+      </div>
         </section>
       </section>
     </main>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import DecomposedGraniteCalculatorClient from "./DecomposedGraniteCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 export const metadata: Metadata = {
   title: "Decomposed Granite Calculator | Cubic Yards, Tons & Cost",
@@ -293,7 +294,9 @@ export default function DecomposedGraniteCalculatorPage() {
               question="Should I use stabilized decomposed granite?"
               answer="Stabilized decomposed granite can be useful for paths, patios, and areas where erosion or loose material movement is a concern."
             />
-          </div>
+
+        <ConstructionCalculatorSearchSection />
+      </div>
         </section>
       </section>
     </main>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FlooringCalculatorClient from "./FlooringCalculatorClient";
+import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 const canonicalUrl =
   "https://numeravo.com/construction/flooring-calculator";
@@ -319,6 +320,8 @@ export default function FlooringCalculatorPage() {
             />
           </div>
         </section>
+
+        <ConstructionCalculatorSearchSection />
       </div>
     </main>
   );
