@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import CalculatorSearch from "./CalculatorSearch";
+
 type CalculatorPageShellProps = {
   children: ReactNode;
   contained?: boolean;
@@ -21,9 +23,25 @@ export default function CalculatorPageShell({
       {contained ? (
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
           {children}
+
+          <div className="mt-8">
+            <CalculatorSearch
+              category="construction"
+              placeholder="Search construction calculators..."
+            />
+          </div>
         </div>
       ) : (
-        children
+        <>
+          {children}
+
+          <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6 sm:pb-12 lg:pb-16">
+            <CalculatorSearch
+              category="construction"
+              placeholder="Search construction calculators..."
+            />
+          </div>
+        </>
       )}
     </main>
   );

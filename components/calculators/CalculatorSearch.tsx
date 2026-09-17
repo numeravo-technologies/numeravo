@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   calculators,
@@ -20,6 +21,8 @@ export default function CalculatorSearch({
   placeholder = "Search calculators...",
   maxResults = 8,
 }: CalculatorSearchProps) {
+  const pathname = usePathname();
+  const activeHref = currentHref ?? pathname;
   const [query, setQuery] = useState("");
 
   const results = useMemo(() => {
@@ -30,7 +33,7 @@ export default function CalculatorSearch({
     }
 
     return calculators
-      .filter((calculator) => calculator.href !== currentHref)
+      .filter((calculator) => calculator.href !== activeHref)
       .filter((calculator) => {
         if (category && calculator.category !== category) {
           return false;
@@ -49,7 +52,7 @@ export default function CalculatorSearch({
         return searchableText.includes(normalized);
       })
       .slice(0, maxResults);
-  }, [query, currentHref, category, maxResults]);
+  }, [query, activeHref, category, maxResults]);
 
   const showResults = query.trim().length > 0;
 
