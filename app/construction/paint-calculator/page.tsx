@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PaintCalculatorClient from "./PaintCalculatorClient";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
+import RelatedCalculators from "@/components/calculators/RelatedCalculators";
 
 const canonicalUrl =
   "https://numeravo.com/construction/paint-calculator";
@@ -298,39 +299,7 @@ export default function PaintCalculatorPage() {
           </div>
         </section>
 
-        <section className="mt-12 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
-          <h2 className="text-2xl font-bold">
-            Related construction calculators
-          </h2>
-
-          <p className="mt-3 text-[#A0AEC0]">
-            Continue planning surface area, drywall, framing, and interior
-            construction materials.
-          </p>
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <RelatedLink
-              href="/construction/flooring-calculator"
-              label="Flooring Calculator"
-            />
-            <RelatedLink
-              href="/construction/drywall-calculator"
-              label="Drywall Calculator"
-            />
-            <RelatedLink
-              href="/construction/area-calculator"
-              label="Area Calculator"
-            />
-            <RelatedLink
-              href="/construction/stud-calculator"
-              label="Stud Calculator"
-            />
-            <RelatedLink
-              href="/construction"
-              label="All Construction Calculators"
-            />
-          </div>
-        </section>
+        <RelatedCalculators calculatorId="paint-calculator" />
 
         <ConstructionCalculatorSearchSection />
       </div>
@@ -418,22 +387,5 @@ function InfoCard({
       <h2 className="text-2xl font-bold">{title}</h2>
       <div className="mt-4 leading-8 text-[#A0AEC0]">{children}</div>
     </article>
-  );
-}
-
-function RelatedLink({
-  href,
-  label,
-}: {
-  href: string;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="rounded-2xl border border-[#1F2937] bg-[#0B0F19] p-4 text-sm font-semibold text-white transition hover:border-orange-400 hover:text-orange-300"
-    >
-      {label}
-    </Link>
   );
 }
