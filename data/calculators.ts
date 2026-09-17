@@ -955,6 +955,79 @@ export function searchCalculators(query: string) {
   });
 }
 
+export function getRelatedCalculators(
+  calculatorId: string,
+  limit = 6,
+): CalculatorRecord[] {
+  const current = getCalculatorById(calculatorId);
+
+  if (!current || limit <= 0) {
+    return [];
+  }
+
+  const results: CalculatorRecord[] = [];
+  const seen = new Set<string>([current.id]);
+
+  const addCalculator = (calculator: CalculatorRecord | undefined) => {
+    if (!calculator || seen.has(calculator.id) || results.length >= limit) {
+      return;
+    }
+
+    seen.add(calculator.id);
+    results.push(calculator);
+  };
+
+  for (const relatedId of current.related ?? []) {
+    addCalculator(getCalculatorById(relatedId));
+  }
+
+  if (results.length < limit && current.subcategory) {
+    for (const calculator of calculators) {
+      if (
+        calculator.category === current.category &&
+        calculator.subcategory === current.subcategory
+      ) {
+        addCalculator(calculator);
+      }
+
+      if (results.length >= limit) {
+        break;
+      }
+    }
+  }
+
+  if (results.length < limit && current.workflowStages?.length) {
+    const currentStages = new Set(current.workflowStages);
+
+    for (const calculator of calculators) {
+      if (
+        calculator.category === current.category &&
+        calculator.workflowStages?.some((stage) => currentStages.has(stage))
+      ) {
+        addCalculator(calculator);
+      }
+
+      if (results.length >= limit) {
+        break;
+      }
+    }
+  }
+
+  if (results.length < limit) {
+    for (const calculator of calculators) {
+      if (calculator.category === current.category) {
+        addCalculator(calculator);
+      }
+
+      if (results.length >= limit) {
+        break;
+      }
+    }
+  }
+
+  return results;
+}
+
 export type CalculatorRegistryIssue = {
   type:
     | "duplicate-id"
