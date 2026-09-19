@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import CalculatorNextSteps from "@/components/calculators/CalculatorNextSteps";
 import CalculatorSearch from "@/components/calculators/CalculatorSearch";
+import { calculateImperialConcreteVolume } from "@/lib/calculations/concreteVolume";
 
 type UnitSystem = "imperial" | "metric";
 type ConcreteOrderMode = "readyMix" | "bags";
@@ -473,7 +474,20 @@ export default function ConcreteCalculatorPage() {
       );
       const quantity = toNumber(slabQuantity);
 
-      baseVolume = length * width * thickness * quantity;
+      if (unitSystem === "imperial") {
+        const slabResult = calculateImperialConcreteVolume({
+          lengthFeet: length,
+          widthFeet: width,
+          thicknessInches: thickness * 12,
+          quantity,
+          wastePercent: 0,
+        });
+
+        baseVolume = slabResult.baseCubicFeet;
+      } else {
+        baseVolume = length * width * thickness * quantity;
+      }
+
       formulaLabel = "Length × width × thickness × quantity";
     }
 

@@ -1,3 +1,4 @@
+import { calculateImperialConcreteVolume } from "@/lib/calculations/concreteVolume";
 import type {
   ProjectInputKey,
   ProjectRecipeId,
@@ -90,16 +91,12 @@ export function getProjectConcreteYards(
     return null;
   }
 
-  const baseYards =
-    (length * width * (thickness / 12)) / 27;
+  const result = calculateImperialConcreteVolume({
+    lengthFeet: length,
+    widthFeet: width,
+    thicknessInches: thickness,
+    wastePercent: project.inputs.wastePercent ?? 0,
+  });
 
-  const wastePercent =
-    project.inputs.wastePercent ?? 0;
-
-  const safeWastePercent =
-    Number.isFinite(wastePercent) && wastePercent >= 0
-      ? wastePercent
-      : 0;
-
-  return baseYards * (1 + safeWastePercent / 100);
+  return result.volumeWithWaste;
 }
