@@ -18,6 +18,12 @@ const relatedBlocks = [
   ),
 ];
 
+const nextStepBlocks = [
+  ...source.matchAll(
+    /id:\s*"([^"]+)"[\s\S]*?nextSteps:\s*\[([\s\S]*?)\][\s\S]*?(?=\n\s*\},|\n\];)/g
+  ),
+];
+
 const issues = [];
 
 const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
@@ -49,6 +55,25 @@ for (const block of relatedBlocks) {
     if (!idSet.has(relatedId)) {
       issues.push(
         `${calculatorId} references missing related id: ${relatedId}`
+      );
+    }
+  }
+}
+
+for (const block of nextStepBlocks) {
+  const calculatorId = block[1];
+  const nextStepIds = [...block[2].matchAll(/"([^"]+)"/g)].map(
+    (match) => match[1]
+  );
+
+  for (const nextStepId of nextStepIds) {
+    if (nextStepId === calculatorId) {
+      issues.push(`${calculatorId} lists itself as a next step`);
+    }
+
+    if (!idSet.has(nextStepId)) {
+      issues.push(
+        `${calculatorId} references missing next-step id: ${nextStepId}`
       );
     }
   }

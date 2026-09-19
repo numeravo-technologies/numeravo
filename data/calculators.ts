@@ -42,6 +42,8 @@ export type CalculatorRecord = {
 
   related?: string[];
 
+  nextSteps?: string[];
+
   methodologyHref?: string;
 
   featured?: boolean;
@@ -80,6 +82,16 @@ export const calculators: CalculatorRecord[] = [
       "rebar-calculator",
       "concrete-formwork-calculator",
       "concrete-truckload-calculator",
+    ],
+    nextSteps: [
+      "gravel-calculator",
+      "rebar-calculator",
+      "concrete-formwork-calculator",
+      "concrete-truckload-calculator",
+      "concrete-pump-truck-cost-calculator",
+      "concrete-labor-cost-calculator",
+      "concrete-finishing-cost-calculator",
+      "concrete-saw-cut-calculator",
     ],
     featured: true,
   },
@@ -1028,12 +1040,33 @@ export function getRelatedCalculators(
   return results;
 }
 
+export function getNextStepCalculators(
+  calculatorId: string,
+  limit = 8,
+): CalculatorRecord[] {
+  const current = getCalculatorById(calculatorId);
+
+  if (!current || limit <= 0) {
+    return [];
+  }
+
+  return (current.nextSteps ?? [])
+    .map((nextStepId) => getCalculatorById(nextStepId))
+    .filter(
+      (calculator): calculator is CalculatorRecord =>
+        calculator !== undefined && calculator.id !== current.id,
+    )
+    .slice(0, limit);
+}
+
 export type CalculatorRegistryIssue = {
   type:
     | "duplicate-id"
     | "duplicate-href"
     | "missing-related-id"
-    | "self-related";
+    | "self-related"
+    | "missing-next-step-id"
+    | "self-next-step";
   calculatorId: string;
   detail: string;
 };
@@ -1080,6 +1113,24 @@ export function validateCalculatorRegistry(): CalculatorRegistryIssue[] {
           type: "missing-related-id",
           calculatorId: calculator.id,
           detail: `Related calculator id does not exist: ${relatedId}`,
+        });
+      }
+    }
+
+    for (const nextStepId of calculator.nextSteps ?? []) {
+      if (nextStepId === calculator.id) {
+        issues.push({
+          type: "self-next-step",
+          calculatorId: calculator.id,
+          detail: `Calculator lists itself as a next step: ${nextStepId}`,
+        });
+      }
+
+      if (!validIds.has(nextStepId)) {
+        issues.push({
+          type: "missing-next-step-id",
+          calculatorId: calculator.id,
+          detail: `Next-step calculator id does not exist: ${nextStepId}`,
         });
       }
     }
