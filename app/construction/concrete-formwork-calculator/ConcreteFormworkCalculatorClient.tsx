@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type PresetType =
   | "Slab"
@@ -152,6 +152,51 @@ export default function ConcreteFormworkCalculatorClient() {
   const [laborHours, setLaborHours] = useState(5);
   const [laborRate, setLaborRate] = useState(65);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (
+      params.get("fromProject") !==
+      "concrete-slab-equipment-pad"
+    ) {
+      return;
+    }
+
+    const readNonNegativeNumber = (key: string) => {
+      const rawValue = params.get(key);
+
+      if (rawValue === null || rawValue.trim() === "") {
+        return null;
+      }
+
+      const value = Number(rawValue);
+
+      if (!Number.isFinite(value) || value < 0) {
+        return null;
+      }
+
+      return value;
+    };
+
+    const nextLength = readNonNegativeNumber("length");
+    const nextWidth = readNonNegativeNumber("width");
+    const nextWaste = readNonNegativeNumber("waste");
+
+    setPresetType("Slab");
+
+    if (nextLength !== null) {
+      setLength(nextLength);
+    }
+
+    if (nextWidth !== null) {
+      setWidth(nextWidth);
+    }
+
+    if (nextWaste !== null) {
+      setWastePercent(nextWaste);
+    }
+  }, []);
 
   function applyPreset(type: PresetType) {
     const preset = presets[type];

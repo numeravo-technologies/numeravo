@@ -59,6 +59,8 @@ export default function ProjectWorkflowNavigator() {
       "concrete-calculator",
       "gravel-calculator",
       "rebar-spacing-for-concrete-slab",
+      "concrete-formwork-calculator",
+      "concrete-truckload-calculator",
     ]);
 
     if (!supportedCalculatorIds.has(calculatorId)) {
@@ -83,7 +85,8 @@ export default function ProjectWorkflowNavigator() {
     }
 
     if (
-      calculatorId === "concrete-calculator" &&
+      (calculatorId === "concrete-calculator" ||
+        calculatorId === "concrete-truckload-calculator") &&
       thickness !== undefined
     ) {
       params.set("thickness", String(thickness));
@@ -91,7 +94,9 @@ export default function ProjectWorkflowNavigator() {
 
     if (
       (calculatorId === "concrete-calculator" ||
-        calculatorId === "gravel-calculator") &&
+        calculatorId === "gravel-calculator" ||
+        calculatorId === "concrete-formwork-calculator" ||
+        calculatorId === "concrete-truckload-calculator") &&
       wastePercent !== undefined
     ) {
       params.set("waste", String(wastePercent));

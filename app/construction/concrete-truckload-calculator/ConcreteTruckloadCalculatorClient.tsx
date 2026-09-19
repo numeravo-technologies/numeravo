@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type InputMode = "Known cubic yards" | "Calculate from dimensions";
 type ProjectType = "Slab / pad" | "Driveway" | "Patio" | "Sidewalk" | "Footing";
@@ -29,6 +29,57 @@ export default function ConcreteTruckloadCalculatorClient() {
   const [concreteWeightPerYard, setConcreteWeightPerYard] = useState(4050);
 
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (
+      params.get("fromProject") !==
+      "concrete-slab-equipment-pad"
+    ) {
+      return;
+    }
+
+    const readNonNegativeNumber = (key: string) => {
+      const rawValue = params.get(key);
+
+      if (rawValue === null || rawValue.trim() === "") {
+        return null;
+      }
+
+      const value = Number(rawValue);
+
+      if (!Number.isFinite(value) || value < 0) {
+        return null;
+      }
+
+      return value;
+    };
+
+    const nextLength = readNonNegativeNumber("length");
+    const nextWidth = readNonNegativeNumber("width");
+    const nextThickness = readNonNegativeNumber("thickness");
+    const nextWaste = readNonNegativeNumber("waste");
+
+    setInputMode("Calculate from dimensions");
+    setProjectType("Slab / pad");
+
+    if (nextLength !== null) {
+      setLength(nextLength);
+    }
+
+    if (nextWidth !== null) {
+      setWidth(nextWidth);
+    }
+
+    if (nextThickness !== null) {
+      setThicknessInches(nextThickness);
+    }
+
+    if (nextWaste !== null) {
+      setWastePercent(nextWaste);
+    }
+  }, []);
 
   const results = useMemo(() => {
     const baseYards =
