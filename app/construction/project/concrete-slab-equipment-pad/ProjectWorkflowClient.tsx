@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import {
   createProjectContext,
+  getProjectConcreteYards,
   isScopeComponentSelected,
   setProjectInput,
   toggleScopeComponent,
@@ -77,6 +78,9 @@ export default function ProjectWorkflowClient({
       "rebar-spacing-for-concrete-slab",
       "concrete-formwork-calculator",
       "concrete-truckload-calculator",
+      "concrete-pump-truck-cost-calculator",
+      "concrete-labor-cost-calculator",
+      "concrete-finishing-cost-calculator",
     ]);
 
     if (!supportedCalculatorIds.has(item.calculatorId)) {
@@ -92,17 +96,22 @@ export default function ProjectWorkflowClient({
     const thickness = project.inputs.thickness;
     const wastePercent = project.inputs.wastePercent;
 
-    if (length !== undefined) {
+    const usesDimensions =
+      item.calculatorId !==
+      "concrete-pump-truck-cost-calculator";
+
+    if (usesDimensions && length !== undefined) {
       params.set("length", String(length));
     }
 
-    if (width !== undefined) {
+    if (usesDimensions && width !== undefined) {
       params.set("width", String(width));
     }
 
     if (
       (item.calculatorId === "concrete-calculator" ||
-        item.calculatorId === "concrete-truckload-calculator") &&
+        item.calculatorId === "concrete-truckload-calculator" ||
+        item.calculatorId === "concrete-labor-cost-calculator") &&
       thickness !== undefined
     ) {
       params.set("thickness", String(thickness));
@@ -116,6 +125,18 @@ export default function ProjectWorkflowClient({
       wastePercent !== undefined
     ) {
       params.set("waste", String(wastePercent));
+    }
+
+    if (
+      item.calculatorId ===
+      "concrete-pump-truck-cost-calculator"
+    ) {
+      const concreteYards =
+        getProjectConcreteYards(project);
+
+      if (concreteYards !== null) {
+        params.set("yards", String(concreteYards));
+      }
     }
 
     return `${item.calculatorHref}?${params.toString()}`;

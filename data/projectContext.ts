@@ -63,3 +63,43 @@ export function setProjectInput(
     },
   };
 }
+
+export function getProjectConcreteYards(
+  project: ProjectContext,
+): number | null {
+  const length = project.inputs.length;
+  const width = project.inputs.width;
+  const thickness = project.inputs.thickness;
+
+  if (
+    length === undefined ||
+    width === undefined ||
+    thickness === undefined
+  ) {
+    return null;
+  }
+
+  if (
+    !Number.isFinite(length) ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(thickness) ||
+    length < 0 ||
+    width < 0 ||
+    thickness < 0
+  ) {
+    return null;
+  }
+
+  const baseYards =
+    (length * width * (thickness / 12)) / 27;
+
+  const wastePercent =
+    project.inputs.wastePercent ?? 0;
+
+  const safeWastePercent =
+    Number.isFinite(wastePercent) && wastePercent >= 0
+      ? wastePercent
+      : 0;
+
+  return baseYards * (1 + safeWastePercent / 100);
+}

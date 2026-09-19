@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type PresetType =
   | "Broom finish"
@@ -177,6 +177,46 @@ export default function ConcreteFinishingCostCalculatorClient() {
   const [cleanupCost, setCleanupCost] = useState(125);
   const [minimumCharge, setMinimumCharge] = useState(750);
   const [overheadPercent, setOverheadPercent] = useState(10);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (
+      params.get("fromProject") !==
+      "concrete-slab-equipment-pad"
+    ) {
+      return;
+    }
+
+    const readNonNegativeNumber = (key: string) => {
+      const rawValue = params.get(key);
+
+      if (rawValue === null || rawValue.trim() === "") {
+        return null;
+      }
+
+      const value = Number(rawValue);
+
+      if (!Number.isFinite(value) || value < 0) {
+        return null;
+      }
+
+      return value;
+    };
+
+    const nextLength = readNonNegativeNumber("length");
+    const nextWidth = readNonNegativeNumber("width");
+
+    setPreset("Broom finish");
+
+    if (nextLength !== null) {
+      setLength(nextLength);
+    }
+
+    if (nextWidth !== null) {
+      setWidth(nextWidth);
+    }
+  }, []);
 
   function applyPreset(nextPreset: PresetType) {
     const selected = presets[nextPreset];
@@ -504,9 +544,11 @@ function NumberInput({
   return (
     <label className="block">
       <span className="mb-2 block text-sm font-medium text-[#A0AEC0]">{label}</span>
-      <div className="flex overflow-hidden rounded-2xl border border-[#1F2937] bg-[#0B0F19] focus-within:border-orange-400">
+      <div className="flex min-h-14 items-stretch overflow-hidden rounded-2xl border border-[#1F2937] bg-[#0B0F19] transition focus-within:border-orange-400">
         {prefix ? (
-          <span className="flex items-center px-3 text-sm text-[#A0AEC0]">{prefix}</span>
+          <span className="flex shrink-0 items-center pl-4 pr-1 text-base text-[#A0AEC0]">
+            {prefix}
+          </span>
         ) : null}
         <input
           type="number"
@@ -514,10 +556,12 @@ function NumberInput({
           step="0.01"
           value={value}
           onChange={(event) => onChange(Number(event.target.value))}
-          className="min-w-0 flex-1 bg-transparent px-4 py-3 text-white outline-none"
+          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-base font-semibold tabular-nums text-white outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
         {suffix ? (
-          <span className="flex items-center px-3 text-sm text-[#A0AEC0]">{suffix}</span>
+          <span className="flex shrink-0 items-center whitespace-nowrap pl-1 pr-4 text-sm text-[#A0AEC0]">
+            {suffix}
+          </span>
         ) : null}
       </div>
     </label>

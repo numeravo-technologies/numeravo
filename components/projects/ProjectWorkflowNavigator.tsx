@@ -5,7 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { getCalculatorById } from "@/data/calculators";
-import type { ProjectContext } from "@/data/projectContext";
+import {
+  getProjectConcreteYards,
+  type ProjectContext,
+} from "@/data/projectContext";
 import { loadProjectSession } from "@/data/projectSession";
 import { getProjectRecipeById } from "@/data/projectRecipes";
 
@@ -61,6 +64,9 @@ export default function ProjectWorkflowNavigator() {
       "rebar-spacing-for-concrete-slab",
       "concrete-formwork-calculator",
       "concrete-truckload-calculator",
+      "concrete-pump-truck-cost-calculator",
+      "concrete-labor-cost-calculator",
+      "concrete-finishing-cost-calculator",
     ]);
 
     if (!supportedCalculatorIds.has(calculatorId)) {
@@ -76,17 +82,22 @@ export default function ProjectWorkflowNavigator() {
     const thickness = activeProject.inputs.thickness;
     const wastePercent = activeProject.inputs.wastePercent;
 
-    if (length !== undefined) {
+    const usesDimensions =
+      calculatorId !==
+      "concrete-pump-truck-cost-calculator";
+
+    if (usesDimensions && length !== undefined) {
       params.set("length", String(length));
     }
 
-    if (width !== undefined) {
+    if (usesDimensions && width !== undefined) {
       params.set("width", String(width));
     }
 
     if (
       (calculatorId === "concrete-calculator" ||
-        calculatorId === "concrete-truckload-calculator") &&
+        calculatorId === "concrete-truckload-calculator" ||
+        calculatorId === "concrete-labor-cost-calculator") &&
       thickness !== undefined
     ) {
       params.set("thickness", String(thickness));
@@ -100,6 +111,18 @@ export default function ProjectWorkflowNavigator() {
       wastePercent !== undefined
     ) {
       params.set("waste", String(wastePercent));
+    }
+
+    if (
+      calculatorId ===
+      "concrete-pump-truck-cost-calculator"
+    ) {
+      const concreteYards =
+        getProjectConcreteYards(activeProject);
+
+      if (concreteYards !== null) {
+        params.set("yards", String(concreteYards));
+      }
     }
 
     return `${calculatorHref}?${params.toString()}`;

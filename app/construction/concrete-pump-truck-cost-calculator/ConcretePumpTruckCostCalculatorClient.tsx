@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type PresetType =
   | "Line pump"
@@ -163,6 +163,31 @@ export default function ConcretePumpTruckCostCalculatorClient() {
   const [standbyHours, setStandbyHours] = useState(0);
   const [standbyRate, setStandbyRate] = useState(150);
   const [extraLaborCost, setExtraLaborCost] = useState(0);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (
+      params.get("fromProject") !==
+      "concrete-slab-equipment-pad"
+    ) {
+      return;
+    }
+
+    const rawYards = params.get("yards");
+
+    if (rawYards === null || rawYards.trim() === "") {
+      return;
+    }
+
+    const yards = Number(rawYards);
+
+    if (!Number.isFinite(yards) || yards < 0) {
+      return;
+    }
+
+    setConcreteYards(yards);
+  }, []);
 
   function applyPreset(nextPreset: PresetType) {
     const selected = presets[nextPreset];
@@ -442,9 +467,11 @@ function NumberInput({
   return (
     <label className="block">
       <span className="mb-2 block text-sm font-medium text-[#A0AEC0]">{label}</span>
-      <div className="flex overflow-hidden rounded-2xl border border-[#1F2937] bg-[#0B0F19] focus-within:border-orange-400">
+      <div className="flex min-h-14 items-stretch overflow-hidden rounded-2xl border border-[#1F2937] bg-[#0B0F19] transition focus-within:border-orange-400">
         {prefix ? (
-          <span className="flex items-center px-3 text-sm text-[#A0AEC0]">{prefix}</span>
+          <span className="flex shrink-0 items-center pl-4 pr-1 text-base text-[#A0AEC0]">
+            {prefix}
+          </span>
         ) : null}
         <input
           type="number"
@@ -452,10 +479,12 @@ function NumberInput({
           step="0.01"
           value={value}
           onChange={(event) => onChange(Number(event.target.value))}
-          className="min-w-0 flex-1 bg-transparent px-4 py-3 text-white outline-none"
+          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-base font-semibold tabular-nums text-white outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
         {suffix ? (
-          <span className="flex items-center px-3 text-sm text-[#A0AEC0]">{suffix}</span>
+          <span className="flex shrink-0 items-center whitespace-nowrap pl-1 pr-4 text-sm text-[#A0AEC0]">
+            {suffix}
+          </span>
         ) : null}
       </div>
     </label>
