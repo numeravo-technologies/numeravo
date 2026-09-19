@@ -1,7 +1,6 @@
 import type {
   ProjectInputKey,
   ProjectRecipeId,
-  ProjectScopeComponent,
 } from "@/data/projectRecipes";
 
 export type ProjectUnitSystem = "imperial" | "metric";
@@ -32,9 +31,9 @@ export function createProjectContext(
 
 export function isScopeComponentSelected(
   project: ProjectContext,
-  component: ProjectScopeComponent,
+  componentId: string,
 ) {
-  return project.selectedScopeIds.includes(component.id);
+  return project.selectedScopeIds.includes(componentId);
 }
 
 export function toggleScopeComponent(
