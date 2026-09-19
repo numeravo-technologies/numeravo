@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import CalculatorNextSteps from "@/components/calculators/CalculatorNextSteps";
 import CalculatorSearch from "@/components/calculators/CalculatorSearch";
 
 type UnitSystem = "imperial" | "metric";
@@ -1630,6 +1631,16 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
             </div>
           </div>
         </div>
+
+        {(projectType === "slab" ||
+          projectType === "circularPad" ||
+          projectType === "lShapedSlab") && (
+          <CalculatorNextSteps
+            calculatorId="concrete-calculator"
+            title="Next steps for this concrete project"
+            description="Continue from concrete quantity into base, reinforcement, forms, delivery, placement, labor, finishing, and joint planning. Use only the steps that apply to your project."
+          />
+        )}
 
         <section className="mt-8 rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
           <div className="max-w-4xl">
