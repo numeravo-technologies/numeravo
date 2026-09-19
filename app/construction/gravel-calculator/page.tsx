@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
 type UnitSystem = "imperial" | "metric";
@@ -119,6 +119,51 @@ export default function GravelCalculatorPage() {
 
   const [pricePerTon, setPricePerTon] = useState("45");
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (
+      params.get("fromProject") !==
+      "concrete-slab-equipment-pad"
+    ) {
+      return;
+    }
+
+    const readNonNegativeNumber = (key: string) => {
+      const rawValue = params.get(key);
+
+      if (rawValue === null || rawValue.trim() === "") {
+        return null;
+      }
+
+      const value = Number(rawValue);
+
+      if (!Number.isFinite(value) || value < 0) {
+        return null;
+      }
+
+      return String(value);
+    };
+
+    const nextLength = readNonNegativeNumber("length");
+    const nextWidth = readNonNegativeNumber("width");
+    const nextWaste = readNonNegativeNumber("waste");
+
+    setUnitSystem("imperial");
+
+    if (nextLength !== null) {
+      setLength(nextLength);
+    }
+
+    if (nextWidth !== null) {
+      setWidth(nextWidth);
+    }
+
+    if (nextWaste !== null) {
+      setWastePercent(nextWaste);
+    }
+  }, []);
 
   const unitLabels =
     unitSystem === "imperial"
@@ -253,6 +298,8 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
 
   return (
     <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+      <div className="mx-auto max-w-6xl">
+      </div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

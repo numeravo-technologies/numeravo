@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type RebarSize = "#3" | "#4" | "#5" | "#6";
 type SpacingPreset = "Light slab" | "Standard slab" | "Heavy slab" | "Custom";
@@ -25,6 +25,44 @@ export default function RebarSpacingForConcreteSlabClient() {
   const [pricePerFoot, setPricePerFoot] = useState(0.85);
 
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (
+      params.get("fromProject") !==
+      "concrete-slab-equipment-pad"
+    ) {
+      return;
+    }
+
+    const readNonNegativeNumber = (key: string) => {
+      const rawValue = params.get(key);
+
+      if (rawValue === null || rawValue.trim() === "") {
+        return null;
+      }
+
+      const value = Number(rawValue);
+
+      if (!Number.isFinite(value) || value < 0) {
+        return null;
+      }
+
+      return value;
+    };
+
+    const nextLength = readNonNegativeNumber("length");
+    const nextWidth = readNonNegativeNumber("width");
+
+    if (nextLength !== null) {
+      setSlabLength(nextLength);
+    }
+
+    if (nextWidth !== null) {
+      setSlabWidth(nextWidth);
+    }
+  }, []);
 
   const results = useMemo(() => {
     const usableLengthFeet = Math.max(slabLength - (edgeClearanceInches * 2) / 12, 0);

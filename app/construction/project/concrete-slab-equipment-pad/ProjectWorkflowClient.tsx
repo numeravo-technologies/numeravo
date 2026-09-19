@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   createProjectContext,
@@ -9,6 +9,10 @@ import {
   setProjectInput,
   toggleScopeComponent,
 } from "@/data/projectContext";
+import {
+  loadProjectSession,
+  saveProjectSession,
+} from "@/data/projectSession";
 import type {
   ProjectInputKey,
   ProjectRecipeId,
@@ -42,13 +46,38 @@ export default function ProjectWorkflowClient({
   const [project, setProject] = useState(() =>
     createProjectContext(recipeId),
   );
+  const [sessionRestored, setSessionRestored] = useState(false);
+
+  useEffect(() => {
+    const storedProject = loadProjectSession(recipeId);
+
+    if (storedProject) {
+      setProject(storedProject);
+    }
+
+    setSessionRestored(true);
+  }, [recipeId]);
+
+  useEffect(() => {
+    if (!sessionRestored) {
+      return;
+    }
+
+    saveProjectSession(project);
+  }, [project, sessionRestored]);
 
   const selectedScope = scope.filter((item) =>
     project.selectedScopeIds.includes(item.id),
   );
 
   function getCalculatorHref(item: WorkflowScopeItem) {
-    if (item.calculatorId !== "concrete-calculator") {
+    const supportedCalculatorIds = new Set([
+      "concrete-calculator",
+      "gravel-calculator",
+      "rebar-spacing-for-concrete-slab",
+    ]);
+
+    if (!supportedCalculatorIds.has(item.calculatorId)) {
       return item.calculatorHref;
     }
 
@@ -69,11 +98,18 @@ export default function ProjectWorkflowClient({
       params.set("width", String(width));
     }
 
-    if (thickness !== undefined) {
+    if (
+      item.calculatorId === "concrete-calculator" &&
+      thickness !== undefined
+    ) {
       params.set("thickness", String(thickness));
     }
 
-    if (wastePercent !== undefined) {
+    if (
+      (item.calculatorId === "concrete-calculator" ||
+        item.calculatorId === "gravel-calculator") &&
+      wastePercent !== undefined
+    ) {
       params.set("waste", String(wastePercent));
     }
 
