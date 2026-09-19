@@ -2,20 +2,18 @@
 
 import { useMemo, useState } from "react";
 
+import {
+  buildLoanSchedule,
+  calculateLoanPayment,
+  getLoanScheduleTotals,
+  type LoanScheduleRow,
+} from "@/lib/calculations/loan";
+
 type TermUnit = "years" | "months";
 type FeeMode = "upfront" | "financed";
 type ScheduleMode = "yearly" | "monthly";
 
-type Row = {
-  number: number;
-  date: Date;
-  beginningBalance: number;
-  payment: number;
-  principal: number;
-  interest: number;
-  extra: number;
-  endingBalance: number;
-};
+type Row = LoanScheduleRow;
 
 const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 const number = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
@@ -24,64 +22,6 @@ const monthYear = new Intl.DateTimeFormat("en-US", { month: "short", year: "nume
 function safe(value: string) {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-}
-
-function addMonths(date: Date, months: number) {
-  const result = new Date(date);
-  const day = result.getDate();
-  result.setDate(1);
-  result.setMonth(result.getMonth() + months);
-  const lastDay = new Date(result.getFullYear(), result.getMonth() + 1, 0).getDate();
-  result.setDate(Math.min(day, lastDay));
-  return result;
-}
-
-function paymentFor(principal: number, annualRate: number, months: number) {
-  if (!principal || !months) return 0;
-  const rate = annualRate / 100 / 12;
-  if (!rate) return principal / months;
-  return principal * (rate * (1 + rate) ** months) / ((1 + rate) ** months - 1);
-}
-
-function buildSchedule(principal: number, annualRate: number, months: number, extra: number, start: Date) {
-  const rows: Row[] = [];
-  if (!principal || !months) return rows;
-  const regular = paymentFor(principal, annualRate, months);
-  const rate = annualRate / 100 / 12;
-  let balance = principal;
-  let count = 0;
-  const maximum = Math.max(months * 2, 1200);
-
-  while (balance > 0.005 && count < maximum) {
-    count += 1;
-    const beginningBalance = balance;
-    const interest = beginningBalance * rate;
-    const availablePrincipal = Math.max(0, regular - interest);
-    const regularPrincipal = Math.min(beginningBalance, availablePrincipal);
-    const remainingAfterRegular = Math.max(0, beginningBalance - regularPrincipal);
-    const appliedExtra = Math.min(extra, remainingAfterRegular);
-    const principalPaid = regularPrincipal + appliedExtra;
-    balance = Math.max(0, beginningBalance - principalPaid);
-    rows.push({
-      number: count,
-      date: addMonths(start, count - 1),
-      beginningBalance,
-      payment: interest + principalPaid,
-      principal: regularPrincipal,
-      interest,
-      extra: appliedExtra,
-      endingBalance: balance,
-    });
-    if (regular <= interest && !extra) break;
-  }
-  return rows;
-}
-
-function totals(rows: Row[]) {
-  return rows.reduce(
-    (sum, row) => ({ paid: sum.paid + row.payment, interest: sum.interest + row.interest }),
-    { paid: 0, interest: 0 },
-  );
 }
 
 export default function LoanCalculatorClient() {
@@ -104,14 +44,14 @@ export default function LoanCalculatorClient() {
     const enteredTerm = safe(term);
     const months = Math.max(0, Math.round(termUnit === "years" ? enteredTerm * 12 : enteredTerm));
     const start = new Date(`${startDate || new Date().toISOString().slice(0, 10)}T12:00:00`);
-    const baseRows = buildSchedule(principal, annualRate, months, 0, start);
-    const extraRows = buildSchedule(principal, annualRate, months, safe(extra), start);
-    const base = totals(baseRows);
-    const accelerated = totals(extraRows);
+    const baseRows = buildLoanSchedule(principal, annualRate, months, 0, start);
+    const extraRows = buildLoanSchedule(principal, annualRate, months, safe(extra), start);
+    const base = getLoanScheduleTotals(baseRows);
+    const accelerated = getLoanScheduleTotals(extraRows);
     const upfront = feeMode === "upfront" ? feeAmount : 0;
     return {
       originalPrincipal, principal, annualRate, months, feeAmount, upfront,
-      payment: paymentFor(principal, annualRate, months), baseRows, extraRows,
+      payment: calculateLoanPayment(principal, annualRate, months), baseRows, extraRows,
       baseInterest: base.interest, acceleratedInterest: accelerated.interest,
       baseCost: base.paid + upfront, acceleratedCost: accelerated.paid + upfront,
       interestSaved: Math.max(0, base.interest - accelerated.interest),
