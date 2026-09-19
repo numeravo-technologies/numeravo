@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import CalculatorNextSteps from "@/components/calculators/CalculatorNextSteps";
 import CalculatorSearch from "@/components/calculators/CalculatorSearch";
@@ -241,6 +241,64 @@ export default function ConcreteCalculatorPage() {
   const [pricePer80LbBag, setPricePer80LbBag] = useState("6.50");
   const [pricePer60LbBag, setPricePer60LbBag] = useState("5.50");
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (
+      params.get("fromProject") !==
+      "concrete-slab-equipment-pad"
+    ) {
+      return;
+    }
+
+    const readNonNegativeNumber = (key: string) => {
+      const rawValue = params.get(key);
+
+      if (rawValue === null || rawValue.trim() === "") {
+        return null;
+      }
+
+      const value = Number(rawValue);
+
+      if (!Number.isFinite(value) || value < 0) {
+        return null;
+      }
+
+      return String(value);
+    };
+
+    const length = readNonNegativeNumber("length");
+    const width = readNonNegativeNumber("width");
+    const thickness = readNonNegativeNumber("thickness");
+    const waste = readNonNegativeNumber("waste");
+
+    setProjectType("slab");
+    setUnitSystem("imperial");
+
+    setMeasurementUnits((current) => ({
+      ...current,
+      slabLength: "ft",
+      slabWidth: "ft",
+      slabThickness: "in",
+    }));
+
+    if (length !== null) {
+      setSlabLength(length);
+    }
+
+    if (width !== null) {
+      setSlabWidth(width);
+    }
+
+    if (thickness !== null) {
+      setSlabThickness(thickness);
+    }
+
+    if (waste !== null) {
+      setWastePercent(waste);
+    }
+  }, []);
 
   const selectedProject = projectTypes.find((type) => type.id === projectType);
 

@@ -47,6 +47,39 @@ export default function ProjectWorkflowClient({
     project.selectedScopeIds.includes(item.id),
   );
 
+  function getCalculatorHref(item: WorkflowScopeItem) {
+    if (item.calculatorId !== "concrete-calculator") {
+      return item.calculatorHref;
+    }
+
+    const params = new URLSearchParams({
+      fromProject: recipeId,
+    });
+
+    const length = project.inputs.length;
+    const width = project.inputs.width;
+    const thickness = project.inputs.thickness;
+    const wastePercent = project.inputs.wastePercent;
+
+    if (length !== undefined) {
+      params.set("length", String(length));
+    }
+
+    if (width !== undefined) {
+      params.set("width", String(width));
+    }
+
+    if (thickness !== undefined) {
+      params.set("thickness", String(thickness));
+    }
+
+    if (wastePercent !== undefined) {
+      params.set("waste", String(wastePercent));
+    }
+
+    return `${item.calculatorHref}?${params.toString()}`;
+  }
+
   const updateInput = (
     key: ProjectInputKey,
     rawValue: string,
@@ -282,7 +315,7 @@ export default function ProjectWorkflowClient({
                   {selectedScope.map((item, index) => (
                     <Link
                       key={item.id}
-                      href={item.calculatorHref}
+                      href={getCalculatorHref(item)}
                       className="group block rounded-xl border border-[#263041] bg-[#0B0F19] p-3 transition hover:border-[#F97316]/70"
                     >
                       <div className="flex items-center gap-3">
