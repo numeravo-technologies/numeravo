@@ -60,40 +60,89 @@ export default function ConcreteCostCalculatorClient() {
       <section className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#F97316]">
-            Construction Calculator
+            Concrete Project Cost
           </p>
 
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Concrete Cost Calculator
+            Calculate the cost. Price the concrete work.
           </h1>
 
           <p className="mt-6 text-lg leading-8 text-[#A0AEC0]">
-            Estimate concrete cubic yards, ready-mix cost, delivery fees, and
-            total project cost. This is the first working version. We will add
-            base, rebar, labor, extras, FAQs, schema, and internal links after
-            this build passes.
+            Estimate concrete quantity, ready-mix cost, base material,
+            reinforcement, labor, preparation, delivery fees, and total installed
+            project cost. Use the connected project workflow when you want to build
+            the full job scope, or calculate cost here for a quick estimate.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <Link
+              href="/construction/project/concrete-slab-equipment-pad"
+              className="rounded-xl bg-[#F97316] px-6 py-4 text-center text-sm font-semibold text-white transition hover:bg-[#EA580C]"
+            >
+              Start Concrete Project
+            </Link>
+
             <a
               href="#calculator"
-              className="rounded-xl bg-[#F97316] px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#fb8a3c]"
+              className="rounded-xl border border-[#F97316]/50 bg-[#2A170D] px-6 py-4 text-center text-sm font-semibold text-[#FDBA74] transition hover:border-[#F97316] hover:text-white"
             >
-              Start Estimate
+              Calculate Cost Only
             </a>
 
             <Link
               href="/construction/concrete-calculator"
-              className="rounded-xl border border-[#1F2937] px-5 py-3 text-center text-sm font-semibold text-[#A0AEC0] transition hover:border-[#F97316] hover:text-white"
+              className="rounded-xl border border-[#1F2937] px-6 py-4 text-center text-sm font-semibold text-[#A0AEC0] transition hover:border-[#F97316] hover:text-white"
             >
               Concrete Volume Calculator
             </Link>
           </div>
         </div>
 
+        <section className="mt-8 rounded-2xl border border-[#3A2A20] bg-[#121826] p-5 sm:p-6">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#F97316]">
+              Connected project workflow
+            </p>
+
+            <h2 className="text-xl font-bold text-white">
+              Build the complete concrete job scope.
+            </h2>
+
+            <p className="text-sm leading-6 text-[#A0AEC0]">
+              Use this calculator for a fast installed-cost estimate, or move through
+              the connected project workflow to calculate and update each scope
+              separately.
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              "Concrete",
+              "Base",
+              "Reinforcement",
+              "Formwork",
+              "Delivery",
+              "Pumping",
+              "Labor",
+              "Finishing",
+              "Joints",
+            ].map((step, index) => (
+              <div
+                key={step}
+                className="rounded-xl border border-[#1F2937] bg-[#0B0F19] px-4 py-3"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#F97316]">
+                  Step {index + 1}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-white">{step}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <div
           id="calculator"
-          className="mt-10 grid gap-6 lg:grid-cols-[1fr_0.8fr]"
+          className="mt-10 scroll-mt-28 grid gap-6 lg:grid-cols-[1fr_0.8fr]"
         >
           <section className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
             <h2 className="text-2xl font-semibold">Concrete cost inputs</h2>
