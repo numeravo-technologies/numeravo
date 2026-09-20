@@ -1,4 +1,5 @@
 import Link from "next/link";
+import GuidePageShell from "@/components/guides/GuidePageShell";
 
 export const metadata = {
   title: "Sonotube Concrete Calculator | Estimate Concrete for Piers & Posts",
@@ -26,7 +27,7 @@ export const metadata = {
 
 export default function SonotubeConcreteCalculatorPage() {
   return (
-  <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+  <GuidePageShell>
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
@@ -355,7 +356,7 @@ export default function SonotubeConcreteCalculatorPage() {
           </div>
         </section>
       </section>
-    </main>
+    </GuidePageShell>
   );
 }
 

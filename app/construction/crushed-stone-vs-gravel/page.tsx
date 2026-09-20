@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CrushedStoneVsGravelClient from "./CrushedStoneVsGravelClient";
 import type { Metadata } from "next";
+import GuidePageShell from "@/components/guides/GuidePageShell";
 
 export const metadata: Metadata = {
   title: "Crushed Stone vs Gravel | Differences, Uses & Calculator Guide",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function CrushedStoneVsGravelPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <GuidePageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -401,7 +402,7 @@ export default function CrushedStoneVsGravelPage() {
           </div>
         </section>
       </section>
-    </main>
+    </GuidePageShell>
   );
 }
 

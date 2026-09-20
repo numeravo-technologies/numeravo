@@ -1,6 +1,7 @@
 import Link from "next/link";
 import GravelDrivewayCostClient from "./GravelDrivewayCostClient";
 import type { Metadata } from "next";
+import GuidePageShell from "@/components/guides/GuidePageShell";
 
 export const metadata: Metadata = {
   title: "Gravel Driveway Cost | Estimate Tons, Yards & Project Price",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function GravelDrivewayCostPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <GuidePageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -407,7 +408,7 @@ export default function GravelDrivewayCostPage() {
           </div>
         </section>
       </section>
-    </main>
+    </GuidePageShell>
   );
 }
 

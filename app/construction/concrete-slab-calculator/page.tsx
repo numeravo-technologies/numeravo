@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import CalculatorPageShell from "@/components/calculators/CalculatorPageShell";
+import GuidePageShell from "@/components/guides/GuidePageShell";
 
 export const metadata = {
   title: "Concrete Slab Calculator | Estimate Concrete for Slabs & Pads",
@@ -27,7 +27,7 @@ export const metadata = {
 
 export default function ConcreteSlabCalculatorPage() {
   return (
-    <CalculatorPageShell showBottomSearch={false}>
+    <GuidePageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -586,7 +586,7 @@ export default function ConcreteSlabCalculatorPage() {
           </div>
         </section>
       </section>
-    </CalculatorPageShell>
+    </GuidePageShell>
   );
 }
 

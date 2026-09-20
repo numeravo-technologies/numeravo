@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import GuidePageShell from "@/components/guides/GuidePageShell";
 
 export const metadata: Metadata = {
   title: "Base for Concrete Slab Depth | Gravel Base Guide",
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function BaseForConcreteSlabDepthPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <GuidePageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -342,7 +343,7 @@ export default function BaseForConcreteSlabDepthPage() {
           </div>
         </section>
       </section>
-    </main>
+    </GuidePageShell>
   );
 }
 
