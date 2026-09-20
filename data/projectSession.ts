@@ -1,10 +1,30 @@
 import {
   createProjectContext,
   type ProjectContext,
-} from "@/data/projectContext";
-import type { ProjectRecipeId } from "@/data/projectRecipes";
+} from "./projectContext";
+import {
+  isProjectScopeResult,
+  type ProjectScopeResult,
+} from "./projectScopeResult";
+import type { ProjectRecipeId } from "./projectRecipes";
 
 const PROJECT_SESSION_PREFIX = "numeravo:project:";
+
+function normalizeScopeResults(
+  value: unknown,
+): Record<string, ProjectScopeResult> {
+  if (!value || typeof value !== "object") {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      ([key, scopeResult]) =>
+        typeof key === "string" &&
+        isProjectScopeResult(scopeResult),
+    ),
+  );
+}
 
 function getProjectSessionKey(recipeId: ProjectRecipeId) {
   return `${PROJECT_SESSION_PREFIX}${recipeId}`;
@@ -65,6 +85,7 @@ export function loadProjectSession(
             (id): id is string => typeof id === "string",
           )
         : [],
+      scopeResults: normalizeScopeResults(parsed.scopeResults),
     };
   } catch {
     return null;

@@ -1,4 +1,5 @@
 import { calculateImperialConcreteVolume } from "../lib/calculations/concreteVolume";
+import type { ProjectScopeResult } from "./projectScopeResult";
 import type {
   ProjectInputKey,
   ProjectRecipeId,
@@ -16,6 +17,7 @@ export type ProjectContext = {
   unitSystem: ProjectUnitSystem;
   inputs: ProjectInputValues;
   selectedScopeIds: string[];
+  scopeResults: Record<string, ProjectScopeResult>;
 };
 
 export function createProjectContext(
@@ -27,6 +29,7 @@ export function createProjectContext(
     unitSystem: "imperial",
     inputs: {},
     selectedScopeIds: [],
+    scopeResults: {},
   };
 }
 
@@ -61,6 +64,19 @@ export function setProjectInput(
     inputs: {
       ...project.inputs,
       [key]: value,
+    },
+  };
+}
+
+export function setProjectScopeResult(
+  project: ProjectContext,
+  scopeResult: ProjectScopeResult,
+): ProjectContext {
+  return {
+    ...project,
+    scopeResults: {
+      ...project.scopeResults,
+      [scopeResult.scopeId]: scopeResult,
     },
   };
 }
