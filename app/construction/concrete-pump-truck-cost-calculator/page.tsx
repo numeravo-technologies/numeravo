@@ -87,7 +87,7 @@ const appJsonLd = {
 
 export default function ConcretePumpTruckCostCalculatorPage() {
   return (
-    <CalculatorPageShell contained={false}>
+    <CalculatorPageShell contained={false} showBottomSearch={false}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -118,6 +118,22 @@ export default function ConcretePumpTruckCostCalculatorPage() {
               hourly pumping cost, setup fees, travel fees, yardage charges, hose
               labor, standby time, and total concrete pumping cost.
             </p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/construction/project/concrete-slab-equipment-pad"
+                className="rounded-xl bg-[#F97316] px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#fb8a3c]"
+              >
+                Start Concrete Project
+              </Link>
+
+              <a
+                href="#pump-calculator"
+                className="rounded-xl border border-[#2A3444] bg-[#121826] px-5 py-3 text-center text-sm font-semibold text-white transition hover:border-[#F97316]"
+              >
+                Calculate Only
+              </a>
+            </div>
+
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-4">
@@ -164,7 +180,57 @@ export default function ConcretePumpTruckCostCalculatorPage() {
           </div>
         </div>
 
-        <ConcretePumpTruckCostCalculatorClient />
+
+        <section className="rounded-3xl border border-[#1F2937] bg-[#121826] p-5 sm:p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#F97316]">
+                Connected project workflow
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">
+                Build the full concrete job scope
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-[#A0AEC0]">
+                Move through the major project scopes without losing sight of the full job.
+              </p>
+            </div>
+
+            <Link
+              href="/construction/project/concrete-slab-equipment-pad"
+              className="rounded-xl bg-[#F97316] px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#fb8a3c]"
+            >
+              Start Concrete Project
+            </Link>
+          </div>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-3 lg:grid-cols-9">
+            {[
+              "Concrete",
+              "Base",
+              "Reinforcement",
+              "Formwork",
+              "Delivery",
+              "Pumping",
+              "Labor",
+              "Finishing",
+              "Joints",
+            ].map((step, index) => (
+              <div
+                key={step}
+                className="rounded-xl border border-[#1F2937] bg-[#0B0F19] px-3 py-3 text-center"
+              >
+                <p className="text-xs font-semibold text-[#F97316]">
+                  {index + 1}
+                </p>
+                <p className="mt-1 text-xs font-medium text-white">{step}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div id="pump-calculator" className="scroll-mt-28">
+          <ConcretePumpTruckCostCalculatorClient />
+        </div>
 
         <section className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
           <h2 className="text-2xl font-bold">How concrete pump truck cost is estimated</h2>
