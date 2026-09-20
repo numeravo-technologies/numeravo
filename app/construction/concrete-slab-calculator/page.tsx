@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import CalculatorPageShell from "@/components/calculators/CalculatorPageShell";
+
 export const metadata = {
   title: "Concrete Slab Calculator | Estimate Concrete for Slabs & Pads",
   description:
@@ -25,7 +27,7 @@ export const metadata = {
 
 export default function ConcreteSlabCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorPageShell showBottomSearch={false}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -99,35 +101,84 @@ export default function ConcreteSlabCalculatorPage() {
 
       <section className="mx-auto max-w-5xl">
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#F97316]">
-          Concrete Slab Calculator
+          Concrete Slab Project
         </p>
 
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          Concrete slab calculator for patios, driveways, sidewalks, and pads.
+          Plan and calculate your concrete slab project.
         </h1>
 
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[#A0AEC0]">
-          Estimate how much concrete you need for rectangular slabs, square
-          pads, patios, sidewalks, driveways, garage floors, and shed pads. Use
-          the main concrete calculator to enter dimensions, add waste, switch
-          between imperial and metric units, and estimate material cost.
+          Start with your slab dimensions, then work through the full project
+          scope: concrete quantity, base, reinforcement, formwork, delivery,
+          pumping, labor, finishing, and joints. Use the connected project
+          workflow to keep each calculation tied to the job, or open the
+          concrete calculator for a quick quantity estimate.
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
-            href="/construction/concrete-calculator"
+            href="/construction/project/concrete-slab-equipment-pad"
             className="rounded-xl bg-[#F97316] px-6 py-4 text-center text-sm font-semibold text-white transition hover:bg-[#EA580C]"
           >
-            Open Concrete Calculator
+            Start Slab Project
+          </Link>
+
+          <Link
+            href="/construction/concrete-calculator"
+            className="rounded-xl border border-[#F97316]/50 bg-[#2A170D] px-6 py-4 text-center text-sm font-semibold text-[#FDBA74] transition hover:border-[#F97316] hover:text-white"
+          >
+            Calculate Concrete Only
           </Link>
 
           <Link
             href="/construction"
             className="rounded-xl border border-[#1F2937] px-6 py-4 text-center text-sm font-semibold text-[#A0AEC0] transition hover:border-[#F97316] hover:text-white"
           >
-            View Construction Calculators
+            Browse Construction Calculators
           </Link>
         </div>
+
+        <section className="mt-8 rounded-2xl border border-[#3A2A20] bg-[#121826] p-5 sm:p-6">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#F97316]">
+              Connected project workflow
+            </p>
+
+            <h2 className="text-xl font-bold text-white">
+              One project. Connected calculations.
+            </h2>
+
+            <p className="text-sm leading-6 text-[#A0AEC0]">
+              Move through the job scope and update individual calculations as
+              the project develops.
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              "Concrete",
+              "Base",
+              "Reinforcement",
+              "Formwork",
+              "Delivery",
+              "Pumping",
+              "Labor",
+              "Finishing",
+              "Joints",
+            ].map((step, index) => (
+              <div
+                key={step}
+                className="rounded-xl border border-[#1F2937] bg-[#0B0F19] px-4 py-3"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#F97316]">
+                  Step {index + 1}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-white">{step}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
           <section className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
@@ -535,7 +586,7 @@ export default function ConcreteSlabCalculatorPage() {
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorPageShell>
   );
 }
 
