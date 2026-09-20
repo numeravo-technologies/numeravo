@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import {
+  calculateConcreteCost,
+} from "@/lib/calculations/concreteCost";
 
 export default function ConcreteCostCalculatorClient() {
   const [length, setLength] = useState("20");
@@ -21,55 +24,21 @@ export default function ConcreteCostCalculatorClient() {
   const [prepPerSqFt, setPrepPerSqFt] = useState("2");
 
   const results = useMemo(() => {
-    const lengthNumber = toNumber(length);
-    const widthNumber = toNumber(width);
-    const thicknessNumber = toNumber(thickness);
-    const wasteNumber = toNumber(wastePercent);
-    const priceNumber = toNumber(pricePerYard);
-    const deliveryNumber = toNumber(deliveryFee);
-    const shortLoadNumber = toNumber(shortLoadFee);
-
-    const area = lengthNumber * widthNumber;
-    const cubicFeet = area * (thicknessNumber / 12);
-    const cubicYards = cubicFeet / 27;
-    const cubicYardsWithWaste = cubicYards * (1 + wasteNumber / 100);
-    const concreteCost = cubicYardsWithWaste * priceNumber;
-
-    const baseCubicFeet = area * (toNumber(baseDepth) / 12);
-    const baseCubicYards = baseCubicFeet / 27;
-    const baseTons = baseCubicYards * toNumber(baseTonsPerCubicYard);
-    const baseCost = baseTons * toNumber(basePricePerTon);
-
-    const rebarCost = area * toNumber(rebarPerSqFt);
-    const laborCost = area * toNumber(laborPerSqFt);
-    const prepCost = area * toNumber(prepPerSqFt);
-
-    const totalCost =
-      concreteCost +
-      deliveryNumber +
-      shortLoadNumber +
-      baseCost +
-      rebarCost +
-      laborCost +
-      prepCost;
-
-    const costPerSqFt = area > 0 ? totalCost / area : 0;
-
-    return {
-      area,
-      cubicFeet,
-      cubicYards,
-      cubicYardsWithWaste,
-      concreteCost,
-      baseCubicYards,
-      baseTons,
-      baseCost,
-      rebarCost,
-      laborCost,
-      prepCost,
-      totalCost,
-      costPerSqFt,
-    };
+    return calculateConcreteCost({
+      lengthFeet: toNumber(length),
+      widthFeet: toNumber(width),
+      thicknessInches: toNumber(thickness),
+      wastePercent: toNumber(wastePercent),
+      pricePerYard: toNumber(pricePerYard),
+      deliveryFee: toNumber(deliveryFee),
+      shortLoadFee: toNumber(shortLoadFee),
+      baseDepthInches: toNumber(baseDepth),
+      basePricePerTon: toNumber(basePricePerTon),
+      baseTonsPerCubicYard: toNumber(baseTonsPerCubicYard),
+      rebarPerSqFt: toNumber(rebarPerSqFt),
+      laborPerSqFt: toNumber(laborPerSqFt),
+      prepPerSqFt: toNumber(prepPerSqFt),
+    });
   }, [
     length,
     width,
@@ -656,9 +625,9 @@ function NumberInput({
     <label className="block">
       <span className="text-sm font-medium text-[#A0AEC0]">{label}</span>
 
-      <div className="mt-2 flex overflow-hidden rounded-xl border border-[#1F2937] bg-[#0B0F19]">
+      <div className="mt-2 flex h-[58px] w-full overflow-hidden rounded-xl border border-[#1F2937] bg-[#0B0F19]">
         {prefix && (
-          <span className="border-r border-[#1F2937] px-4 py-3 text-sm text-[#A0AEC0]">
+          <span className="flex shrink-0 items-center border-r border-[#1F2937] px-4 text-sm text-[#A0AEC0] whitespace-nowrap">
             {prefix}
           </span>
         )}
@@ -669,11 +638,11 @@ function NumberInput({
           inputMode="decimal"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full bg-transparent px-4 py-3 text-white outline-none"
+          className="min-w-0 flex-1 bg-transparent px-4 text-white outline-none"
         />
 
         {suffix && (
-          <span className="border-l border-[#1F2937] px-4 py-3 text-sm text-[#A0AEC0]">
+          <span className="flex shrink-0 items-center border-l border-[#1F2937] px-4 text-sm text-[#A0AEC0] whitespace-nowrap">
             {suffix}
           </span>
         )}
@@ -684,9 +653,9 @@ function NumberInput({
 
 function ResultRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl border border-[#1F2937] bg-[#0B0F19] p-4">
+    <div className="flex min-h-[80px] items-center justify-between gap-4 rounded-xl border border-[#1F2937] bg-[#0B0F19] px-5 py-4">
       <span className="text-sm text-[#A0AEC0]">{label}</span>
-      <span className="text-right text-lg font-semibold text-white">{value}</span>
+      <span className="shrink-0 text-right text-lg font-semibold text-white">{value}</span>
     </div>
   );
 }
