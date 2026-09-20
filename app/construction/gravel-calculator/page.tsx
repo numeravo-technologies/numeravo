@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
+import {
+  calculateImperialGravel,
+  calculateMetricGravel,
+} from "@/lib/calculations/gravel";
 
 type UnitSystem = "imperial" | "metric";
 
@@ -194,54 +198,24 @@ export default function GravelCalculatorPage() {
     const price = toNumber(pricePerTon);
 
     if (unitSystem === "imperial") {
-      const depthFeet = depthNumber / 12;
-      const cubicFeet = lengthNumber * widthNumber * depthFeet;
-      const cubicYards = cubicFeet / 27;
-      const cubicYardsWithWaste = cubicYards * (1 + waste / 100);
-      const estimatedTons = cubicYardsWithWaste * toNumber(tonsPerCubicYard);
-      const estimatedCost = estimatedTons * price;
-      const smallTruckLoads = estimatedTons > 0 ? Math.ceil(estimatedTons / 5) : 0;
-      const standardTruckLoads =
-        estimatedTons > 0 ? Math.ceil(estimatedTons / 10) : 0;
-      const largeTruckLoads = estimatedTons > 0 ? Math.ceil(estimatedTons / 15) : 0;
-
-      return {
-        cubicFeet,
-        cubicYards,
-        cubicMeters: cubicYards * 0.764555,
-        volumeWithWaste: cubicYardsWithWaste,
-        estimatedWeight: estimatedTons,
-        estimatedCost,
-        smallTruckLoads,
-        standardTruckLoads,
-        largeTruckLoads,
-      };
+      return calculateImperialGravel({
+        lengthFeet: lengthNumber,
+        widthFeet: widthNumber,
+        depthInches: depthNumber,
+        wastePercent: waste,
+        tonsPerCubicYard: toNumber(tonsPerCubicYard),
+        pricePerTon: price,
+      });
     }
 
-    const depthMeters = depthNumber / 100;
-    const cubicMeters = lengthNumber * widthNumber * depthMeters;
-    const cubicMetersWithWaste = cubicMeters * (1 + waste / 100);
-    const estimatedTonnes =
-      cubicMetersWithWaste * toNumber(tonnesPerCubicMeter);
-    const estimatedCost = estimatedTonnes * price;
-    const smallTruckLoads =
-      estimatedTonnes > 0 ? Math.ceil(estimatedTonnes / 5) : 0;
-    const standardTruckLoads =
-      estimatedTonnes > 0 ? Math.ceil(estimatedTonnes / 10) : 0;
-    const largeTruckLoads =
-      estimatedTonnes > 0 ? Math.ceil(estimatedTonnes / 15) : 0;
-
-    return {
-      cubicFeet: cubicMeters * 35.3147,
-      cubicYards: cubicMeters * 1.30795,
-      cubicMeters,
-      volumeWithWaste: cubicMetersWithWaste,
-      estimatedWeight: estimatedTonnes,
-      estimatedCost,
-      smallTruckLoads,
-      standardTruckLoads,
-      largeTruckLoads,
-    };
+    return calculateMetricGravel({
+      lengthMeters: lengthNumber,
+      widthMeters: widthNumber,
+      depthCentimeters: depthNumber,
+      wastePercent: waste,
+      tonnesPerCubicMeter: toNumber(tonnesPerCubicMeter),
+      pricePerTonne: price,
+    });
   }, [
     unitSystem,
     length,
