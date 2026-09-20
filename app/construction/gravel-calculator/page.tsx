@@ -3,12 +3,24 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
+import { buildGravelCalculationResult } from "@/data/gravelCalculationResult";
+import { setProjectScopeResult } from "@/data/projectContext";
+import { createProjectScopeResult } from "@/data/projectScopeResult";
+import {
+  loadProjectSession,
+  saveProjectSession,
+} from "@/data/projectSession";
+import type { ProjectRecipeId } from "@/data/projectRecipes";
 import {
   calculateImperialGravel,
   calculateMetricGravel,
 } from "@/lib/calculations/gravel";
 
 type UnitSystem = "imperial" | "metric";
+
+const CONCRETE_PROJECT_RECIPE_ID: ProjectRecipeId =
+  "concrete-slab-equipment-pad";
+const BASE_PROJECT_SCOPE_ID = "base";
 
 const materialPresets = [
   {
@@ -123,15 +135,74 @@ export default function GravelCalculatorPage() {
 
   const [pricePerTon, setPricePerTon] = useState("45");
   const [copied, setCopied] = useState(false);
+  const [projectRecipeId, setProjectRecipeId] =
+    useState<ProjectRecipeId | null>(null);
+  const [hasSavedProjectResult, setHasSavedProjectResult] =
+    useState(false);
+  const [projectSaveMessage, setProjectSaveMessage] =
+    useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
     if (
       params.get("fromProject") !==
-      "concrete-slab-equipment-pad"
+      CONCRETE_PROJECT_RECIPE_ID
     ) {
       return;
+    }
+
+    setProjectRecipeId(CONCRETE_PROJECT_RECIPE_ID);
+
+    const storedProject = loadProjectSession(
+      CONCRETE_PROJECT_RECIPE_ID,
+    );
+
+    const storedScopeResult =
+      storedProject?.scopeResults[BASE_PROJECT_SCOPE_ID];
+
+    setHasSavedProjectResult(Boolean(storedScopeResult));
+
+    if (storedScopeResult) {
+      const savedInputs =
+        storedScopeResult.result.inputSummary;
+
+      const readSavedNumber = (key: string) => {
+        const field = savedInputs.find(
+          (input) => input.key === key,
+        );
+
+        return typeof field?.value === "number" &&
+          Number.isFinite(field.value) &&
+          field.value >= 0
+          ? String(field.value)
+          : null;
+      };
+
+      const savedMaterial = savedInputs.find(
+        (input) => input.key === "material",
+      )?.value;
+
+      if (typeof savedMaterial === "string") {
+        setSelectedMaterial(savedMaterial);
+      }
+
+      const savedDepth = readSavedNumber("depth");
+      const savedDensity = readSavedNumber("density");
+      const savedPrice =
+        readSavedNumber("pricePerWeightUnit");
+
+      if (savedDepth !== null) {
+        setDepth(savedDepth);
+      }
+
+      if (savedDensity !== null) {
+        setTonsPerCubicYard(savedDensity);
+      }
+
+      if (savedPrice !== null) {
+        setPricePerTon(savedPrice);
+      }
     }
 
     const readNonNegativeNumber = (key: string) => {
@@ -226,6 +297,60 @@ export default function GravelCalculatorPage() {
     tonnesPerCubicMeter,
     pricePerTon,
   ]);
+
+  const calculationResult = buildGravelCalculationResult({
+    material: selectedMaterial,
+    unitSystem,
+    length: toNumber(length),
+    width: toNumber(width),
+    depth: toNumber(depth),
+    wastePercent: toNumber(wastePercent),
+    density:
+      unitSystem === "imperial"
+        ? toNumber(tonsPerCubicYard)
+        : toNumber(tonnesPerCubicMeter),
+    pricePerWeightUnit: toNumber(pricePerTon),
+    results,
+  });
+
+  function saveCalculationToProject() {
+    if (projectRecipeId !== CONCRETE_PROJECT_RECIPE_ID) {
+      return;
+    }
+
+    const project = loadProjectSession(projectRecipeId);
+
+    if (!project) {
+      setProjectSaveMessage(
+        "Project session not found. Return to the project and reopen this calculator.",
+      );
+      return;
+    }
+
+    const isUpdate = Boolean(
+      project.scopeResults[BASE_PROJECT_SCOPE_ID],
+    );
+
+    const scopeResult = createProjectScopeResult({
+      scopeId: BASE_PROJECT_SCOPE_ID,
+      result: calculationResult,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const updatedProject = setProjectScopeResult(
+      project,
+      scopeResult,
+    );
+
+    saveProjectSession(updatedProject);
+
+    setHasSavedProjectResult(true);
+    setProjectSaveMessage(
+      isUpdate
+        ? "Base result updated in project."
+        : "Base result added to project.",
+    );
+  }
 
   async function copyResults() {
     const resultText =
@@ -567,17 +692,40 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
           </section>
 
           <section className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <h2 className="text-2xl font-semibold">Results</h2>
 
-              <button
-                type="button"
-                onClick={copyResults}
-                className="rounded-xl border border-[#1F2937] px-3 py-2 text-xs font-semibold text-[#A0AEC0] hover:border-[#F97316] hover:text-white"
-              >
-                {copied ? "Copied" : "Copy Results"}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                {projectRecipeId === CONCRETE_PROJECT_RECIPE_ID && (
+                  <button
+                    type="button"
+                    onClick={saveCalculationToProject}
+                    className="rounded-xl border border-[#F97316] bg-[#F97316] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#EA580C]"
+                  >
+                    {hasSavedProjectResult
+                      ? "Update Project"
+                      : "Add to Project"}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={copyResults}
+                  className="rounded-xl border border-[#1F2937] px-3 py-2 text-xs font-semibold text-[#A0AEC0] hover:border-[#F97316] hover:text-white"
+                >
+                  {copied ? "Copied" : "Copy Results"}
+                </button>
+              </div>
             </div>
+
+            {projectSaveMessage && (
+              <div
+                role="status"
+                className="mt-4 rounded-xl border border-[#2A3444] bg-[#0B0F19] px-4 py-3 text-sm text-[#A0AEC0]"
+              >
+                {projectSaveMessage}
+              </div>
+            )}
 
             <div className="mt-6 rounded-2xl border border-[#F97316] bg-[#0B0F19] p-5">
               <p className="text-sm text-[#A0AEC0]">
