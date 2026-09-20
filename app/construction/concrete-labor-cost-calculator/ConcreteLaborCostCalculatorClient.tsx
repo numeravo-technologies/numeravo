@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import {
+  calculateConcreteLabor,
+} from "@/lib/calculations/concreteLabor";
 
 type PresetType =
   | "Slab labor"
@@ -261,91 +264,23 @@ export default function ConcreteLaborCostCalculatorClient() {
   }
 
   const result = useMemo(() => {
-    const safeLength = clampNumber(length);
-    const safeWidth = clampNumber(width);
-    const safeThickness = clampNumber(thickness);
-    const safeCrewSize = Math.max(clampNumber(crewSize, 1), 1);
-    const safeProductionRate = Math.max(clampNumber(productionRateSqFtPerHour, 1), 1);
-    const safeLaborRate = clampNumber(laborRatePerHour);
-    const safeSetupHours = clampNumber(setupHours);
-    const safeFormingHours = clampNumber(formingHours);
-    const safePlacementHours = clampNumber(placementHours);
-    const safeFinishingHours = clampNumber(finishingHours);
-    const safeCleanupHours = clampNumber(cleanupHours);
-    const safeEquipmentCost = clampNumber(equipmentCost);
-    const safeOverheadPercent = clampNumber(overheadPercent);
-    const safeMinimumCharge = clampNumber(minimumCharge);
-
-    const area = safeLength * safeWidth;
-    const cubicYards = (area * (safeThickness / 12)) / 27;
-
-    const baseCrewHours = area / safeProductionRate;
-    const addedCrewHours =
-      safeSetupHours +
-      safeFormingHours +
-      safePlacementHours +
-      safeFinishingHours +
-      safeCleanupHours;
-
-    const totalCrewHours = baseCrewHours + addedCrewHours;
-    const personHours = totalCrewHours * safeCrewSize;
-    const directLaborCost = personHours * safeLaborRate;
-    const directCost = directLaborCost + safeEquipmentCost;
-    const overheadCost = directCost * (safeOverheadPercent / 100);
-    const subtotal = directCost + overheadCost;
-    const totalCost = Math.max(subtotal, safeMinimumCharge);
-    const minimumChargeAdjustment = Math.max(safeMinimumCharge - subtotal, 0);
-
-    const costPerSqFt = area > 0 ? totalCost / area : 0;
-    const costPerYard = cubicYards > 0 ? totalCost / cubicYards : 0;
-    const personHoursPerSqFt = area > 0 ? personHours / area : 0;
-
-    const notes: string[] = [];
-
-    if (area < 250 && minimumChargeAdjustment > 0) {
-      notes.push("Small concrete labor jobs are often controlled by the minimum charge.");
-    }
-
-    if (safeProductionRate < 100 && laborType !== "Removal/demo") {
-      notes.push("Low production rate increases labor cost. Confirm access, finish complexity, crew size, and setup conditions.");
-    }
-
-    if (laborType === "Removal/demo") {
-      notes.push("Removal labor may also require disposal, haul-off, saw cutting, and equipment rental estimates.");
-    }
-
-    if (safeFormingHours > safeFinishingHours * 2 && laborType !== "Removal/demo") {
-      notes.push("Forming hours are a major labor driver on this estimate.");
-    }
-
-    if (safeOverheadPercent < 8) {
-      notes.push("Overhead allowance is low. Contractors may need higher overhead to cover insurance, supervision, tools, and admin time.");
-    }
-
-    if (notes.length === 0) {
-      notes.push("Labor estimate looks reasonable for the selected project size, crew, and production rate.");
-    }
-
-    return {
-      area,
-      cubicYards,
-      baseCrewHours,
-      addedCrewHours,
-      totalCrewHours,
-      personHours,
-      directLaborCost,
-      equipmentCost: safeEquipmentCost,
-      directCost,
-      overheadCost,
-      subtotal,
-      minimumCharge: safeMinimumCharge,
-      minimumChargeAdjustment,
-      totalCost,
-      costPerSqFt,
-      costPerYard,
-      personHoursPerSqFt,
-      notes,
-    };
+    return calculateConcreteLabor({
+      lengthFeet: length,
+      widthFeet: width,
+      thicknessInches: thickness,
+      laborType,
+      crewSize,
+      productionRateSqFtPerHour,
+      laborRatePerHour,
+      setupHours,
+      formingHours,
+      placementHours,
+      finishingHours,
+      cleanupHours,
+      equipmentCost,
+      overheadPercent,
+      minimumCharge,
+    });
   }, [
     length,
     width,
