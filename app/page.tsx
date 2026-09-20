@@ -55,14 +55,14 @@ const categories = [
   {
     title: "Business Tools",
     href: "/business",
-    accent: "bg-[#EAB308]",
+    accent: "bg-[#06B6D4]",
     description:
       "Contractor pricing, estimates, overhead, labor burden, hourly rates, profit, margin, markup, and business planning calculators.",
   },
   {
     title: "All Tools",
     href: "/tools",
-    accent: "bg-[#06B6D4]",
+    accent: "bg-[#EAB308]",
     description:
       "Browse the full Numeravo tool library across every calculator category.",
   },
@@ -78,14 +78,13 @@ export default function HomePage() {
           </p>
 
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            Practical calculators for construction, business, finance, and everyday decisions.
+            Practical calculators for real-world decisions.
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-8 text-[#A0AEC0]">
-            Numeravo helps contractors, businesses, homeowners, and individuals solve
-            practical calculation problems with focused tools for construction,
-            pricing, estimating, financial planning, conversions, and everyday
-            decisions.
+            Calculate construction quantities, project costs, contractor pricing,
+            business numbers, loans, savings, conversions, and everyday decisions
+            with focused tools built to keep the inputs and results understandable.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -162,23 +161,59 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="w-full rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
-          <div className="grid gap-6 md:grid-cols-[1fr_1.4fr] md:items-center">
+        <section className="w-full rounded-3xl border border-[#F97316]/30 bg-[#121826] p-6 md:p-8">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#F97316]">
                 Featured category
               </p>
-              <h2 className="mt-3 text-2xl font-bold">
-                Construction calculators are now expanded.
+
+              <h2 className="mt-3 text-3xl font-bold tracking-tight">
+                Calculate the job. Price the work.
               </h2>
+
+              <p className="mt-4 leading-7 text-[#A0AEC0]">
+                Construction is Numeravo&apos;s deepest calculator library, connecting
+                material quantities, project scope, delivery, labor, reinforcement,
+                finishing, and cost planning.
+              </p>
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/construction"
+                  className="rounded-xl bg-[#F97316] px-5 py-3 text-center text-sm font-semibold text-[#0B0F19] transition hover:bg-orange-300"
+                >
+                  Explore Construction
+                </Link>
+
+                <Link
+                  href="/construction/project/concrete-slab-equipment-pad"
+                  className="rounded-xl border border-[#2A3444] bg-[#0B0F19] px-5 py-3 text-center text-sm font-semibold text-white transition hover:border-[#F97316]"
+                >
+                  Start a Concrete Project
+                </Link>
+              </div>
             </div>
-            <p className="leading-7 text-[#A0AEC0]">
-              The construction library now includes concrete volume, cost,
-              delivery, short-load fees, waste, weight, PSI, slabs, driveways,
-              patios, sidewalks, pads, formwork, removal, demolition, saw cuts,
-              pump truck cost, finishing cost, labor cost, rebar spacing, rebar
-              weight, and lap splice estimating tools.
-            </p>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                ["Calculate", "Materials, quantities, dimensions, and requirements"],
+                ["Plan", "Connect the major scopes of a construction project"],
+                ["Price", "Estimate delivery, labor, finishing, and project costs"],
+                ["Compare", "Review assumptions and evaluate project options"],
+              ].map(([title, description]) => (
+                <div
+                  key={title}
+                  className="rounded-2xl border border-[#1F2937] bg-[#0B0F19] p-5"
+                >
+                  <div className="mb-3 h-1.5 w-9 rounded-full bg-[#F97316]" />
+                  <p className="font-semibold text-white">{title}</p>
+                  <p className="mt-2 text-sm leading-6 text-[#A0AEC0]">
+                    {description}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </section>
