@@ -75,7 +75,7 @@ export default function ConcretePadCalculatorPage() {
   };
 
   return (
-    <CalculatorPageShell>
+    <CalculatorPageShell showBottomSearch={false}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -98,16 +98,41 @@ export default function ConcretePadCalculatorPage() {
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div>
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#F97316]">
-              Construction Calculator
+              Concrete Pad Project
             </p>
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              Concrete Pad Calculator
+              Plan and estimate your concrete pad project.
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-[#A0AEC0]">
-              Estimate concrete yards, pad thickness, gravel base, reinforcement,
-              forms, waste, delivery, labor, finishing, and total cost for small
-              concrete pads, shed pads, AC pads, generator pads, and equipment pads.
+              Start with your pad dimensions, then work through concrete quantity,
+              base, reinforcement, formwork, delivery, pumping, labor, finishing,
+              and joints. Use the connected project workflow to keep each scope
+              calculation tied to the job, or use the calculator below for a quick
+              pad estimate.
             </p>
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/construction/project/concrete-slab-equipment-pad"
+                className="rounded-xl bg-[#F97316] px-6 py-4 text-center text-sm font-semibold text-white transition hover:bg-[#EA580C]"
+              >
+                Start Pad Project
+              </Link>
+
+              <a
+                href="#pad-calculator"
+                className="rounded-xl border border-[#F97316]/50 bg-[#2A170D] px-6 py-4 text-center text-sm font-semibold text-[#FDBA74] transition hover:border-[#F97316] hover:text-white"
+              >
+                Calculate Pad Only
+              </a>
+
+              <Link
+                href="/construction"
+                className="rounded-xl border border-[#1F2937] px-6 py-4 text-center text-sm font-semibold text-[#A0AEC0] transition hover:border-[#F97316] hover:text-white"
+              >
+                Browse Construction Calculators
+              </Link>
+            </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-4">
@@ -142,7 +167,50 @@ export default function ConcretePadCalculatorPage() {
           </div>
         </div>
 
-        <div className="mt-10">
+        <section className="mt-8 rounded-2xl border border-[#3A2A20] bg-[#121826] p-5 sm:p-6">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#F97316]">
+              Connected project workflow
+            </p>
+
+            <h2 className="text-xl font-bold text-white">
+              One pad project. Connected calculations.
+            </h2>
+
+            <p className="text-sm leading-6 text-[#A0AEC0]">
+              Move through the scope and update individual calculations as the
+              project develops.
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              "Concrete",
+              "Base",
+              "Reinforcement",
+              "Formwork",
+              "Delivery",
+              "Pumping",
+              "Labor",
+              "Finishing",
+              "Joints",
+            ].map((step, index) => (
+              <div
+                key={step}
+                className="rounded-xl border border-[#1F2937] bg-[#0B0F19] px-4 py-3"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#F97316]">
+                  Step {index + 1}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-white">
+                  {step}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div id="pad-calculator" className="mt-10 scroll-mt-28">
           <ConcretePadCalculatorClient />
         </div>
 
