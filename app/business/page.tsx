@@ -97,6 +97,44 @@ export const metadata = {
   },
 };
 
+const calculatorGroups = [
+  {
+    title: "Pricing & Estimating",
+    description:
+      "Build prices, billing rates, estimates, overhead recovery, and fully burdened labor costs.",
+    calculators: calculators.filter((calculator) =>
+      [
+        "/business/pricing-calculator",
+        "/business/contractor-hourly-rate-calculator",
+        "/business/contractor-estimate-calculator",
+        "/business/contractor-overhead-calculator",
+        "/business/contractor-labor-burden-calculator",
+      ].includes(calculator.href),
+    ),
+  },
+  {
+    title: "Profitability & Break-Even",
+    description:
+      "Analyze margins, markup, job profitability, contribution margin, and break-even performance.",
+    calculators: calculators.filter((calculator) =>
+      [
+        "/business/profit-margin-calculator",
+        "/business/markup-calculator",
+        "/business/break-even-calculator",
+        "/business/contractor-job-profit-calculator",
+      ].includes(calculator.href),
+    ),
+  },
+  {
+    title: "Tax",
+    description:
+      "Calculate sales tax for taxable and non-taxable transactions and tax-inclusive pricing.",
+    calculators: calculators.filter((calculator) =>
+      ["/business/sales-tax-calculator"].includes(calculator.href),
+    ),
+  },
+];
+
 const businessCollectionSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -141,29 +179,72 @@ export default function BusinessPage() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {calculators.map((calculator) => (
-            <Link
-              key={calculator.href}
-              href={calculator.href}
-              className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6 transition hover:border-[#06B6D4]"
-            >
-              <div className="mb-4 h-2 w-12 rounded-full bg-[#06B6D4]" />
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5">
+            <p className="text-sm text-[#A0AEC0]">Price the work</p>
+            <p className="mt-2 font-semibold text-white">
+              Rates, estimates, and overhead
+            </p>
+          </div>
 
-              <div className="flex items-start justify-between gap-4">
-                <h2 className="text-xl font-semibold text-white">
-                  {calculator.title}
+          <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5">
+            <p className="text-sm text-[#A0AEC0]">Measure performance</p>
+            <p className="mt-2 font-semibold text-white">
+              Margin, profit, and break-even
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5">
+            <p className="text-sm text-[#A0AEC0]">Plan the numbers</p>
+            <p className="mt-2 font-semibold text-white">
+              Costs, labor, and tax
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-14 space-y-12">
+          {calculatorGroups.map((group) => (
+            <section key={group.title}>
+              <div className="mb-5 max-w-3xl">
+                <div className="mb-3 h-1.5 w-10 rounded-full bg-[#06B6D4]" />
+                <h2 className="text-2xl font-bold text-white">
+                  {group.title}
                 </h2>
-
-                <span className="rounded-full border border-[#1F2937] px-3 py-1 text-xs text-[#A0AEC0]">
-                  {calculator.status}
-                </span>
+                <p className="mt-2 text-sm leading-6 text-[#A0AEC0]">
+                  {group.description}
+                </p>
               </div>
 
-              <p className="mt-4 text-sm leading-6 text-[#A0AEC0]">
-                {calculator.description}
-              </p>
-            </Link>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {group.calculators.map((calculator) => (
+                  <Link
+                    key={calculator.href}
+                    href={calculator.href}
+                    className="group rounded-2xl border border-[#1F2937] bg-[#121826] p-6 transition hover:-translate-y-1 hover:border-[#06B6D4]"
+                  >
+                    <div className="mb-4 h-2 w-12 rounded-full bg-[#06B6D4]" />
+
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="text-xl font-semibold text-white">
+                        {calculator.title}
+                      </h3>
+
+                      <span className="rounded-full border border-[#1F2937] px-3 py-1 text-xs text-[#A0AEC0]">
+                        {calculator.status}
+                      </span>
+                    </div>
+
+                    <p className="mt-4 text-sm leading-6 text-[#A0AEC0]">
+                      {calculator.description}
+                    </p>
+
+                    <p className="mt-5 text-sm font-semibold text-[#06B6D4]">
+                      Open calculator →
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       </section>

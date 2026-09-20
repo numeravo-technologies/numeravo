@@ -69,6 +69,33 @@ export const metadata = {
   },
 };
 
+const calculatorGroups = [
+  {
+    title: "Borrowing & Debt",
+    description:
+      "Compare loan payments, mortgage costs, auto financing, debt payoff time, and total interest.",
+    calculators: calculators.filter((calculator) =>
+      [
+        "/finance/loan-calculator",
+        "/finance/mortgage-calculator",
+        "/finance/auto-loan-calculator",
+        "/finance/credit-card-payoff-calculator",
+      ].includes(calculator.href),
+    ),
+  },
+  {
+    title: "Saving & Growth",
+    description:
+      "Plan savings goals, recurring contributions, compound growth, and future balances.",
+    calculators: calculators.filter((calculator) =>
+      [
+        "/finance/compound-interest-calculator",
+        "/finance/savings-calculator",
+      ].includes(calculator.href),
+    ),
+  },
+];
+
 const financeCollectionSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -116,29 +143,72 @@ export default function FinancePage() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {calculators.map((calculator) => (
-            <Link
-              key={calculator.href}
-              href={calculator.href}
-              className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6 transition hover:border-[#22C55E]"
-            >
-              <div className="mb-4 h-2 w-12 rounded-full bg-[#22C55E]" />
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5">
+            <p className="text-sm text-[#A0AEC0]">Borrow</p>
+            <p className="mt-2 font-semibold text-white">
+              Payments and total cost
+            </p>
+          </div>
 
-              <div className="flex items-start justify-between gap-4">
-                <h2 className="text-xl font-semibold text-white">
-                  {calculator.title}
+          <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5">
+            <p className="text-sm text-[#A0AEC0]">Pay down debt</p>
+            <p className="mt-2 font-semibold text-white">
+              Payoff time and interest
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5">
+            <p className="text-sm text-[#A0AEC0]">Build savings</p>
+            <p className="mt-2 font-semibold text-white">
+              Goals and compound growth
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-14 space-y-12">
+          {calculatorGroups.map((group) => (
+            <section key={group.title}>
+              <div className="mb-5 max-w-3xl">
+                <div className="mb-3 h-1.5 w-10 rounded-full bg-[#22C55E]" />
+                <h2 className="text-2xl font-bold text-white">
+                  {group.title}
                 </h2>
-
-                <span className="rounded-full border border-[#1F2937] px-3 py-1 text-xs text-[#A0AEC0]">
-                  {calculator.status}
-                </span>
+                <p className="mt-2 text-sm leading-6 text-[#A0AEC0]">
+                  {group.description}
+                </p>
               </div>
 
-              <p className="mt-4 text-sm leading-6 text-[#A0AEC0]">
-                {calculator.description}
-              </p>
-            </Link>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {group.calculators.map((calculator) => (
+                  <Link
+                    key={calculator.href}
+                    href={calculator.href}
+                    className="group rounded-2xl border border-[#1F2937] bg-[#121826] p-6 transition hover:-translate-y-1 hover:border-[#22C55E]"
+                  >
+                    <div className="mb-4 h-2 w-12 rounded-full bg-[#22C55E]" />
+
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="text-xl font-semibold text-white">
+                        {calculator.title}
+                      </h3>
+
+                      <span className="rounded-full border border-[#1F2937] px-3 py-1 text-xs text-[#A0AEC0]">
+                        {calculator.status}
+                      </span>
+                    </div>
+
+                    <p className="mt-4 text-sm leading-6 text-[#A0AEC0]">
+                      {calculator.description}
+                    </p>
+
+                    <p className="mt-5 text-sm font-semibold text-[#22C55E]">
+                      Open calculator →
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       </section>
