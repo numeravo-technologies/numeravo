@@ -156,7 +156,7 @@ const businessCollectionSchema = {
 
 export default function BusinessPage() {
   return (
-    <CategoryPageShell>
+    <CategoryPageShell theme="business">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

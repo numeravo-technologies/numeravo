@@ -70,7 +70,14 @@ const categories = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <main
+      className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(59,130,246,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.10) 1px, transparent 1px), radial-gradient(circle at 50% 0%, rgba(59,130,246,0.20), transparent 40rem)",
+        backgroundSize: "32px 32px, 32px 32px, auto",
+      }}
+    >
       <section className="mx-auto flex max-w-6xl flex-col items-start gap-10">
         <div className="max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#3B82F6]">

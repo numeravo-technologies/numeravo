@@ -117,7 +117,7 @@ const financeCollectionSchema = {
 
 export default function FinancePage() {
   return (
-    <CategoryPageShell>
+    <CategoryPageShell theme="finance">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

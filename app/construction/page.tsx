@@ -636,7 +636,7 @@ const constructionCollectionSchema = {
 
 export default function ConstructionPage() {
   return (
-    <CategoryPageShell>
+    <CategoryPageShell theme="construction">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
