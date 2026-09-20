@@ -1,8 +1,8 @@
-import { calculateImperialConcreteVolume } from "@/lib/calculations/concreteVolume";
+import { calculateImperialConcreteVolume } from "../lib/calculations/concreteVolume";
 import type {
   ProjectInputKey,
   ProjectRecipeId,
-} from "@/data/projectRecipes";
+} from "./projectRecipes";
 
 export type ProjectUnitSystem = "imperial" | "metric";
 
