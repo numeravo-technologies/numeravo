@@ -1,6 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  calculateConcreteMix,
+} from "@/lib/calculations/concreteMix";
 
 type MixPreset =
   | "General purpose 1:2:3"
@@ -29,50 +32,19 @@ export default function ConcreteMixRatioClient() {
   const [copied, setCopied] = useState(false);
 
   const results = useMemo(() => {
-    const wetCubicFeet = targetYards * 27;
-    const dryCubicFeet = wetCubicFeet * dryVolumeFactor;
-    const totalParts = cementParts + sandParts + gravelParts;
-
-    const cementCubicFeet = totalParts > 0 ? dryCubicFeet * (cementParts / totalParts) : 0;
-    const sandCubicFeet = totalParts > 0 ? dryCubicFeet * (sandParts / totalParts) : 0;
-    const gravelCubicFeet = totalParts > 0 ? dryCubicFeet * (gravelParts / totalParts) : 0;
-
-    const cementPounds = cementCubicFeet * cementDensityLbPerCubicFoot;
-    const cementBags = cementBagWeight > 0 ? cementPounds / cementBagWeight : 0;
-    const cementBagsRounded = Math.ceil(cementBags);
-
-    const sandYards = sandCubicFeet / 27;
-    const gravelYards = gravelCubicFeet / 27;
-
-    const waterPounds = cementPounds * waterCementRatio;
-    const waterGallons = waterPounds / 8.34;
-
-    const cementCost = cementBagsRounded * cementBagPrice;
-    const sandCost = sandYards * sandPricePerYard;
-    const gravelCost = gravelYards * gravelPricePerYard;
-    const totalCost = cementCost + sandCost + gravelCost;
-    const costPerYard = targetYards > 0 ? totalCost / targetYards : 0;
-
-    return {
-      wetCubicFeet,
-      dryCubicFeet,
-      totalParts,
-      cementCubicFeet,
-      sandCubicFeet,
-      gravelCubicFeet,
-      cementPounds,
-      cementBags,
-      cementBagsRounded,
-      sandYards,
-      gravelYards,
-      waterPounds,
-      waterGallons,
-      cementCost,
-      sandCost,
-      gravelCost,
-      totalCost,
-      costPerYard,
-    };
+    return calculateConcreteMix({
+      targetYards,
+      dryVolumeFactor,
+      cementParts,
+      sandParts,
+      gravelParts,
+      cementBagWeight,
+      cementDensityLbPerCubicFoot,
+      waterCementRatio,
+      cementBagPrice,
+      sandPricePerYard,
+      gravelPricePerYard,
+    });
   }, [
     targetYards,
     dryVolumeFactor,
