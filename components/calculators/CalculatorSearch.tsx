@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import {
   calculators,
   type CalculatorRecord,
@@ -13,6 +13,7 @@ type CalculatorSearchProps = {
   category?: CalculatorRecord["category"];
   placeholder?: string;
   maxResults?: number;
+  compact?: boolean;
 };
 
 export default function CalculatorSearch({
@@ -20,9 +21,11 @@ export default function CalculatorSearch({
   category,
   placeholder = "Search calculators...",
   maxResults = 8,
+  compact = false,
 }: CalculatorSearchProps) {
   const pathname = usePathname();
   const activeHref = currentHref ?? pathname;
+  const searchInputId = useId();
   const [query, setQuery] = useState("");
 
   const results = useMemo(() => {
@@ -57,28 +60,38 @@ export default function CalculatorSearch({
   const showResults = query.trim().length > 0;
 
   return (
-    <section className="rounded-2xl border border-[#1F2937] bg-[#0B0F19]/95 p-5 shadow-[0_18px_60px_-40px_rgba(0,0,0,0.65)] sm:p-6">
+    <section
+      className={
+        compact
+          ? "rounded-2xl border border-[#263041] bg-[#0B0F19]/95 p-4"
+          : "rounded-2xl border border-[#1F2937] bg-[#0B0F19]/95 p-5 shadow-[0_18px_60px_-40px_rgba(0,0,0,0.65)] sm:p-6"
+      }
+    >
       <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#F97316]">
-          Find another calculator
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#F97316]">
+          Find a calculator
         </p>
 
-        <h2 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl">
-          Search Numeravo tools
-        </h2>
+        {!compact ? (
+          <>
+            <h2 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl">
+              Search Numeravo tools
+            </h2>
 
-        <p className="mt-2 text-sm leading-6 text-[#A0AEC0]">
-          Search by project, material, measurement, cost, or calculator name.
-        </p>
+            <p className="mt-2 text-sm leading-6 text-[#A0AEC0]">
+              Search by project, material, measurement, cost, or calculator name.
+            </p>
+          </>
+        ) : null}
       </div>
 
-      <div className="mt-5">
-        <label htmlFor="calculator-search" className="sr-only">
+      <div className={compact ? "mt-3" : "mt-5"}>
+        <label htmlFor={searchInputId} className="sr-only">
           Search calculators
         </label>
 
         <input
-          id="calculator-search"
+          id={searchInputId}
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}

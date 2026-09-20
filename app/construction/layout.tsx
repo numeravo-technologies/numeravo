@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import ConstructionTopSearch from "@/components/calculators/ConstructionTopSearch";
 import ProjectWorkflowNavigator from "@/components/projects/ProjectWorkflowNavigator";
 
 type ConstructionLayoutProps = {
@@ -12,6 +13,7 @@ export default function ConstructionLayout({
   return (
     <>
       <ProjectWorkflowNavigator />
+      <ConstructionTopSearch />
       {children}
     </>
   );

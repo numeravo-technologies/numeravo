@@ -667,6 +667,33 @@ export default function ConstructionPage() {
             labor, delivery, finishing, pumping, demolition, and other construction
             project numbers with fast, focused calculators and guides.
           </p>
+
+          <div className="mt-8 rounded-2xl border border-[#F97316]/40 bg-[#121826] p-5 sm:p-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#F97316]">
+                  Project workflow
+                </p>
+
+                <h2 className="mt-2 text-2xl font-bold text-white">
+                  Plan a Concrete Project
+                </h2>
+
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#A0AEC0]">
+                  Start with your slab dimensions, choose the scope you need, and work
+                  through concrete quantity, base, reinforcement, formwork, delivery,
+                  pumping, labor, finishing, and joints in one connected workflow.
+                </p>
+              </div>
+
+              <Link
+                href="/construction/project/concrete-slab-equipment-pad"
+                className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#F97316] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#EA580C]"
+              >
+                Start project plan →
+              </Link>
+            </div>
+          </div>
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
