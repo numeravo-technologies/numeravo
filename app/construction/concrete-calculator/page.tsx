@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import CalculatorNextSteps from "@/components/calculators/CalculatorNextSteps";
 import CalculatorSearch from "@/components/calculators/CalculatorSearch";
+import { buildConcreteCalculationResult } from "@/data/concreteCalculationResult";
 import { calculateImperialConcreteVolume } from "@/lib/calculations/concreteVolume";
 
 type UnitSystem = "imperial" | "metric";
@@ -715,6 +716,15 @@ export default function ConcreteCalculatorPage() {
     pricePer80LbBag,
     pricePer60LbBag,
   ]);
+
+  const calculationResult = buildConcreteCalculationResult({
+    projectLabel:
+      selectedProject?.label ?? "Concrete Project",
+    unitSystem,
+    orderMode: concreteOrderMode,
+    wastePercent: toNumber(wastePercent),
+    results,
+  });
 
   async function copyResults() {
     const projectLabel = selectedProject?.label ?? "Concrete Project";
