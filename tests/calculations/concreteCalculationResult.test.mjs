@@ -30,6 +30,9 @@ test("imperial ready-mix result exposes truck loads", () => {
     unitSystem: "imperial",
     orderMode: "readyMix",
     wastePercent: 10,
+    pricePerUnit: 150,
+    pricePer80LbBag: 6.5,
+    pricePer60LbBag: 5.5,
     results,
   });
 
@@ -58,6 +61,9 @@ test("imperial bag result exposes bags and pallets instead of truck loads", () =
     unitSystem: "imperial",
     orderMode: "bags",
     wastePercent: 10,
+    pricePerUnit: 150,
+    pricePer80LbBag: 6.5,
+    pricePer60LbBag: 5.5,
     results,
   });
 
@@ -98,6 +104,9 @@ test("metric result uses cubic-meter metrics only", () => {
     unitSystem: "metric",
     orderMode: "readyMix",
     wastePercent: 10,
+    pricePerUnit: 150,
+    pricePer80LbBag: 6.5,
+    pricePer60LbBag: 5.5,
     results: metricResults,
   });
 
@@ -129,6 +138,9 @@ test("producer preserves calculator identity and formula note", () => {
     unitSystem: "imperial",
     orderMode: "readyMix",
     wastePercent: 10,
+    pricePerUnit: 150,
+    pricePer80LbBag: 6.5,
+    pricePer60LbBag: 5.5,
     results,
   });
 
@@ -146,4 +158,27 @@ test("producer preserves calculator identity and formula note", () => {
     result.notes,
     ["Length × width × thickness × quantity"],
   );
+});
+
+test("structured result preserves concrete pricing inputs for project restore", () => {
+  const result = buildConcreteCalculationResult({
+    projectLabel: "Slab / Pad",
+    unitSystem: "imperial",
+    orderMode: "readyMix",
+    wastePercent: 10,
+    pricePerUnit: 187.5,
+    pricePer80LbBag: 7.25,
+    pricePer60LbBag: 6.15,
+    results,
+  });
+
+  const inputValue = (key) =>
+    result.inputSummary.find(
+      (input) => input.key === key,
+    )?.value;
+
+  assert.equal(inputValue("pricePerUnit"), 187.5);
+  assert.equal(inputValue("pricePer80LbBag"), 7.25);
+  assert.equal(inputValue("pricePer60LbBag"), 6.15);
+  assert.equal(inputValue("orderMethod"), "Ready-Mix Truck");
 });

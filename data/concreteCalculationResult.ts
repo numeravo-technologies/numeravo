@@ -20,12 +20,18 @@ export function buildConcreteCalculationResult({
   unitSystem,
   orderMode,
   wastePercent,
+  pricePerUnit,
+  pricePer80LbBag,
+  pricePer60LbBag,
   results,
 }: {
   projectLabel: string;
   unitSystem: "imperial" | "metric";
   orderMode: "readyMix" | "bags";
   wastePercent: number;
+  pricePerUnit: number;
+  pricePer80LbBag: number;
+  pricePer60LbBag: number;
   results: ConcreteCalculationResultValues;
 }): CalculationResult {
   return {
@@ -56,6 +62,27 @@ export function buildConcreteCalculationResult({
         label: "Waste",
         value: wastePercent,
         unit: "%",
+      },
+      {
+        key: "pricePerUnit",
+        label:
+          unitSystem === "imperial"
+            ? "Concrete Price Per Cubic Yard"
+            : "Concrete Price Per Cubic Meter",
+        value: pricePerUnit,
+        unit: unitSystem === "imperial" ? "$/yd³" : "$/m³",
+      },
+      {
+        key: "pricePer80LbBag",
+        label: "Cost Per 80 lb Bag",
+        value: pricePer80LbBag,
+        unit: "$/bag",
+      },
+      {
+        key: "pricePer60LbBag",
+        label: "Cost Per 60 lb Bag",
+        value: pricePer60LbBag,
+        unit: "$/bag",
       },
     ],
 

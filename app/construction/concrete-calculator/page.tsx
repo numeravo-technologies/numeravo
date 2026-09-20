@@ -6,10 +6,21 @@ import { useEffect, useMemo, useState } from "react";
 import CalculatorNextSteps from "@/components/calculators/CalculatorNextSteps";
 import CalculatorSearch from "@/components/calculators/CalculatorSearch";
 import { buildConcreteCalculationResult } from "@/data/concreteCalculationResult";
+import { setProjectScopeResult } from "@/data/projectContext";
+import { createProjectScopeResult } from "@/data/projectScopeResult";
+import {
+  loadProjectSession,
+  saveProjectSession,
+} from "@/data/projectSession";
+import type { ProjectRecipeId } from "@/data/projectRecipes";
 import { calculateImperialConcreteVolume } from "@/lib/calculations/concreteVolume";
 
 type UnitSystem = "imperial" | "metric";
 type ConcreteOrderMode = "readyMix" | "bags";
+
+const CONCRETE_PROJECT_RECIPE_ID: ProjectRecipeId =
+  "concrete-slab-equipment-pad";
+const CONCRETE_PROJECT_SCOPE_ID = "concrete";
 type MeasurementUnit = "ft" | "in" | "m" | "cm";
 
 type MeasurementKey =
@@ -243,15 +254,80 @@ export default function ConcreteCalculatorPage() {
   const [pricePer80LbBag, setPricePer80LbBag] = useState("6.50");
   const [pricePer60LbBag, setPricePer60LbBag] = useState("5.50");
   const [copied, setCopied] = useState(false);
+  const [projectRecipeId, setProjectRecipeId] =
+    useState<ProjectRecipeId | null>(null);
+  const [hasSavedProjectResult, setHasSavedProjectResult] =
+    useState(false);
+  const [projectSaveMessage, setProjectSaveMessage] =
+    useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
     if (
       params.get("fromProject") !==
-      "concrete-slab-equipment-pad"
+      CONCRETE_PROJECT_RECIPE_ID
     ) {
       return;
+    }
+
+    setProjectRecipeId(CONCRETE_PROJECT_RECIPE_ID);
+
+    const storedProject = loadProjectSession(
+      CONCRETE_PROJECT_RECIPE_ID,
+    );
+
+    const storedScopeResult =
+      storedProject?.scopeResults[
+        CONCRETE_PROJECT_SCOPE_ID
+      ];
+
+    setHasSavedProjectResult(Boolean(storedScopeResult));
+
+    if (storedScopeResult) {
+      const savedInputs =
+        storedScopeResult.result.inputSummary;
+
+      const readSavedNumber = (key: string) => {
+        const field = savedInputs.find(
+          (input) => input.key === key,
+        );
+
+        return typeof field?.value === "number" &&
+          Number.isFinite(field.value) &&
+          field.value >= 0
+          ? String(field.value)
+          : null;
+      };
+
+      const savedOrderMethod = savedInputs.find(
+        (input) => input.key === "orderMethod",
+      )?.value;
+
+      if (savedOrderMethod === "Concrete Bags") {
+        setConcreteOrderMode("bags");
+      } else if (savedOrderMethod === "Ready-Mix Truck") {
+        setConcreteOrderMode("readyMix");
+      }
+
+      const savedPricePerUnit =
+        readSavedNumber("pricePerUnit");
+      const savedPricePer80LbBag =
+        readSavedNumber("pricePer80LbBag");
+      const savedPricePer60LbBag =
+        readSavedNumber("pricePer60LbBag");
+
+      if (savedPricePerUnit !== null) {
+        setPricePerUnit(savedPricePerUnit);
+      }
+
+      if (savedPricePer80LbBag !== null) {
+        setPricePer80LbBag(savedPricePer80LbBag);
+      }
+
+      if (savedPricePer60LbBag !== null) {
+        setPricePer60LbBag(savedPricePer60LbBag);
+      }
     }
 
     const readNonNegativeNumber = (key: string) => {
@@ -723,8 +799,50 @@ export default function ConcreteCalculatorPage() {
     unitSystem,
     orderMode: concreteOrderMode,
     wastePercent: toNumber(wastePercent),
+    pricePerUnit: toNumber(pricePerUnit),
+    pricePer80LbBag: toNumber(pricePer80LbBag),
+    pricePer60LbBag: toNumber(pricePer60LbBag),
     results,
   });
+
+  function saveCalculationToProject() {
+    if (projectRecipeId !== CONCRETE_PROJECT_RECIPE_ID) {
+      return;
+    }
+
+    const project = loadProjectSession(projectRecipeId);
+
+    if (!project) {
+      setProjectSaveMessage(
+        "Project session not found. Return to the project and reopen this calculator.",
+      );
+      return;
+    }
+
+    const isUpdate = Boolean(
+      project.scopeResults[CONCRETE_PROJECT_SCOPE_ID],
+    );
+
+    const scopeResult = createProjectScopeResult({
+      scopeId: CONCRETE_PROJECT_SCOPE_ID,
+      result: calculationResult,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const updatedProject = setProjectScopeResult(
+      project,
+      scopeResult,
+    );
+
+    saveProjectSession(updatedProject);
+
+    setHasSavedProjectResult(true);
+    setProjectSaveMessage(
+      isUpdate
+        ? "Concrete result updated in project."
+        : "Concrete result added to project.",
+    );
+  }
 
   async function copyResults() {
     const projectLabel = selectedProject?.label ?? "Concrete Project";
@@ -1549,17 +1667,41 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
           </div>
 
           <div className="rounded-2xl border border-[#3A2A20] bg-[#121923]/95 p-4 shadow-[0_24px_70px_-40px_rgba(249,115,22,0.28)] backdrop-blur sm:p-6 md:sticky md:top-4 md:self-start">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <h2 className="text-2xl font-semibold">Results</h2>
 
-              <button
-                type="button"
-                onClick={copyResults}
-                className="rounded-xl border border-[#1F2937] px-3 py-2 text-xs font-semibold text-[#A0AEC0] hover:border-[#F97316] hover:text-white"
-              >
-                {copied ? "Copied" : "Copy Results"}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                {projectRecipeId === CONCRETE_PROJECT_RECIPE_ID && (
+                  <button
+                    type="button"
+                    onClick={saveCalculationToProject}
+                    className="rounded-xl bg-[#F97316] px-3 py-2 text-xs font-bold text-[#090D14] transition hover:bg-[#FB923C]"
+                  >
+                    {hasSavedProjectResult
+                      ? "Update Project"
+                      : "Add to Project"}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={copyResults}
+                  className="rounded-xl border border-[#1F2937] px-3 py-2 text-xs font-semibold text-[#A0AEC0] hover:border-[#F97316] hover:text-white"
+                >
+                  {copied ? "Copied" : "Copy Results"}
+                </button>
+              </div>
             </div>
+
+            {projectRecipeId === CONCRETE_PROJECT_RECIPE_ID &&
+              projectSaveMessage && (
+                <div
+                  className="mt-4 rounded-xl border border-[#2A3444] bg-[#0B0F19] px-4 py-3 text-sm text-[#A0AEC0]"
+                  role="status"
+                >
+                  {projectSaveMessage}
+                </div>
+              )}
 
             <div className="sticky top-2 z-20 mt-5 rounded-2xl border border-[#F97316]/80 bg-gradient-to-br from-[#2B190F] to-[#0C121B] p-4 shadow-[0_16px_45px_-28px_rgba(249,115,22,0.65)] backdrop-blur sm:mt-6 sm:p-5 md:relative md:top-auto md:z-auto">
               <p className="text-sm text-[#A0AEC0]">
