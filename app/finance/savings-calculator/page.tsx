@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SavingsCalculatorClient from "./SavingsCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/finance/savings-calculator";
 const description = "Calculate how much to save each month, estimate future savings growth, and see when you may reach your goal using contributions, APY, and compound interest.";
 
@@ -31,7 +32,7 @@ const schemas = [
 ];
 
 export default function SavingsCalculatorPage() {
-  return <main className="min-h-screen bg-[#0B0F19] px-6 py-12 text-white">
+  return <CalculatorCanvas theme="finance" className="px-6 py-12">
     {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />)}
     <div className="mx-auto max-w-6xl">
       <nav aria-label="Breadcrumb" className="text-sm text-[#A0AEC0]"><Link href="/finance" className="hover:text-[#22C55E]">Finance Calculators</Link><span className="mx-2">/</span><span className="text-white">Savings Calculator</span></nav>
@@ -55,7 +56,7 @@ export default function SavingsCalculatorPage() {
 
       <section className="mt-10 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8"><h2 className="text-2xl font-bold">Related finance calculators</h2><div className="mt-5 flex flex-wrap gap-3"><Related href="/finance/compound-interest-calculator">Compound Interest Calculator</Related><Related href="/finance/credit-card-payoff-calculator">Credit Card Payoff Calculator</Related><Related href="/finance/loan-calculator">Loan Calculator</Related><Related href="/finance/mortgage-calculator">Mortgage Calculator</Related><Related href="/finance">All Finance Calculators</Related></div></section>
     </div>
-  </main>;
+  </CalculatorCanvas>;
 }
 
 function Info({ title, children }: { title: string; children: React.ReactNode }) { return <article className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5"><h2 className="font-semibold text-[#4ADE80]">{title}</h2><p className="mt-3 text-sm leading-6 text-[#A0AEC0]">{children}</p></article>; }

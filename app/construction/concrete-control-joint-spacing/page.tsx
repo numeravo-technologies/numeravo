@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ConcreteControlJointSpacingClient from "./ConcreteControlJointSpacingClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 export const metadata: Metadata = {
   title: "Concrete Control Joint Spacing Calculator | Slab Joint Guide",
   description:
@@ -82,7 +83,7 @@ export default function ConcreteControlJointSpacingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorCanvas theme="construction">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -252,7 +253,7 @@ export default function ConcreteControlJointSpacingPage() {
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ContractorLaborBurdenCalculatorClient from "./ContractorLaborBurdenCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/business/contractor-labor-burden-calculator";
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ const schemas = [
 ];
 
 export default function ContractorLaborBurdenCalculatorPage() {
-  return <main className="min-h-screen bg-[#0B0F19] px-6 py-14 text-white">
+  return <CalculatorCanvas theme="business" className="px-6 py-14">
     {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />)}
     <div className="mx-auto max-w-6xl">
       <nav aria-label="Breadcrumb" className="text-sm text-[#A0AEC0]"><Link href="/business" className="hover:text-[#22D3EE]">Business Calculators</Link><span className="mx-2">/</span><span className="text-white">Contractor Labor Burden Calculator</span></nav>
@@ -35,7 +36,7 @@ export default function ContractorLaborBurdenCalculatorPage() {
       <section className="mt-10 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8"><h2 className="text-2xl font-bold">Employment-cost disclaimer</h2><p className="mt-4 leading-7 text-[#A0AEC0]">Numeravo provides educational estimates based on the values entered. Results are not payroll, accounting, tax, insurance, employment-law, legal, or pricing advice. Rates and obligations vary by employee classification, state, jurisdiction, insurer, benefit plan, and company. Verify actual costs and requirements with qualified payroll, accounting, insurance, and legal professionals.</p><p className="mt-4 text-sm text-[#718096]">Created and maintained by Numeravo Technologies LLC.</p></section>
       <section className="mt-10 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8"><h2 className="text-2xl font-bold">Related business calculators</h2><div className="mt-5 flex flex-wrap gap-3"><Related href="/business/contractor-overhead-calculator">Contractor Overhead Calculator</Related><Related href="/business/contractor-job-profit-calculator">Contractor Job Profit Calculator</Related><Related href="/business/pricing-calculator">Business Pricing Calculator</Related><Related href="/business/break-even-calculator">Break-Even Calculator</Related><Related href="/business/contractor-estimate-calculator">Contractor Estimate Calculator</Related><Related href="/business/contractor-hourly-rate-calculator">Contractor Hourly Rate Calculator</Related><Related href="/business">All Business Calculators</Related></div></section>
     </div>
-  </main>;
+  </CalculatorCanvas>;
 }
 
 function Info({ title, children }: { title: string; children: React.ReactNode }) { return <article className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5"><h2 className="font-semibold text-[#22D3EE]">{title}</h2><p className="mt-3 text-sm leading-6 text-[#A0AEC0]">{children}</p></article>; }

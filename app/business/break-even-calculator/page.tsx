@@ -1,6 +1,7 @@
 import Link from "next/link";
 import BreakEvenCalculatorClient from "./BreakEvenCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/business/break-even-calculator";
 const faqs = [
   { question: "What is the break-even point?", answer: "The break-even point is the sales level where total contribution equals fixed costs, producing neither an operating profit nor an operating loss under the entered assumptions." },
@@ -26,7 +27,7 @@ const schemas = [
 ];
 
 export default function Page() {
-  return <main className="min-h-screen bg-[#0B0F19] px-6 py-12 text-white">
+  return <CalculatorCanvas theme="business" className="px-6 py-12">
     {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />)}
     <div className="mx-auto max-w-6xl">
       <nav aria-label="Breadcrumb" className="text-sm text-[#A0AEC0]"><Link href="/business" className="hover:text-[#22D3EE]">Business Calculators</Link><span className="mx-2">/</span><span className="text-white">Break-Even Calculator</span></nav>
@@ -44,7 +45,7 @@ export default function Page() {
       <section className="mt-10 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8"><h2 className="text-2xl font-bold">Methodology and disclaimer</h2><p className="mt-4 leading-7 text-[#A0AEC0]">Numeravo uses the values entered and a standard contribution-margin model. It assumes selling price, variable cost per unit, and fixed costs remain constant within the modeled relevant range. Results are planning estimates and are not accounting, tax, legal, investment, or financial advice. Verify classifications and assumptions using current business records and qualified professional guidance.</p><p className="mt-4 text-sm text-[#718096]">Created and maintained by Numeravo Technologies LLC.</p></section>
       <section className="mt-10 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8"><h2 className="text-2xl font-bold">Related business calculators</h2><div className="mt-5 flex flex-wrap gap-3"><Related href="/business/profit-margin-calculator">Profit Margin Calculator</Related><Related href="/business/markup-calculator">Markup Calculator</Related><Related href="/business/pricing-calculator">Business Pricing Calculator</Related><Related href="/business/sales-tax-calculator">Sales Tax Calculator</Related><Related href="/business/contractor-job-profit-calculator">Contractor Job Profit Calculator</Related><Related href="/business/contractor-overhead-calculator">Contractor Overhead Calculator</Related><Related href="/business/contractor-labor-burden-calculator">Contractor Labor Burden Calculator</Related><Related href="/business/contractor-estimate-calculator">Contractor Estimate Calculator</Related><Related href="/business">All Business Calculators</Related></div></section>
     </div>
-  </main>;
+  </CalculatorCanvas>;
 }
 
 function Info({ title, children }: { title: string; children: React.ReactNode }) { return <article className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5"><h2 className="font-semibold text-[#22D3EE]">{title}</h2><p className="mt-3 text-sm leading-6 text-[#A0AEC0]">{children}</p></article>; }

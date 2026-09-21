@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import PaverBaseCalculatorClient from "./PaverBaseCalculatorClient";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 export const metadata: Metadata = {
   title: "Paver Base Calculator | Gravel Base, Sand, Tons & Cost",
   description:
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function PaverBaseCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -261,7 +262,7 @@ export default function PaverBaseCalculatorPage() {
 
         <ConstructionCalculatorSearchSection />
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

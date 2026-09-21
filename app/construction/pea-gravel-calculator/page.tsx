@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import PeaGravelCalculatorClient from "./PeaGravelCalculatorClient";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 export const metadata: Metadata = {
   title: "Pea Gravel Calculator | Cubic Yards, Tons & Cost",
   description:
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function PeaGravelCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -307,7 +308,7 @@ export default function PeaGravelCalculatorPage() {
 
         <ConstructionCalculatorSearchSection />
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

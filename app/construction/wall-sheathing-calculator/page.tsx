@@ -3,6 +3,7 @@ import Link from "next/link";
 import WallSheathingCalculatorClient from "./WallSheathingCalculatorClient";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 export const metadata: Metadata = {
   title: "Wall Sheathing Calculator | Panels, Fasteners & Cost",
   description: "Estimate OSB or plywood wall sheathing panels, net wall area, opening deductions, waste, fasteners, housewrap, seam tape, and material cost.",
@@ -26,7 +27,7 @@ export default function WallSheathingCalculatorPage() {
     { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://numeravo.com" }, { "@type": "ListItem", position: 2, name: "Construction", item: "https://numeravo.com/construction" }, { "@type": "ListItem", position: 3, name: "Wall Sheathing Calculator", item: "https://numeravo.com/construction/wall-sheathing-calculator" }] },
   ] };
 
-  return <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /><div className="mx-auto max-w-6xl">
+  return <CalculatorCanvas theme="construction" className="px-6 py-16"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /><div className="mx-auto max-w-6xl">
     <nav className="text-sm text-[#A0AEC0]" aria-label="Breadcrumb"><Link href="/" className="hover:text-white">Home</Link><span className="px-2">/</span><Link href="/construction" className="hover:text-white">Construction</Link><span className="px-2">/</span><span>Wall Sheathing Calculator</span></nav>
     <header className="py-12"><p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#F97316]">Exterior wall material planning</p><h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-6xl">Wall Sheathing Calculator</h1><p className="mt-5 max-w-4xl text-lg leading-8 text-[#A0AEC0]">Estimate net wall area, OSB or plywood panels, opening deductions, waste, fasteners, housewrap, seam tape, purchased coverage, and material cost.</p><div className="mt-8 grid gap-4 sm:grid-cols-3"><Card label="Wall coverage" value="Area − openings" /><Card label="Material order" value="Panels + accessories" /><Card label="Project planning" value="Cost + overage" /></div></header>
     <WallSheathingCalculatorClient />
@@ -36,7 +37,7 @@ export default function WallSheathingCalculatorPage() {
     <Section title="Related construction calculators"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><Related href="/construction/stud-calculator" label="Stud Calculator" /><Related href="/construction/lumber-calculator" label="Lumber Calculator" /><Related href="/construction/area-calculator" label="Area Calculator" /><Related href="/construction/drywall-calculator" label="Drywall Calculator" /><Related href="/construction/paint-calculator" label="Paint Calculator" /><Related href="/construction/fence-calculator" label="Fence Calculator" /></div></Section>
 
         <ConstructionCalculatorSearchSection />
-      </div></main>;
+      </div></CalculatorCanvas>;
 }
 
 function Card({ label, value }: { label: string; value: string }) { return <div className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5"><p className="text-sm text-[#A0AEC0]">{label}</p><p className="mt-2 text-lg font-bold">{value}</p></div>; }

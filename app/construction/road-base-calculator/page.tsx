@@ -3,6 +3,7 @@ import RoadBaseCalculatorClient from "./RoadBaseCalculatorClient";
 import type { Metadata } from "next";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 export const metadata: Metadata = {
   title: "Road Base Calculator | Estimate Tons, Yards & Cost",
   description:
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function RoadBaseCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -430,7 +431,7 @@ export default function RoadBaseCalculatorPage() {
 
         <ConstructionCalculatorSearchSection />
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

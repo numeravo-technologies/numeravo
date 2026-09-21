@@ -1,6 +1,7 @@
 import Link from "next/link";
 import LoanCalculatorClient from "./LoanCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/finance/loan-calculator";
 
 export const metadata = {
@@ -25,7 +26,7 @@ const breadcrumbSchema = { "@context": "https://schema.org", "@type": "Breadcrum
 const faqSchema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) };
 
 export default function LoanCalculatorPage() {
-  return <main className="min-h-screen bg-[#0B0F19] px-6 py-12 text-white">
+  return <CalculatorCanvas theme="finance" className="px-6 py-12">
     {[applicationSchema, breadcrumbSchema, faqSchema].map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />)}
     <div className="mx-auto max-w-6xl">
       <nav aria-label="Breadcrumb" className="text-sm text-[#A0AEC0]"><Link href="/finance" className="hover:text-[#22C55E]">Finance Calculators</Link><span className="mx-2">/</span><span className="text-white">Loan Calculator</span></nav>
@@ -86,7 +87,7 @@ export default function LoanCalculatorPage() {
         </Link>
       </div></section>
     </div>
-  </main>;
+  </CalculatorCanvas>;
 }
 
 function Info({ title, text }: { title: string; text: string }) { return <article className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5"><h2 className="font-semibold text-[#4ADE80]">{title}</h2><p className="mt-3 text-sm leading-6 text-[#A0AEC0]">{text}</p></article>; }

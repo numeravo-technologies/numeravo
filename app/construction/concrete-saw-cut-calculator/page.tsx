@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ConcreteSawCutCalculatorClient from "./ConcreteSawCutCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 export const metadata: Metadata = {
   title: "Concrete Saw Cut Calculator | Joint Depth, Spacing & Cost",
   description:
@@ -86,7 +87,7 @@ const appJsonLd = {
 
 export default function ConcreteSawCutCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white">
+    <CalculatorCanvas theme="construction">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -221,7 +222,7 @@ export default function ConcreteSawCutCalculatorPage() {
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

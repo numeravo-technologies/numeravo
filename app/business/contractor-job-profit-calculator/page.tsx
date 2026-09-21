@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ContractorJobProfitCalculatorClient from "./ContractorJobProfitCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/business/contractor-job-profit-calculator";
 
 export const metadata: Metadata = {
@@ -59,7 +60,7 @@ const structuredData = [
 
 export default function ContractorJobProfitCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-12 text-white sm:py-16">
+    <CalculatorCanvas theme="business" className="px-6 py-12 sm:py-16">
       {structuredData.map((data, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />)}
       <div className="mx-auto max-w-7xl">
         <nav aria-label="Breadcrumb" className="text-sm text-[#718096]">
@@ -119,7 +120,7 @@ export default function ContractorJobProfitCalculatorPage() {
           </div>
         </section>
       </div>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

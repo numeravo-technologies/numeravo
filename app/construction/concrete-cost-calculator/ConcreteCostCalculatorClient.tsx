@@ -6,6 +6,7 @@ import {
   calculateConcreteCost,
 } from "@/lib/calculations/concreteCost";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 export default function ConcreteCostCalculatorClient() {
   const [length, setLength] = useState("20");
   const [width, setWidth] = useState("20");
@@ -56,7 +57,7 @@ export default function ConcreteCostCalculatorClient() {
   ]);
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <section className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#F97316]">
@@ -567,7 +568,7 @@ export default function ConcreteCostCalculatorClient() {
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

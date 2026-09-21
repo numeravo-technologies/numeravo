@@ -3,6 +3,7 @@ import Link from "next/link";
 import FenceCalculatorClient from "./FenceCalculatorClient";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 export const metadata: Metadata = {
   title: "Fence Calculator | Posts, Pickets, Panels & Cost",
   description: "Estimate fence posts, rails, pickets, panels, gates, concrete, fasteners, waste, and material cost for wood and panel fence projects.",
@@ -40,7 +41,7 @@ export default function FenceCalculatorPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <div className="mx-auto max-w-6xl">
         <nav className="text-sm text-[#A0AEC0]" aria-label="Breadcrumb"><Link href="/" className="hover:text-white">Home</Link><span className="px-2">/</span><Link href="/construction" className="hover:text-white">Construction</Link><span className="px-2">/</span><span>Fence Calculator</span></nav>
@@ -98,7 +99,7 @@ export default function FenceCalculatorPage() {
 
         <ConstructionCalculatorSearchSection />
       </div>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

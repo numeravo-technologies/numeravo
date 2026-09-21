@@ -15,6 +15,7 @@ import {
 import type { ProjectRecipeId } from "@/data/projectRecipes";
 import { calculateImperialConcreteVolume } from "@/lib/calculations/concreteVolume";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 type UnitSystem = "imperial" | "metric";
 type ConcreteOrderMode = "readyMix" | "bags";
 
@@ -890,14 +891,7 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
   }
 
   return (
-    <main
-      className="min-h-screen bg-[#090D14] text-white"
-      style={{
-        backgroundImage:
-          "linear-gradient(rgba(249,115,22,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.035) 1px, transparent 1px), radial-gradient(circle at 50% 0%, rgba(249,115,22,0.10), transparent 34rem)",
-        backgroundSize: "32px 32px, 32px 32px, auto",
-      }}
-    >
+    <CalculatorCanvas theme="construction">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -2231,7 +2225,7 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

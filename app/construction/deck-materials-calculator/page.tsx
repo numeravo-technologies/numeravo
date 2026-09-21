@@ -3,6 +3,7 @@ import Link from "next/link";
 import DeckMaterialsCalculatorClient from "./DeckMaterialsCalculatorClient";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const canonicalUrl =
   "https://numeravo.com/construction/deck-materials-calculator";
 
@@ -93,7 +94,7 @@ const faqJsonLd = {
 
 export default function DeckMaterialsCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -323,7 +324,7 @@ export default function DeckMaterialsCalculatorPage() {
 
         <ConstructionCalculatorSearchSection />
       </div>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

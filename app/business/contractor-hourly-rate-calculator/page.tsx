@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ContractorHourlyRateCalculatorClient from "./ContractorHourlyRateCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url =
   "https://numeravo.com/business/contractor-hourly-rate-calculator";
 
@@ -114,7 +115,7 @@ const schemas = [
 
 export default function ContractorHourlyRateCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-14 text-white">
+    <CalculatorCanvas theme="business" className="px-6 py-14">
       {schemas.map((schema, index) => (
         <script
           key={index}
@@ -274,7 +275,7 @@ export default function ContractorHourlyRateCalculatorPage() {
           </div>
         </section>
       </div>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

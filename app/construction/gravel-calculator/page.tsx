@@ -16,6 +16,7 @@ import {
   calculateMetricGravel,
 } from "@/lib/calculations/gravel";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 type UnitSystem = "imperial" | "metric";
 
 const CONCRETE_PROJECT_RECIPE_ID: ProjectRecipeId =
@@ -396,7 +397,7 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <div className="mx-auto max-w-6xl">
       </div>
       <script
@@ -1154,7 +1155,7 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
 
         <ConstructionCalculatorSearchSection />
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

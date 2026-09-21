@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ContractorEstimateCalculatorClient from "./ContractorEstimateCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/business/contractor-estimate-calculator";
 
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ const schemas = [
 
 export default function ContractorEstimateCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="business" className="px-6 py-16">
       {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />)}
       <div className="mx-auto max-w-7xl">
         <nav aria-label="Breadcrumb" className="text-sm text-[#A0AEC0]"><Link href="/business" className="hover:text-[#22D3EE]">Business Calculators</Link><span className="mx-2">/</span><span className="text-white">Contractor Estimate Calculator</span></nav>
@@ -83,7 +84,7 @@ export default function ContractorEstimateCalculatorPage() {
           </div>
         </section>
       </div>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

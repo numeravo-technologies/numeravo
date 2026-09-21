@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SalesTaxCalculatorClient from "./SalesTaxCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/business/sales-tax-calculator";
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ const schema = [
 
 export default function SalesTaxCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-5 py-12 text-white sm:px-6 sm:py-16">
+    <CalculatorCanvas theme="business" className="px-5 py-12 sm:px-6 sm:py-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <div className="mx-auto max-w-6xl">
         <nav aria-label="Breadcrumb" className="text-sm text-[#718096]"><Link href="/business" className="hover:text-[#22D3EE]">Business Calculators</Link><span className="mx-2">/</span><span className="text-white">Sales Tax Calculator</span></nav>
@@ -97,7 +98,7 @@ export default function SalesTaxCalculatorPage() {
           <div className="mt-5 flex flex-wrap gap-3"><Related href="/business/pricing-calculator">Business Pricing Calculator</Related><Related href="/business/profit-margin-calculator">Profit Margin Calculator</Related><Related href="/business/markup-calculator">Markup Calculator</Related><Related href="/business/break-even-calculator">Break-Even Calculator</Related><Related href="/business/contractor-job-profit-calculator">Contractor Job Profit Calculator</Related><Related href="/business/contractor-overhead-calculator">Contractor Overhead Calculator</Related><Related href="/business/contractor-labor-burden-calculator">Contractor Labor Burden Calculator</Related><Related href="/business/contractor-estimate-calculator">Contractor Estimate Calculator</Related><Related href="/business">All Business Calculators</Related></div>
         </section>
       </div>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

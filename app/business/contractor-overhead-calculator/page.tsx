@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ContractorOverheadCalculatorClient from "./ContractorOverheadCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/business/contractor-overhead-calculator";
 
 export const metadata: Metadata = {
@@ -59,7 +60,7 @@ const schemas = [
 
 export default function ContractorOverheadCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-12 text-white md:py-16">
+    <CalculatorCanvas theme="business" className="px-6 py-12 md:py-16">
       {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />)}
       <div className="mx-auto max-w-6xl">
         <nav aria-label="Breadcrumb" className="text-sm text-[#718096]">
@@ -125,7 +126,7 @@ export default function ContractorOverheadCalculatorPage() {
           </div>
         </section>
       </div>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

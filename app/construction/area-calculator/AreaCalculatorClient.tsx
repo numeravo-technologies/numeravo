@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 type Shape = "rectangle" | "triangle" | "circle" | "trapezoid";
 type Unit = "feet" | "yards" | "meters";
 
@@ -138,7 +139,7 @@ export default function AreaCalculatorClient() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -562,7 +563,7 @@ export default function AreaCalculatorClient() {
           </div>
         </section>
       </section>
-    </main>
+    </CalculatorCanvas>
   );
 }
 

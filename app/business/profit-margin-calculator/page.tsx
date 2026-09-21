@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ProfitMarginCalculatorClient from "./ProfitMarginCalculatorClient";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const url = "https://numeravo.com/business/profit-margin-calculator";
 const description = "Calculate profit margin, profit per unit, markup, selling price, allowable cost, transaction fees, and total profit for a product or service.";
 
@@ -31,7 +32,7 @@ const schemas = [
 ];
 
 export default function ProfitMarginCalculatorPage() {
-  return <main className="min-h-screen bg-[#0B0F19] px-6 py-12 text-white">
+  return <CalculatorCanvas theme="business" className="px-6 py-12">
     {schemas.map((schema, i) => <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />)}
     <div className="mx-auto max-w-6xl">
       <nav aria-label="Breadcrumb" className="text-sm text-[#A0AEC0]"><Link href="/business" className="hover:text-[#06B6D4]">Business Calculators</Link><span className="mx-2">/</span><span className="text-white">Profit Margin Calculator</span></nav>
@@ -55,7 +56,7 @@ export default function ProfitMarginCalculatorPage() {
 
       <section className="mt-10 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8"><h2 className="text-2xl font-bold">Related business calculators</h2><div className="mt-5 flex flex-wrap gap-3"><Related href="/business/markup-calculator">Markup Calculator</Related><Related href="/business/break-even-calculator">Break-Even Calculator</Related><Related href="/business/pricing-calculator">Business Pricing Calculator</Related><Related href="/business/sales-tax-calculator">Sales Tax Calculator</Related><Related href="/business/contractor-job-profit-calculator">Contractor Job Profit Calculator</Related><Related href="/business/contractor-overhead-calculator">Contractor Overhead Calculator</Related><Related href="/business/contractor-labor-burden-calculator">Contractor Labor Burden Calculator</Related><Related href="/business/contractor-estimate-calculator">Contractor Estimate Calculator</Related><Related href="/business">All Business Calculators</Related></div></section>
     </div>
-  </main>;
+  </CalculatorCanvas>;
 }
 
 function Info({ title, children }: { title: string; children: React.ReactNode }) { return <article className="rounded-2xl border border-[#1F2937] bg-[#121826] p-5"><h2 className="font-semibold text-[#22D3EE]">{title}</h2><p className="mt-3 text-sm leading-6 text-[#A0AEC0]">{children}</p></article>; }

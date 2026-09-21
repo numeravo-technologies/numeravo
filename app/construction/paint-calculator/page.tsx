@@ -4,6 +4,7 @@ import PaintCalculatorClient from "./PaintCalculatorClient";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 import RelatedCalculators from "@/components/calculators/RelatedCalculators";
 
+import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 const canonicalUrl =
   "https://numeravo.com/construction/paint-calculator";
 
@@ -94,7 +95,7 @@ const faqJsonLd = {
 
 export default function PaintCalculatorPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CalculatorCanvas theme="construction" className="px-6 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -303,7 +304,7 @@ export default function PaintCalculatorPage() {
 
         <ConstructionCalculatorSearchSection />
       </div>
-    </main>
+    </CalculatorCanvas>
   );
 }
 
