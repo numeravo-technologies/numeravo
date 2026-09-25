@@ -73,8 +73,8 @@ export default function SavingsCalculatorClient() {
     const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([content], { type: "text/csv" })); a.download = "numeravo-savings-projection.csv"; a.click(); URL.revokeObjectURL(a.href);
   };
 
-  return <section className="grid gap-6 lg:grid-cols-[1.05fr_.95fr]">
-    <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
+  return <section className="grid min-w-0 gap-6 lg:grid-cols-[1.05fr_.95fr]">
+    <div className="min-w-0 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
       <div className="grid grid-cols-2 rounded-xl bg-[#0B0F19] p-1">
         <ModeButton active={mode === "required"} onClick={() => setMode("required")}>Required monthly savings</ModeButton>
         <ModeButton active={mode === "future"} onClick={() => setMode("future")}>Future savings</ModeButton>
@@ -92,7 +92,7 @@ export default function SavingsCalculatorClient() {
       <p className="mt-6 text-xs leading-5 text-[#718096]">Use an estimated rate for planning. Savings rates can change, and actual account fees, taxes, deposit timing, and rounding may affect results.</p>
     </div>
 
-    <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8" aria-live="polite">
+    <div className="min-w-0 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8" aria-live="polite">
       <p className="text-sm font-semibold uppercase tracking-[.2em] text-[#22C55E]">Estimated savings plan</p>
       <p className="mt-5 text-sm text-[#A0AEC0]">{mode === "required" ? "Required monthly contribution" : "Projected savings balance"}</p>
       <p className="mt-1 text-4xl font-bold">{usd.format(mode === "required" ? result.needed : result.balance)}</p>
@@ -102,7 +102,7 @@ export default function SavingsCalculatorClient() {
       <div className="mt-6 grid gap-3 sm:grid-cols-2"><button onClick={copy} className="rounded-xl bg-[#22C55E] px-4 py-3 font-semibold text-[#07120A]">{copied ? "Copied" : "Copy results"}</button><button onClick={csv} className="rounded-xl border border-[#374151] px-4 py-3 font-semibold hover:border-[#22C55E]">Download CSV</button></div>
     </div>
 
-    <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8 lg:col-span-2">
+    <div className="min-w-0 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8 lg:col-span-2">
       <h2 className="text-2xl font-bold">See how changing your contribution affects savings</h2>
       <div className="mt-5 grid gap-3 sm:grid-cols-3"><Scenario label="Save 10% less" monthly={result.needed * .9} balance={result.lower} /><Scenario label="Current plan" monthly={result.needed} balance={result.balance} highlight /><Scenario label="Save 10% more" monthly={result.needed * 1.1} balance={result.higher} /></div>
       <div className="mt-8 overflow-x-auto"><table className="w-full min-w-[650px] text-left text-sm"><thead className="text-[#A0AEC0]"><tr><th className="pb-3">Year</th><th>Total contributions</th><th>Interest earned</th><th>Projected balance</th></tr></thead><tbody>{result.rows.map(r => <tr key={r.year} className="border-t border-[#1F2937]"><td className="py-3">{r.year}</td><td>{usd.format(r.deposits)}</td><td>{usd.format(r.interest)}</td><td className="font-semibold">{usd.format(r.balance)}</td></tr>)}</tbody></table></div>

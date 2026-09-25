@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-type CategoryTheme = "construction" | "business" | "finance";
+type CategoryTheme = "construction" | "business" | "finance" | "converters";
 
 type CategoryPageShellProps = {
   children: ReactNode;
@@ -25,6 +25,10 @@ const themeStyles: Record<
   finance: {
     grid: "rgba(34,197,94,0.075)",
     glow: "rgba(34,197,94,0.14)",
+  },
+  converters: {
+    grid: "rgba(59,130,246,0.075)",
+    glow: "rgba(59,130,246,0.14)",
   },
 };
 

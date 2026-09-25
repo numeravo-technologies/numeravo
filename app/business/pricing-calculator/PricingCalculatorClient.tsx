@@ -335,7 +335,7 @@ export default function PricingCalculatorClient() {
 
             <div className={`rounded-3xl border p-6 ${result.discountedProfit >= 0 ? "border-[#164E63] bg-[#083344]/30" : "border-[#7F1D1D] bg-[#450A0A]/30"}`}>
               <h3 className="text-lg font-bold">Discount scenario</h3>
-              <div className="mt-5 grid grid-cols-3 gap-3">
+              <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <ResultCard label="Discounted price" value={usd.format(result.discountedPrice)} />
                 <ResultCard label="Profit after discount" value={usd.format(result.discountedProfit)} />
                 <ResultCard label="Margin after discount" value={`${percent.format(result.discountedMargin)}%`} />
@@ -344,7 +344,7 @@ export default function PricingCalculatorClient() {
 
             <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6">
               <h3 className="text-lg font-bold">Quantity projection</h3>
-              <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <ResultCard label={`${inputs.quantity} unit/job revenue`} value={usd.format(result.quantityRevenue)} />
                 <ResultCard label={`${inputs.quantity} unit/job profit`} value={usd.format(result.quantityProfit)} />
               </div>

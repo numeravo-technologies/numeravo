@@ -1,3 +1,5 @@
+import CategoryPageShell from "@/components/categories/CategoryPageShell";
+
 const calculators = [
   {
     title: "Unit Converter",
@@ -46,10 +48,10 @@ export const metadata = {
 
 export default function ConvertersPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CategoryPageShell theme="converters">
       <section className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#EC4899]">
+          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#3B82F6]">
             Unit Converters
           </p>
 
@@ -67,9 +69,9 @@ export default function ConvertersPage() {
           {calculators.map((calculator) => (
             <div
               key={calculator.href}
-              className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6 transition hover:border-[#EC4899]"
+              className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6 transition hover:border-[#3B82F6]"
             >
-              <div className="mb-4 h-2 w-12 rounded-full bg-[#EC4899]" />
+              <div className="mb-4 h-2 w-12 rounded-full bg-[#3B82F6]" />
 
               <div className="flex items-start justify-between gap-4">
                 <h2 className="text-xl font-semibold text-white">
@@ -88,6 +90,6 @@ export default function ConvertersPage() {
           ))}
         </div>
       </section>
-    </main>
+    </CategoryPageShell>
   );
 }

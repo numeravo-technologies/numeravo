@@ -119,8 +119,8 @@ export default function LoanCalculatorClient() {
   }
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-      <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
+    <section className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <div className="min-w-0 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8">
         <div className="flex items-start justify-between gap-4">
           <div><p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#22C55E]">Loan details</p><h2 className="mt-2 text-2xl font-bold">Calculate your payment</h2></div>
           <button type="button" onClick={reset} className="text-sm font-semibold text-[#A0AEC0] hover:text-white">Reset</button>
@@ -137,7 +137,7 @@ export default function LoanCalculatorClient() {
         <p className="mt-6 text-xs leading-5 text-[#718096]">Assumes a fixed interest rate, monthly compounding, and payments made on schedule. Estimates may differ from lender calculations.</p>
       </div>
 
-      <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8" aria-live="polite">
+      <div className="min-w-0 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8" aria-live="polite">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#22C55E]">Estimated results</p>
         {!valid ? <p className="mt-6 text-[#A0AEC0]">Enter a loan amount and term greater than zero.</p> : <>
           <p className="mt-4 text-sm text-[#A0AEC0]">Required monthly payment</p>
@@ -154,7 +154,7 @@ export default function LoanCalculatorClient() {
         </>}
       </div>
 
-      {valid && <div className="rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8 lg:col-span-2">
+      {valid && <div className="min-w-0 rounded-3xl border border-[#1F2937] bg-[#121826] p-6 md:p-8 lg:col-span-2">
         <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#22C55E]">Amortization</p><h2 className="mt-2 text-2xl font-bold">Payment schedule</h2></div><div className="flex rounded-xl border border-[#1F2937] p-1"><Toggle active={scheduleMode === "yearly"} onClick={() => setScheduleMode("yearly")}>Yearly</Toggle><Toggle active={scheduleMode === "monthly"} onClick={() => setScheduleMode("monthly")}>Monthly</Toggle></div></div>
         <div className="mt-6 overflow-x-auto"><table className="w-full min-w-[720px] text-left text-sm"><thead className="border-b border-[#374151] text-[#A0AEC0]"><tr>{scheduleMode === "yearly" ? <><Th>Year</Th><Th>Payments</Th><Th>Principal</Th><Th>Interest</Th><Th>Ending balance</Th></> : <><Th>#</Th><Th>Date</Th><Th>Payment</Th><Th>Principal</Th><Th>Interest</Th><Th>Extra</Th><Th>Balance</Th></>}</tr></thead><tbody>{scheduleMode === "yearly" ? yearlyRows.map((row) => <tr key={row.year} className="border-b border-[#1F2937]"><Td>{row.year}</Td><Td>{money.format(row.payment)}</Td><Td>{money.format(row.principal)}</Td><Td>{money.format(row.interest)}</Td><Td>{money.format(row.endingBalance)}</Td></tr>) : visibleRows.map((row) => <tr key={row.number} className="border-b border-[#1F2937]"><Td>{row.number}</Td><Td>{monthYear.format(row.date)}</Td><Td>{money.format(row.payment)}</Td><Td>{money.format(row.principal)}</Td><Td>{money.format(row.interest)}</Td><Td>{money.format(row.extra)}</Td><Td>{money.format(row.endingBalance)}</Td></tr>)}</tbody></table></div>
       </div>}
