@@ -1,3 +1,5 @@
+import CategoryPageShell from "@/components/categories/CategoryPageShell";
+
 const calculators = [
   {
     title: "Grade Calculator",
@@ -46,7 +48,7 @@ export const metadata = {
 
 export default function StudentPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] px-6 py-16 text-white">
+    <CategoryPageShell theme="student">
       <section className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#8B5CF6]">
@@ -88,6 +90,6 @@ export default function StudentPage() {
           ))}
         </div>
       </section>
-    </main>
+    </CategoryPageShell>
   );
 }
