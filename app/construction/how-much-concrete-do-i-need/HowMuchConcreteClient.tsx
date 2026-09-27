@@ -2,6 +2,12 @@
 
 import { useMemo, useState } from "react";
 
+import {
+  calculateCircularConcreteBaseVolume,
+  calculateConcretePhysicalVolume,
+  calculateRectangularConcreteBaseVolume,
+} from "@/lib/calculations/concreteVolume";
+
 type ProjectType =
   | "Slab / patio / driveway"
   | "Footing / trench"
@@ -133,17 +139,51 @@ export default function HowMuchConcreteClient() {
     let cubicFeet = 0;
 
     if (projectType === "Slab / patio / driveway" || projectType === "Footing / trench") {
-      cubicFeet = lengthFeet * widthFeet * (thicknessInches / 12);
+      if (
+        canUseCanonicalHowMuchConcreteValue(lengthFeet) &&
+        canUseCanonicalHowMuchConcreteValue(widthFeet) &&
+        canUseCanonicalHowMuchConcreteValue(thicknessInches)
+      ) {
+        cubicFeet = calculateRectangularConcreteBaseVolume({
+          length: lengthFeet,
+          width: widthFeet,
+          height: thicknessInches / 12,
+        });
+      } else {
+        cubicFeet = lengthFeet * widthFeet * (thicknessInches / 12);
+      }
     }
 
     if (projectType === "Wall") {
-      cubicFeet = lengthFeet * heightFeet * (thicknessInches / 12);
+      if (
+        canUseCanonicalHowMuchConcreteValue(lengthFeet) &&
+        canUseCanonicalHowMuchConcreteValue(heightFeet) &&
+        canUseCanonicalHowMuchConcreteValue(thicknessInches)
+      ) {
+        cubicFeet = calculateRectangularConcreteBaseVolume({
+          length: lengthFeet,
+          width: heightFeet,
+          height: thicknessInches / 12,
+        });
+      } else {
+        cubicFeet = lengthFeet * heightFeet * (thicknessInches / 12);
+      }
     }
 
     if (projectType === "Round pier / post hole") {
-      const radiusFeet = diameterInches / 12 / 2;
-      const depthFeet = depthInches / 12;
-      cubicFeet = Math.PI * radiusFeet * radiusFeet * depthFeet;
+      if (
+        canUseCanonicalHowMuchConcreteValue(diameterInches) &&
+        canUseCanonicalHowMuchConcreteValue(depthInches)
+      ) {
+        cubicFeet = calculateCircularConcreteBaseVolume({
+          diameter: diameterInches / 12,
+          height: depthInches / 12,
+        });
+      } else {
+        const radiusFeet = diameterInches / 12 / 2;
+        const depthFeet = depthInches / 12;
+        cubicFeet = Math.PI * radiusFeet * radiusFeet * depthFeet;
+      }
     }
 
     if (projectType === "Known cubic feet") {
@@ -154,7 +194,17 @@ export default function HowMuchConcreteClient() {
       cubicFeet = knownCubicYards * 27;
     }
 
-    const cubicYards = cubicFeet / 27;
+    const physicalVolume = canUseCanonicalHowMuchConcreteValue(cubicFeet)
+      ? calculateConcretePhysicalVolume({
+          baseVolume: cubicFeet,
+          unitSystem: "imperial",
+          wastePercent: 0,
+        })
+      : null;
+
+    const cubicYards = physicalVolume
+      ? physicalVolume.baseCubicYards
+      : cubicFeet / 27;
     const cubicYardsWithWaste = cubicYards * (1 + wastePercent / 100);
     const materialCost = cubicYardsWithWaste * concretePricePerYard;
     const truckLoads =
@@ -410,4 +460,8 @@ function ResultRow({ label, value }: { label: string; value: string }) {
       <span className="text-right font-semibold text-white">{value}</span>
     </div>
   );
+}
+
+function canUseCanonicalHowMuchConcreteValue(value: number) {
+  return !Number.isNaN(value) && value >= 0;
 }
