@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import {
   calculateImperialGravel,
@@ -324,4 +325,251 @@ test("How Much Gravel truckload boundaries preserve Math.ceil behavior", () => {
     assert.equal(result.standardTruckLoads, standard);
     assert.equal(result.largeTruckLoads, large);
   }
+});
+
+
+function legacyGravelDriveway({
+  lengthFeet,
+  widthFeet,
+  depthInches,
+  wastePercent,
+  tonsPerCubicYard,
+  pricePerTon,
+}) {
+  const squareFeet = lengthFeet * widthFeet;
+  const depthFeet = depthInches / 12;
+  const cubicFeet = squareFeet * depthFeet;
+  const cubicYards = cubicFeet / 27;
+  const cubicYardsWithWaste = cubicYards * (1 + wastePercent / 100);
+  const estimatedTons = cubicYardsWithWaste * tonsPerCubicYard;
+  const materialCost = estimatedTons * pricePerTon;
+
+  return {
+    squareFeet,
+    cubicFeet,
+    cubicYards,
+    cubicYardsWithWaste,
+    estimatedTons,
+    materialCost,
+    smallTruckLoads:
+      estimatedTons > 0 ? Math.ceil(estimatedTons / 5) : 0,
+    standardTruckLoads:
+      estimatedTons > 0 ? Math.ceil(estimatedTons / 10) : 0,
+    largeTruckLoads:
+      estimatedTons > 0 ? Math.ceil(estimatedTons / 15) : 0,
+  };
+}
+
+function assertGravelDrivewayParity(input) {
+  const legacy = legacyGravelDriveway(input);
+  const shared = calculateImperialGravel(input);
+
+  assertClose(shared.cubicFeet, legacy.cubicFeet);
+  assertClose(shared.cubicYards, legacy.cubicYards);
+  assertClose(shared.volumeWithWaste, legacy.cubicYardsWithWaste);
+  assertClose(shared.estimatedWeight, legacy.estimatedTons);
+  assertClose(shared.estimatedCost, legacy.materialCost);
+  assert.equal(shared.smallTruckLoads, legacy.smallTruckLoads);
+  assert.equal(shared.standardTruckLoads, legacy.standardTruckLoads);
+  assert.equal(shared.largeTruckLoads, legacy.largeTruckLoads);
+}
+
+const gravelDrivewayDefaults = {
+  lengthFeet: 100,
+  widthFeet: 12,
+  depthInches: 6,
+  wastePercent: 10,
+  tonsPerCubicYard: 1.4,
+  pricePerTon: 45,
+};
+
+test("Gravel Driveway defaults match the canonical shared engine and preserve delivery total", () => {
+  const result = calculateImperialGravel(gravelDrivewayDefaults);
+  const deliveryFee = 150;
+  const totalCost = result.estimatedCost + deliveryFee;
+
+  assert.equal(100 * 12, 1200);
+  assertClose(result.cubicFeet, 600);
+  assertClose(result.cubicYards, 22.22222222222222);
+  assertClose(result.volumeWithWaste, 24.444444444444446);
+  assertClose(result.estimatedWeight, 34.22222222222222);
+  assertClose(result.estimatedCost, 1540);
+  assert.equal(result.smallTruckLoads, 7);
+  assert.equal(result.standardTruckLoads, 4);
+  assert.equal(result.largeTruckLoads, 3);
+  assert.equal(deliveryFee, 150);
+  assert.equal(totalCost, 1690);
+  assertGravelDrivewayParity(gravelDrivewayDefaults);
+});
+
+test("Gravel Driveway valid-input parity covers waste, fractional dimensions, density, and price", () => {
+  for (const wastePercent of [0, 5, 10, 15]) {
+    assertGravelDrivewayParity({
+      ...gravelDrivewayDefaults,
+      wastePercent,
+    });
+  }
+
+  assertGravelDrivewayParity({
+    ...gravelDrivewayDefaults,
+    lengthFeet: 83.75,
+    widthFeet: 11.5,
+    depthInches: 5.25,
+  });
+  assertGravelDrivewayParity({
+    ...gravelDrivewayDefaults,
+    tonsPerCubicYard: 1.62,
+  });
+  assertGravelDrivewayParity({
+    ...gravelDrivewayDefaults,
+    pricePerTon: 68.75,
+  });
+});
+
+test("Gravel Driveway zero dimension density price and delivery preserve expected behavior", () => {
+  const zeroDimension = calculateImperialGravel({
+    ...gravelDrivewayDefaults,
+    lengthFeet: 0,
+  });
+  assert.equal(zeroDimension.cubicFeet, 0);
+  assert.equal(zeroDimension.estimatedWeight, 0);
+  assert.equal(zeroDimension.estimatedCost, 0);
+  assert.equal(zeroDimension.smallTruckLoads, 0);
+
+  const zeroDensity = calculateImperialGravel({
+    ...gravelDrivewayDefaults,
+    tonsPerCubicYard: 0,
+  });
+  assert.ok(zeroDensity.volumeWithWaste > 0);
+  assert.equal(zeroDensity.estimatedWeight, 0);
+  assert.equal(zeroDensity.estimatedCost, 0);
+
+  const zeroPrice = calculateImperialGravel({
+    ...gravelDrivewayDefaults,
+    pricePerTon: 0,
+  });
+  assert.ok(zeroPrice.estimatedWeight > 0);
+  assert.equal(zeroPrice.estimatedCost, 0);
+
+  const normal = calculateImperialGravel(gravelDrivewayDefaults);
+  assert.equal(normal.estimatedCost + 0, 1540);
+  assert.equal(normal.estimatedCost + 287.5, 1827.5);
+});
+
+test("Gravel Driveway conversion adopts canonical negative and invalid clamping", () => {
+  const result = calculateImperialGravel({
+    lengthFeet: -100,
+    widthFeet: Number.NaN,
+    depthInches: -6,
+    wastePercent: -10,
+    tonsPerCubicYard: -1.4,
+    pricePerTon: -45,
+  });
+
+  assert.equal(result.cubicFeet, 0);
+  assert.equal(result.cubicYards, 0);
+  assert.equal(result.volumeWithWaste, 0);
+  assert.equal(result.estimatedWeight, 0);
+  assert.equal(result.estimatedCost, 0);
+  assert.equal(result.smallTruckLoads, 0);
+  assert.equal(result.standardTruckLoads, 0);
+  assert.equal(result.largeTruckLoads, 0);
+});
+
+test("Gravel Driveway truckload boundaries preserve Math.ceil behavior", () => {
+  const cases = [
+    [4.99, 1, 1, 1],
+    [5, 1, 1, 1],
+    [5.01, 2, 1, 1],
+    [9.99, 2, 1, 1],
+    [10, 2, 1, 1],
+    [10.01, 3, 2, 1],
+    [14.99, 3, 2, 1],
+    [15, 3, 2, 1],
+    [15.01, 4, 2, 2],
+  ];
+
+  for (const [tons, small, standard, large] of cases) {
+    const result = calculateImperialGravel({
+      lengthFeet: tons * 27,
+      widthFeet: 1,
+      depthInches: 12,
+      wastePercent: 0,
+      tonsPerCubicYard: 1,
+      pricePerTon: 0,
+    });
+
+    assertClose(result.estimatedWeight, tons, 1e-9);
+    assert.equal(result.smallTruckLoads, small);
+    assert.equal(result.standardTruckLoads, standard);
+    assert.equal(result.largeTruckLoads, large);
+  }
+});
+
+test("Gravel Driveway client preserves presets formatting copy fields and project isolation", () => {
+  const source = readFileSync(
+    new URL(
+      "../../app/construction/gravel-driveway-calculator/GravelDrivewayCalculatorClient.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.match(source, /import \{ calculateImperialGravel \} from "@\/lib\/calculations\/gravel";/);
+  assert.match(source, /const gravelResult = calculateImperialGravel\(\{/);
+  assert.match(source, /const totalCost = gravelResult\.estimatedCost \+ delivery;/);
+
+  assert.doesNotMatch(source, /const depthFeet = depthNumber \/ 12;/);
+  assert.doesNotMatch(source, /const cubicFeet = squareFeet \* depthFeet;/);
+  assert.doesNotMatch(source, /const cubicYards = cubicFeet \/ 27;/);
+  assert.doesNotMatch(source, /Math\.ceil\(estimatedTons \/ 5\)/);
+
+  const presets = [
+    ["Top dressing", "2"],
+    ["Light driveway", "4"],
+    ["Standard driveway", "6"],
+    ["Heavy-use driveway", "8"],
+    ["Deep base", "10"],
+    ["Poor soil", "12"],
+  ];
+
+  for (const [label, depth] of presets) {
+    assert.ok(
+      source.includes(
+        `<PresetButton label="${label}" value="${depth} in" onClick={() => applyPreset("${depth}")} />`,
+      ),
+      `missing preserved ${label} ${depth}-inch preset`,
+    );
+  }
+
+  assert.match(source, /maximumFractionDigits: 0/);
+  assert.equal(
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(1690),
+    "$1,690",
+  );
+
+  for (const field of [
+    "Driveway Size:",
+    "Square Feet:",
+    "Cubic Yards Before Waste:",
+    "Cubic Yards With Waste:",
+    "Estimated Tons:",
+    "Material Cost:",
+    "Delivery Fee:",
+    "Estimated Total:",
+    "Small Dump Truck Loads:",
+    "Standard Dump Truck Loads:",
+    "Large Dump Truck / Tri-Axle Loads:",
+  ]) {
+    assert.ok(source.includes(field), `missing preserved Copy Results field: ${field}`);
+  }
+
+  assert.doesNotMatch(source, /calculateMetricGravel/);
+  assert.doesNotMatch(source, /fromProject/);
+  assert.doesNotMatch(source, /saveCalculationToProject/);
+  assert.doesNotMatch(source, /setProjectScopeResult/);
 });
