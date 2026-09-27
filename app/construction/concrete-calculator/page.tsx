@@ -13,7 +13,14 @@ import {
   saveProjectSession,
 } from "@/data/projectSession";
 import type { ProjectRecipeId } from "@/data/projectRecipes";
-import { calculateImperialConcreteVolume } from "@/lib/calculations/concreteVolume";
+import { calculateConcreteOrder } from "@/lib/calculations/concreteOrder";
+import {
+  calculateCircularConcreteBaseVolume,
+  calculateConcretePhysicalVolume,
+  calculateImperialConcreteVolume,
+  calculateLShapedConcreteBaseVolume,
+  calculateRectangularConcreteBaseVolume,
+} from "@/lib/calculations/concreteVolume";
 
 import CalculatorCanvas from "@/components/calculators/CalculatorCanvas";
 type UnitSystem = "imperial" | "metric";
@@ -563,7 +570,12 @@ export default function ConcreteCalculatorPage() {
 
         baseVolume = slabResult.baseCubicFeet;
       } else {
-        baseVolume = length * width * thickness * quantity;
+        baseVolume = calculateRectangularConcreteBaseVolume({
+          length,
+          width,
+          height: thickness,
+          quantity,
+        });
       }
 
       formulaLabel = "Length × width × thickness × quantity";
@@ -574,14 +586,17 @@ export default function ConcreteCalculatorPage() {
         circleDiameter,
         measurementUnits.circleDiameter,
       );
-      const radius = diameter / 2;
       const thickness = toBaseLength(
         circleThickness,
         measurementUnits.circleThickness,
       );
       const quantity = toNumber(circleQuantity);
 
-      baseVolume = Math.PI * radius * radius * thickness * quantity;
+      baseVolume = calculateCircularConcreteBaseVolume({
+        diameter,
+        height: thickness,
+        quantity,
+      });
       formulaLabel = "π × radius² × thickness × quantity";
     }
 
@@ -607,8 +622,13 @@ export default function ConcreteCalculatorPage() {
         measurementUnits.lShapeThickness,
       );
 
-      baseVolume =
-        lengthOne * widthOne * thickness + lengthTwo * widthTwo * thickness;
+      baseVolume = calculateLShapedConcreteBaseVolume({
+        lengthOne,
+        widthOne,
+        lengthTwo,
+        widthTwo,
+        height: thickness,
+      });
 
       formulaLabel = "Rectangle 1 volume + rectangle 2 volume";
     }
@@ -622,7 +642,12 @@ export default function ConcreteCalculatorPage() {
       const depth = toBaseLength(footingDepth, measurementUnits.footingDepth);
       const quantity = toNumber(footingQuantity);
 
-      baseVolume = length * width * depth * quantity;
+      baseVolume = calculateRectangularConcreteBaseVolume({
+        length,
+        width,
+        height: depth,
+        quantity,
+      });
       formulaLabel = "Length × width × depth × quantity";
     }
 
@@ -631,14 +656,17 @@ export default function ConcreteCalculatorPage() {
         roundPierDiameter,
         measurementUnits.roundPierDiameter,
       );
-      const radius = diameter / 2;
       const depth = toBaseLength(
         roundPierDepth,
         measurementUnits.roundPierDepth,
       );
       const quantity = toNumber(roundPierQuantity);
 
-      baseVolume = Math.PI * radius * radius * depth * quantity;
+      baseVolume = calculateCircularConcreteBaseVolume({
+        diameter,
+        height: depth,
+        quantity,
+      });
       formulaLabel = "π × radius² × depth × quantity";
     }
 
@@ -654,7 +682,12 @@ export default function ConcreteCalculatorPage() {
       );
       const quantity = toNumber(rectPierQuantity);
 
-      baseVolume = length * width * height * quantity;
+      baseVolume = calculateRectangularConcreteBaseVolume({
+        length,
+        width,
+        height,
+        quantity,
+      });
       formulaLabel = "Length × width × height × quantity";
     }
 
@@ -666,7 +699,11 @@ export default function ConcreteCalculatorPage() {
         measurementUnits.wallThickness,
       );
 
-      baseVolume = length * height * thickness;
+      baseVolume = calculateRectangularConcreteBaseVolume({
+        length,
+        width: height,
+        height: thickness,
+      });
       formulaLabel = "Length × height × thickness";
     }
 
@@ -676,7 +713,12 @@ export default function ConcreteCalculatorPage() {
       const rise = toBaseLength(stairRise, measurementUnits.stairRise);
       const count = toNumber(stairCount);
 
-      baseVolume = width * run * rise * count;
+      baseVolume = calculateRectangularConcreteBaseVolume({
+        length: width,
+        width: run,
+        height: rise,
+        quantity: count,
+      });
       formulaLabel = "Width × run × rise × number of steps";
     }
 
@@ -685,53 +727,44 @@ export default function ConcreteCalculatorPage() {
       const width = toBaseLength(curbWidth, measurementUnits.curbWidth);
       const height = toBaseLength(curbHeight, measurementUnits.curbHeight);
 
-      baseVolume = length * width * height;
+      baseVolume = calculateRectangularConcreteBaseVolume({
+        length,
+        width,
+        height,
+      });
       formulaLabel = "Length × width × height";
     }
 
-    const baseCubicFeet = unitSystem === "imperial" ? baseVolume : 0;
-    const baseCubicYards = unitSystem === "imperial" ? baseCubicFeet / 27 : 0;
-    const baseCubicMeters = unitSystem === "metric" ? baseVolume : 0;
+    const {
+      baseCubicFeet,
+      baseCubicYards,
+      baseCubicMeters,
+      volumeWithWaste,
+    } = calculateConcretePhysicalVolume({
+      baseVolume,
+      unitSystem,
+      wastePercent: waste,
+    });
 
-    const volumeWithWaste =
-      unitSystem === "imperial"
-        ? baseCubicYards * (1 + waste / 100)
-        : baseCubicMeters * (1 + waste / 100);
-
-    const recommendedOrder =
-      unitSystem === "imperial"
-        ? roundUpToIncrement(volumeWithWaste, 0.25)
-        : roundUpToIncrement(volumeWithWaste, 0.1);
-
-    const estimatedCost = recommendedOrder * price;
-
-    const recommendedCubicYards =
-      unitSystem === "imperial" ? recommendedOrder : recommendedOrder * 1.30795;
-
-    const truckLoads =
-      recommendedCubicYards > 0 ? Math.ceil(recommendedCubicYards / 10) : 0;
-
-    const eightyLbBagYieldYards = 0.022;
-    const sixtyLbBagYieldYards = 0.0167;
-
-    const eightyLbBags =
-      recommendedCubicYards > 0
-        ? Math.ceil(recommendedCubicYards / eightyLbBagYieldYards)
-        : 0;
-
-    const sixtyLbBags =
-      recommendedCubicYards > 0
-        ? Math.ceil(recommendedCubicYards / sixtyLbBagYieldYards)
-        : 0;
-
-    const eightyLbPallets = eightyLbBags > 0 ? Math.ceil(eightyLbBags / 42) : 0;
-
-    const sixtyLbPallets = sixtyLbBags > 0 ? Math.ceil(sixtyLbBags / 56) : 0;
-
-    const eightyLbBagCost = eightyLbBags * toNumber(pricePer80LbBag);
-    const sixtyLbBagCost = sixtyLbBags * toNumber(pricePer60LbBag);
-
-    const exceedsOnePickupPallet = eightyLbBags > 42 || sixtyLbBags > 56;
+    const {
+      recommendedOrder,
+      estimatedCost,
+      recommendedCubicYards,
+      truckLoads,
+      eightyLbBags,
+      sixtyLbBags,
+      eightyLbPallets,
+      sixtyLbPallets,
+      eightyLbBagCost,
+      sixtyLbBagCost,
+      exceedsOnePickupPallet,
+    } = calculateConcreteOrder({
+      unitSystem,
+      volumeWithWaste,
+      pricePerUnit: price,
+      pricePer80LbBag: toNumber(pricePer80LbBag),
+      pricePer60LbBag: toNumber(pricePer60LbBag),
+    });
 
     return {
       baseCubicFeet,
@@ -2450,14 +2483,6 @@ function toBaseLength(value: string, unit: MeasurementUnit) {
 
 function formatInputNumber(value: number) {
   return Number(value.toFixed(4)).toString();
-}
-
-function roundUpToIncrement(value: number, increment: number) {
-  if (value <= 0) {
-    return 0;
-  }
-
-  return Math.ceil(value / increment) * increment;
 }
 
 function formatNumber(value: number) {
