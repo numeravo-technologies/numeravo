@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { calculateImperialGravel } from "@/lib/calculations/gravel";
 
 export default function CrushedStoneCalculatorClient() {
   const [length, setLength] = useState("30");
@@ -23,35 +24,35 @@ export default function CrushedStoneCalculatorClient() {
     const delivery = toNumber(deliveryFee);
     const labor = toNumber(laborCost);
 
-    const squareFeet = lengthNumber * widthNumber;
-    const depthFeet = depthNumber / 12;
-    const cubicFeet = squareFeet * depthFeet;
-    const cubicYards = cubicFeet / 27;
-    const cubicYardsWithWaste = cubicYards * (1 + waste / 100);
-    const estimatedTons = cubicYardsWithWaste * density;
-    const materialCost = estimatedTons * price;
-    const totalCost = materialCost + delivery + labor;
-    const costPerSquareFoot = squareFeet > 0 ? totalCost / squareFeet : 0;
+    const gravelResult = calculateImperialGravel({
+      lengthFeet: lengthNumber,
+      widthFeet: widthNumber,
+      depthInches: depthNumber,
+      wastePercent: waste,
+      tonsPerCubicYard: density,
+      pricePerTon: price,
+    });
 
-    const smallTruckLoads = estimatedTons > 0 ? Math.ceil(estimatedTons / 5) : 0;
-    const standardTruckLoads =
-      estimatedTons > 0 ? Math.ceil(estimatedTons / 10) : 0;
-    const largeTruckLoads = estimatedTons > 0 ? Math.ceil(estimatedTons / 15) : 0;
+    const safeLength = lengthNumber >= 0 ? lengthNumber : 0;
+    const safeWidth = widthNumber >= 0 ? widthNumber : 0;
+    const squareFeet = safeLength * safeWidth;
+    const totalCost = gravelResult.estimatedCost + delivery + labor;
+    const costPerSquareFoot = squareFeet > 0 ? totalCost / squareFeet : 0;
 
     return {
       squareFeet,
-      cubicFeet,
-      cubicYards,
-      cubicYardsWithWaste,
-      estimatedTons,
-      materialCost,
+      cubicFeet: gravelResult.cubicFeet,
+      cubicYards: gravelResult.cubicYards,
+      cubicYardsWithWaste: gravelResult.volumeWithWaste,
+      estimatedTons: gravelResult.estimatedWeight,
+      materialCost: gravelResult.estimatedCost,
       delivery,
       labor,
       totalCost,
       costPerSquareFoot,
-      smallTruckLoads,
-      standardTruckLoads,
-      largeTruckLoads,
+      smallTruckLoads: gravelResult.smallTruckLoads,
+      standardTruckLoads: gravelResult.standardTruckLoads,
+      largeTruckLoads: gravelResult.largeTruckLoads,
     };
   }, [
     length,

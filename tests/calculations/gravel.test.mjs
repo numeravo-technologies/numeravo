@@ -573,3 +573,296 @@ test("Gravel Driveway client preserves presets formatting copy fields and projec
   assert.doesNotMatch(source, /saveCalculationToProject/);
   assert.doesNotMatch(source, /setProjectScopeResult/);
 });
+
+function legacyCrushedStoneCore({
+  lengthFeet,
+  widthFeet,
+  depthInches,
+  wastePercent,
+  tonsPerCubicYard,
+  pricePerTon,
+}) {
+  const squareFeet = lengthFeet * widthFeet;
+  const depthFeet = depthInches / 12;
+  const cubicFeet = squareFeet * depthFeet;
+  const cubicYards = cubicFeet / 27;
+  const cubicYardsWithWaste = cubicYards * (1 + wastePercent / 100);
+  const estimatedTons = cubicYardsWithWaste * tonsPerCubicYard;
+  const materialCost = estimatedTons * pricePerTon;
+
+  return {
+    squareFeet,
+    cubicFeet,
+    cubicYards,
+    cubicYardsWithWaste,
+    estimatedTons,
+    materialCost,
+    smallTruckLoads:
+      estimatedTons > 0 ? Math.ceil(estimatedTons / 5) : 0,
+    standardTruckLoads:
+      estimatedTons > 0 ? Math.ceil(estimatedTons / 10) : 0,
+    largeTruckLoads:
+      estimatedTons > 0 ? Math.ceil(estimatedTons / 15) : 0,
+  };
+}
+
+function assertCrushedStoneParity(input) {
+  const legacy = legacyCrushedStoneCore(input);
+  const shared = calculateImperialGravel(input);
+
+  assertClose(shared.cubicFeet, legacy.cubicFeet);
+  assertClose(shared.cubicYards, legacy.cubicYards);
+  assertClose(shared.volumeWithWaste, legacy.cubicYardsWithWaste);
+  assertClose(shared.estimatedWeight, legacy.estimatedTons);
+  assertClose(shared.estimatedCost, legacy.materialCost);
+  assert.equal(shared.smallTruckLoads, legacy.smallTruckLoads);
+  assert.equal(shared.standardTruckLoads, legacy.standardTruckLoads);
+  assert.equal(shared.largeTruckLoads, legacy.largeTruckLoads);
+}
+
+const crushedStoneDefaults = {
+  lengthFeet: 30,
+  widthFeet: 12,
+  depthInches: 4,
+  wastePercent: 10,
+  tonsPerCubicYard: 1.4,
+  pricePerTon: 50,
+};
+
+test("Crushed Stone defaults match the canonical shared engine and preserve installed cost", () => {
+  const result = calculateImperialGravel(crushedStoneDefaults);
+  const squareFeet = 30 * 12;
+  const delivery = 125;
+  const labor = 200;
+  const totalCost = result.estimatedCost + delivery + labor;
+  const costPerSquareFoot = squareFeet > 0 ? totalCost / squareFeet : 0;
+
+  assert.equal(squareFeet, 360);
+  assertClose(result.cubicFeet, 120);
+  assertClose(result.cubicYards, 4.444444444444445);
+  assertClose(result.volumeWithWaste, 4.888888888888889);
+  assertClose(result.estimatedWeight, 6.844444444444444);
+  assertClose(result.estimatedCost, 342.2222222222222);
+  assert.equal(result.smallTruckLoads, 2);
+  assert.equal(result.standardTruckLoads, 1);
+  assert.equal(result.largeTruckLoads, 1);
+  assert.equal(delivery, 125);
+  assert.equal(labor, 200);
+  assertClose(totalCost, 667.2222222222222);
+  assertClose(costPerSquareFoot, 1.853395061728395);
+  assertCrushedStoneParity(crushedStoneDefaults);
+});
+
+test("Crushed Stone valid-input parity covers waste, fractional dimensions, density, and price", () => {
+  for (const wastePercent of [0, 5, 10, 15]) {
+    assertCrushedStoneParity({
+      ...crushedStoneDefaults,
+      wastePercent,
+    });
+  }
+
+  assertCrushedStoneParity({
+    ...crushedStoneDefaults,
+    lengthFeet: 28.75,
+    widthFeet: 11.25,
+    depthInches: 3.5,
+  });
+  assertCrushedStoneParity({
+    ...crushedStoneDefaults,
+    tonsPerCubicYard: 1.62,
+  });
+  assertCrushedStoneParity({
+    ...crushedStoneDefaults,
+    pricePerTon: 71.25,
+  });
+});
+
+test("Crushed Stone zero values and supplemental costs preserve expected behavior", () => {
+  const zeroDimension = calculateImperialGravel({
+    ...crushedStoneDefaults,
+    lengthFeet: 0,
+  });
+  assert.equal(zeroDimension.cubicFeet, 0);
+  assert.equal(zeroDimension.estimatedWeight, 0);
+  assert.equal(zeroDimension.estimatedCost, 0);
+  assert.equal(zeroDimension.smallTruckLoads, 0);
+  const zeroArea = 0;
+  const zeroAreaTotal = zeroDimension.estimatedCost + 125 + 200;
+  const zeroAreaCostPerSquareFoot =
+    zeroArea > 0 ? zeroAreaTotal / zeroArea : 0;
+  assert.equal(zeroAreaCostPerSquareFoot, 0);
+
+  const zeroDensity = calculateImperialGravel({
+    ...crushedStoneDefaults,
+    tonsPerCubicYard: 0,
+  });
+  assert.ok(zeroDensity.volumeWithWaste > 0);
+  assert.equal(zeroDensity.estimatedWeight, 0);
+  assert.equal(zeroDensity.estimatedCost, 0);
+
+  const zeroPrice = calculateImperialGravel({
+    ...crushedStoneDefaults,
+    pricePerTon: 0,
+  });
+  assert.ok(zeroPrice.estimatedWeight > 0);
+  assert.equal(zeroPrice.estimatedCost, 0);
+
+  const normal = calculateImperialGravel(crushedStoneDefaults);
+  assertClose(normal.estimatedCost + 0 + 200, 542.2222222222222);
+  assertClose(normal.estimatedCost + 287.5 + 200, 829.7222222222222);
+  assertClose(normal.estimatedCost + 125 + 0, 467.2222222222222);
+  assertClose(normal.estimatedCost + 125 + 375.5, 842.7222222222222);
+});
+
+test("Crushed Stone conversion adopts canonical quantity clamping while preserving supplemental parsing", () => {
+  const result = calculateImperialGravel({
+    lengthFeet: -30,
+    widthFeet: Number.NaN,
+    depthInches: -4,
+    wastePercent: -10,
+    tonsPerCubicYard: -1.4,
+    pricePerTon: -50,
+  });
+
+  assert.equal(result.cubicFeet, 0);
+  assert.equal(result.cubicYards, 0);
+  assert.equal(result.volumeWithWaste, 0);
+  assert.equal(result.estimatedWeight, 0);
+  assert.equal(result.estimatedCost, 0);
+  assert.equal(result.smallTruckLoads, 0);
+  assert.equal(result.standardTruckLoads, 0);
+  assert.equal(result.largeTruckLoads, 0);
+
+  const currentSupplementalToNumber = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  assert.equal(currentSupplementalToNumber("-125"), -125);
+  assert.equal(currentSupplementalToNumber("-200"), -200);
+  assert.equal(currentSupplementalToNumber("invalid"), 0);
+  assert.equal(currentSupplementalToNumber(""), 0);
+});
+
+test("Crushed Stone truckload boundaries preserve Math.ceil behavior", () => {
+  const cases = [
+    [4.99, 1, 1, 1],
+    [5, 1, 1, 1],
+    [5.01, 2, 1, 1],
+    [9.99, 2, 1, 1],
+    [10, 2, 1, 1],
+    [10.01, 3, 2, 1],
+    [14.99, 3, 2, 1],
+    [15, 3, 2, 1],
+    [15.01, 4, 2, 2],
+  ];
+
+  for (const [tons, small, standard, large] of cases) {
+    const result = calculateImperialGravel({
+      lengthFeet: tons * 27,
+      widthFeet: 1,
+      depthInches: 12,
+      wastePercent: 0,
+      tonsPerCubicYard: 1,
+      pricePerTon: 0,
+    });
+
+    assertClose(result.estimatedWeight, tons, 1e-9);
+    assert.equal(result.smallTruckLoads, small);
+    assert.equal(result.standardTruckLoads, standard);
+    assert.equal(result.largeTruckLoads, large);
+  }
+});
+
+test("Crushed Stone client preserves presets supplemental logic formatting copy fields and project isolation", () => {
+  const source = readFileSync(
+    new URL(
+      "../../app/construction/crushed-stone-calculator/CrushedStoneCalculatorClient.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.match(source, /import \{ calculateImperialGravel \} from "@\/lib\/calculations\/gravel";/);
+  assert.match(source, /const gravelResult = calculateImperialGravel\(\{/);
+  assert.match(source, /const totalCost = gravelResult\.estimatedCost \+ delivery \+ labor;/);
+  assert.match(source, /const costPerSquareFoot = squareFeet > 0 \? totalCost \/ squareFeet : 0;/);
+
+  assert.doesNotMatch(source, /const depthFeet = depthNumber \/ 12;/);
+  assert.doesNotMatch(source, /const cubicFeet = squareFeet \* depthFeet;/);
+  assert.doesNotMatch(source, /const cubicYards = cubicFeet \/ 27;/);
+  assert.doesNotMatch(source, /Math\.ceil\(estimatedTons \/ 5\)/);
+
+  const presets = [
+    ["Decorative layer", "2"],
+    ["Walkway", "3"],
+    ["Patio base", "4"],
+    ["Driveway top layer", "5"],
+    ["Driveway base", "6"],
+    ["Drainage base", "8"],
+  ];
+
+  for (const [label, depth] of presets) {
+    assert.ok(
+      source.includes(
+        `<PresetButton label="${label}" value="${depth} in" onClick={() => applyDepth("${depth}")} />`,
+      ),
+      `missing preserved ${label} ${depth}-inch preset`,
+    );
+  }
+
+  assert.match(
+    source,
+    /function toNumber\(value: string\) \{\s*const parsed = Number\(value\);\s*return Number\.isFinite\(parsed\) \? parsed : 0;\s*\}/,
+  );
+  assert.match(source, /const delivery = toNumber\(deliveryFee\);/);
+  assert.match(source, /const labor = toNumber\(laborCost\);/);
+  assert.match(source, /const \[length, setLength\] = useState\("30"\);/);
+  assert.match(source, /const \[width, setWidth\] = useState\("12"\);/);
+  assert.match(source, /const \[depth, setDepth\] = useState\("4"\);/);
+  assert.match(source, /const \[wastePercent, setWastePercent\] = useState\("10"\);/);
+  assert.match(source, /const \[tonsPerCubicYard, setTonsPerCubicYard\] = useState\("1\.4"\);/);
+  assert.match(source, /const \[pricePerTon, setPricePerTon\] = useState\("50"\);/);
+  assert.match(source, /const \[deliveryFee, setDeliveryFee\] = useState\("125"\);/);
+  assert.match(source, /const \[laborCost, setLaborCost\] = useState\("200"\);/);
+  assert.ok(source.includes('label="Project Area"'));
+
+  assert.match(source, /maximumFractionDigits: 0/);
+  assert.equal(
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(667.2222222222222),
+    "$667",
+  );
+  assert.equal(
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(1.853395061728395),
+    "$2",
+  );
+
+  for (const field of [
+    "Project Size:",
+    "Square Feet:",
+    "Cubic Yards Before Waste:",
+    "Cubic Yards With Waste:",
+    "Estimated Tons:",
+    "Material Cost:",
+    "Delivery Fee:",
+    "Labor / Spreading Cost:",
+    "Estimated Total Cost:",
+    "Cost Per Square Foot:",
+    "Standard Dump Truck Loads:",
+  ]) {
+    assert.ok(source.includes(field), `missing preserved Copy Results field: ${field}`);
+  }
+
+  assert.doesNotMatch(source, /calculateMetricGravel/);
+  assert.doesNotMatch(source, /fromProject/);
+  assert.doesNotMatch(source, /saveCalculationToProject/);
+  assert.doesNotMatch(source, /setProjectScopeResult/);
+});
