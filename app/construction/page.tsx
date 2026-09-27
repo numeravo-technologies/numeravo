@@ -464,35 +464,35 @@ const calculatorSections = [
         description:
           "Estimate gravel tons, cubic yards, depth, waste, and material cost for driveway projects.",
         href: "/construction/gravel-driveway-calculator",
-        status: "Guide",
+        status: "Calculator + Guide",
       },
       {
         title: "Gravel Driveway Cost",
         description:
           "Estimate gravel driveway cost using driveway size, gravel depth, tons, price per ton, delivery, and project factors.",
         href: "/construction/gravel-driveway-cost",
-        status: "Guide",
+        status: "Calculator + Guide",
       },
       {
         title: "Gravel Cost Calculator",
         description:
           "Estimate gravel project cost using area, depth, cubic yards, tons, waste, price per ton, and delivery factors.",
         href: "/construction/gravel-cost-calculator",
-        status: "Guide",
+        status: "Calculator + Guide",
       },
       {
         title: "How Much Gravel Do I Need?",
         description:
           "Learn how to estimate gravel volume, cubic yards, tons, depth, waste, and material cost.",
         href: "/construction/how-much-gravel-do-i-need",
-        status: "Guide",
+        status: "Calculator + Guide",
       },
       {
         title: "Gravel Cost Per Ton",
         description:
           "Learn how gravel price per ton works and estimate total material cost for gravel projects.",
         href: "/construction/gravel-cost-per-ton",
-        status: "Guide",
+        status: "Calculator + Guide",
       },
       {
         title: "Pea Gravel Calculator",
@@ -527,21 +527,21 @@ const calculatorSections = [
         description:
           "Estimate crushed stone cubic yards, tons, waste, and cost using the upgraded gravel calculator material preset.",
         href: "/construction/crushed-stone-calculator",
-        status: "Guide",
+        status: "Calculator + Guide",
       },
       {
         title: "Crushed Stone vs Gravel",
         description:
           "Compare crushed stone and gravel for driveways, drainage, landscaping, patios, and base layers.",
         href: "/construction/crushed-stone-vs-gravel",
-        status: "Guide",
+        status: "Guide + Calculator",
       },
       {
         title: "Road Base Calculator",
         description:
           "Estimate road base cubic yards, tons, waste, and cost using the upgraded gravel calculator material preset.",
         href: "/construction/road-base-calculator",
-        status: "Guide",
+        status: "Calculator + Guide",
       },
       {
         title: "Paver Base Calculator",
