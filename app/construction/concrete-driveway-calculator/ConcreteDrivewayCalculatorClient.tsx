@@ -2,7 +2,16 @@
 
 import { useMemo, useState } from "react";
 
+import {
+  calculateConcretePhysicalVolume,
+  calculateRectangularConcreteBaseVolume,
+} from "@/lib/calculations/concreteVolume";
+
 type ReinforcementType = "None" | "Wire mesh" | "Rebar grid" | "Fiber reinforcement";
+
+function canUseCanonicalConcreteDrivewayValue(value: number) {
+  return !Number.isNaN(value) && value >= 0;
+}
 
 export default function ConcreteDrivewayCalculatorClient() {
   const [length, setLength] = useState(40);
@@ -31,8 +40,30 @@ export default function ConcreteDrivewayCalculatorClient() {
   const results = useMemo(() => {
     const area = length * width;
 
-    const concreteCubicFeet = area * (thicknessInches / 12);
-    const concreteCubicYards = concreteCubicFeet / 27;
+    const concreteCubicFeet =
+      canUseCanonicalConcreteDrivewayValue(length) &&
+      canUseCanonicalConcreteDrivewayValue(width) &&
+      canUseCanonicalConcreteDrivewayValue(thicknessInches)
+        ? calculateRectangularConcreteBaseVolume({
+            length,
+            width,
+            height: thicknessInches / 12,
+          })
+        : area * (thicknessInches / 12);
+
+    const concretePhysicalVolume = canUseCanonicalConcreteDrivewayValue(
+      concreteCubicFeet,
+    )
+      ? calculateConcretePhysicalVolume({
+          baseVolume: concreteCubicFeet,
+          unitSystem: "imperial",
+          wastePercent: 0,
+        })
+      : null;
+
+    const concreteCubicYards = concretePhysicalVolume
+      ? concretePhysicalVolume.baseCubicYards
+      : concreteCubicFeet / 27;
     const concreteCubicYardsWithWaste =
       concreteCubicYards * (1 + wastePercent / 100);
 
