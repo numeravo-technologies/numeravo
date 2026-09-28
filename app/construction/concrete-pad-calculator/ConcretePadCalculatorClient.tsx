@@ -2,7 +2,16 @@
 
 import { useMemo, useState } from "react";
 
+import {
+  calculateConcretePhysicalVolume,
+  calculateRectangularConcreteBaseVolume,
+} from "@/lib/calculations/concreteVolume";
+
 type PadUse = "General pad" | "Shed pad" | "AC pad" | "Generator pad" | "Hot tub pad" | "Equipment pad";
+
+function canUseCanonicalConcretePadValue(value: number) {
+  return !Number.isNaN(value) && value >= 0;
+}
 
 export default function ConcretePadCalculatorClient() {
   const [padUse, setPadUse] = useState<PadUse>("General pad");
@@ -32,8 +41,30 @@ export default function ConcretePadCalculatorClient() {
     const area = length * width;
     const perimeter = 2 * (length + width);
 
-    const concreteCubicFeet = area * (thicknessInches / 12);
-    const concreteCubicYards = concreteCubicFeet / 27;
+    const concreteCubicFeet =
+      canUseCanonicalConcretePadValue(length) &&
+      canUseCanonicalConcretePadValue(width) &&
+      canUseCanonicalConcretePadValue(thicknessInches)
+        ? calculateRectangularConcreteBaseVolume({
+            length,
+            width,
+            height: thicknessInches / 12,
+          })
+        : area * (thicknessInches / 12);
+
+    const concretePhysicalVolume = canUseCanonicalConcretePadValue(
+      concreteCubicFeet,
+    )
+      ? calculateConcretePhysicalVolume({
+          baseVolume: concreteCubicFeet,
+          unitSystem: "imperial",
+          wastePercent: 0,
+        })
+      : null;
+
+    const concreteCubicYards = concretePhysicalVolume
+      ? concretePhysicalVolume.baseCubicYards
+      : concreteCubicFeet / 27;
     const concreteCubicYardsWithWaste =
       concreteCubicYards * (1 + wastePercent / 100);
 
