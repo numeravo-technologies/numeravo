@@ -1,9 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  calculateCircularConcreteBaseVolume,
+  calculateConcretePhysicalVolume,
+  calculateLShapedConcreteBaseVolume,
+  calculateRectangularConcreteBaseVolume,
+} from "@/lib/calculations/concreteVolume";
 
 type PatioShape = "Rectangle" | "Circle" | "L-shape";
 type FinishType = "Broom finish" | "Smooth finish" | "Stamped concrete" | "Stained concrete";
+
+function canUseCanonicalConcretePatioValue(value: number) {
+  return !Number.isNaN(value) && value >= 0;
+}
 
 export default function ConcretePatioCalculatorClient() {
   const [shape, setShape] = useState<PatioShape>("Rectangle");
@@ -59,8 +69,60 @@ export default function ConcretePatioCalculatorClient() {
         2 * (sectionBLength + sectionBWidth);
     }
 
-    const concreteCubicFeet = area * (thicknessInches / 12);
-    const concreteCubicYards = concreteCubicFeet / 27;
+    let concreteCubicFeet: number;
+
+    if (
+      shape === "Rectangle" &&
+      canUseCanonicalConcretePatioValue(length) &&
+      canUseCanonicalConcretePatioValue(width) &&
+      canUseCanonicalConcretePatioValue(thicknessInches)
+    ) {
+      concreteCubicFeet = calculateRectangularConcreteBaseVolume({
+        length,
+        width,
+        height: thicknessInches / 12,
+      });
+    } else if (
+      shape === "Circle" &&
+      canUseCanonicalConcretePatioValue(circleDiameter) &&
+      canUseCanonicalConcretePatioValue(thicknessInches)
+    ) {
+      concreteCubicFeet = calculateCircularConcreteBaseVolume({
+        diameter: circleDiameter,
+        height: thicknessInches / 12,
+      });
+    } else if (
+      shape === "L-shape" &&
+      canUseCanonicalConcretePatioValue(sectionALength) &&
+      canUseCanonicalConcretePatioValue(sectionAWidth) &&
+      canUseCanonicalConcretePatioValue(sectionBLength) &&
+      canUseCanonicalConcretePatioValue(sectionBWidth) &&
+      canUseCanonicalConcretePatioValue(thicknessInches)
+    ) {
+      concreteCubicFeet = calculateLShapedConcreteBaseVolume({
+        lengthOne: sectionALength,
+        widthOne: sectionAWidth,
+        lengthTwo: sectionBLength,
+        widthTwo: sectionBWidth,
+        height: thicknessInches / 12,
+      });
+    } else {
+      concreteCubicFeet = area * (thicknessInches / 12);
+    }
+
+    const concretePhysicalVolume =
+      canUseCanonicalConcretePatioValue(concreteCubicFeet)
+        ? calculateConcretePhysicalVolume({
+            baseVolume: concreteCubicFeet,
+            unitSystem: "imperial",
+            wastePercent: 0,
+          })
+        : null;
+
+    const concreteCubicYards = concretePhysicalVolume
+      ? concretePhysicalVolume.baseCubicYards
+      : concreteCubicFeet / 27;
+
     const concreteCubicYardsWithWaste =
       concreteCubicYards * (1 + wastePercent / 100);
 
