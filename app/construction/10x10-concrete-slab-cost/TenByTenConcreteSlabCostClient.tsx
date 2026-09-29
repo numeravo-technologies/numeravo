@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { calculateImperialConcreteVolume } from "../../../lib/calculations/concreteVolume";
+
 type SlabUse =
   | "Shed pad"
   | "Small patio"
@@ -103,9 +105,16 @@ export default function TenByTenConcreteSlabCostClient() {
   }
 
   const results = useMemo(() => {
-    const concreteCubicFeet = slabArea * (thicknessInches / 12);
-    const concreteYards = concreteCubicFeet / 27;
-    const concreteYardsWithWaste = concreteYards * (1 + wastePercent / 100);
+    const concreteVolume = calculateImperialConcreteVolume({
+      lengthFeet: slabLength,
+      widthFeet: slabWidth,
+      thicknessInches,
+      wastePercent,
+    });
+
+    const concreteCubicFeet = concreteVolume.baseCubicFeet;
+    const concreteYards = concreteVolume.baseCubicYards;
+    const concreteYardsWithWaste = concreteVolume.volumeWithWaste;
     const concreteMaterialCost = concreteYardsWithWaste * concretePricePerYard;
 
     const baseCubicFeet = slabArea * (baseDepthInches / 12);
