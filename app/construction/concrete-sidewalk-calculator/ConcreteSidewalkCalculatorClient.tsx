@@ -1,8 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  calculateConcretePhysicalVolume,
+  calculateRectangularConcreteBaseVolume,
+} from "@/lib/calculations/concreteVolume";
 
 type SidewalkLayout = "Straight run" | "Multiple sections";
+
+function canUseCanonicalConcreteSidewalkValue(value: number) {
+  return !Number.isNaN(value) && value >= 0;
+}
 
 export default function ConcreteSidewalkCalculatorClient() {
   const [layout, setLayout] = useState<SidewalkLayout>("Straight run");
@@ -40,8 +48,30 @@ export default function ConcreteSidewalkCalculatorClient() {
     const area = actualLength * actualWidth;
     const formLinearFeet = actualLength * 2;
 
-    const concreteCubicFeet = area * (thicknessInches / 12);
-    const concreteCubicYards = concreteCubicFeet / 27;
+    const concreteCubicFeet =
+      canUseCanonicalConcreteSidewalkValue(actualLength) &&
+      canUseCanonicalConcreteSidewalkValue(actualWidth) &&
+      canUseCanonicalConcreteSidewalkValue(thicknessInches)
+        ? calculateRectangularConcreteBaseVolume({
+            length: actualLength,
+            width: actualWidth,
+            height: thicknessInches / 12,
+          })
+        : area * (thicknessInches / 12);
+
+    const concretePhysicalVolume =
+      canUseCanonicalConcreteSidewalkValue(concreteCubicFeet)
+        ? calculateConcretePhysicalVolume({
+            baseVolume: concreteCubicFeet,
+            unitSystem: "imperial",
+            wastePercent: 0,
+          })
+        : null;
+
+    const concreteCubicYards = concretePhysicalVolume
+      ? concretePhysicalVolume.baseCubicYards
+      : concreteCubicFeet / 27;
+
     const concreteCubicYardsWithWaste =
       concreteCubicYards * (1 + wastePercent / 100);
 
