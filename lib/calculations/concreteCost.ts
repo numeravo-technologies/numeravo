@@ -1,3 +1,8 @@
+import {
+  calculateConcretePhysicalVolume,
+  calculateRectangularConcreteBaseVolume,
+} from "./concreteVolume";
+
 export type ConcreteCostResult = {
   area: number;
   cubicFeet: number;
@@ -47,14 +52,24 @@ export function calculateConcreteCost({
     lengthFeet * widthFeet;
 
   const cubicFeet =
-    area * (thicknessInches / 12);
+    calculateRectangularConcreteBaseVolume({
+      length: lengthFeet,
+      width: widthFeet,
+      height: thicknessInches / 12,
+    });
+
+  const concretePhysicalVolume =
+    calculateConcretePhysicalVolume({
+      baseVolume: cubicFeet,
+      unitSystem: "imperial",
+      wastePercent,
+    });
 
   const cubicYards =
-    cubicFeet / 27;
+    concretePhysicalVolume.baseCubicYards;
 
   const cubicYardsWithWaste =
-    cubicYards *
-    (1 + wastePercent / 100);
+    concretePhysicalVolume.volumeWithWaste;
 
   const concreteCost =
     cubicYardsWithWaste *

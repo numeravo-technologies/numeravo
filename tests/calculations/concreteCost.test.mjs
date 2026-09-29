@@ -1,9 +1,40 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import {
-  calculateConcreteCost,
-} from "../../lib/calculations/concreteCost.ts";
+import { readFile, rm, writeFile } from "node:fs/promises";
+
+const concreteCostSourceUrl = new URL(
+  "../../lib/calculations/concreteCost.ts",
+  import.meta.url,
+);
+
+const concreteCostTestModuleUrl = new URL(
+  "../../lib/calculations/concreteCost.node-test.ts",
+  import.meta.url,
+);
+
+const concreteCostSource = await readFile(
+  concreteCostSourceUrl,
+  "utf8",
+);
+
+const concreteCostNodeSource = concreteCostSource.replace(
+  '"./concreteVolume"',
+  '"./concreteVolume.ts"',
+);
+
+await writeFile(
+  concreteCostTestModuleUrl,
+  concreteCostNodeSource,
+);
+
+const { calculateConcreteCost } = await import(
+  `${concreteCostTestModuleUrl.href}?c5=${Date.now()}`
+);
+
+await rm(concreteCostTestModuleUrl, {
+  force: true,
+});
 
 const defaults = {
   lengthFeet: 20,
@@ -193,4 +224,31 @@ test("zero slab area produces zero cost per square foot", () => {
   assert.equal(result.cubicYards, 0);
   assert.equal(result.totalCost, 0);
   assert.equal(result.costPerSqFt, 0);
+});
+
+test("concrete cost reuses canonical concrete physical-volume math", async () => {
+  const { readFile } = await import("node:fs/promises");
+
+  const source = await readFile(
+    new URL(
+      "../../lib/calculations/concreteCost.ts",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.match(
+    source,
+    /calculateRectangularConcreteBaseVolume/,
+  );
+
+  assert.match(
+    source,
+    /calculateConcretePhysicalVolume/,
+  );
+
+  assert.doesNotMatch(
+    source,
+    /calculateConcreteOrder/,
+  );
 });
