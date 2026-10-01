@@ -2,6 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { buildConcretePumpTruckCostCalculationResult } from "@/data/concretePumpTruckCostCalculationResult";
+import { setProjectScopeResult } from "@/data/projectContext";
+import { createProjectScopeResult } from "@/data/projectScopeResult";
+import {
+  loadProjectSession,
+  saveProjectSession,
+} from "@/data/projectSession";
+
+const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
+const PROJECT_SCOPE_ID = "pumping";
+
 type PresetType =
   | "Line pump"
   | "Boom pump"
@@ -163,16 +174,25 @@ export default function ConcretePumpTruckCostCalculatorClient() {
   const [standbyHours, setStandbyHours] = useState(0);
   const [standbyRate, setStandbyRate] = useState(150);
   const [extraLaborCost, setExtraLaborCost] = useState(0);
+  const [projectMode, setProjectMode] = useState(false);
+  const [hasSavedProjectResult, setHasSavedProjectResult] = useState(false);
+  const [projectSaveMessage, setProjectSaveMessage] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
     if (
       params.get("fromProject") !==
-      "concrete-slab-equipment-pad"
+      PROJECT_RECIPE_ID
     ) {
       return;
     }
+
+    setProjectMode(true);
+    const project = loadProjectSession(PROJECT_RECIPE_ID);
+    setHasSavedProjectResult(
+      Boolean(project?.scopeResults[PROJECT_SCOPE_ID]),
+    );
 
     const rawYards = params.get("yards");
 
@@ -296,6 +316,59 @@ export default function ConcretePumpTruckCostCalculatorClient() {
     extraLaborCost,
     pumpType,
   ]);
+
+  function saveCalculationToProject() {
+    const project = loadProjectSession(PROJECT_RECIPE_ID);
+
+    if (!project) {
+      setProjectSaveMessage(
+        "Project session not found. Return to the project and reopen this calculator.",
+      );
+      return;
+    }
+
+    const isUpdate = Boolean(
+      project.scopeResults[PROJECT_SCOPE_ID],
+    );
+
+    const calculationResult =
+      buildConcretePumpTruckCostCalculationResult({
+        preset,
+        pumpType,
+        concreteYards,
+        pumpRateYardsPerHour,
+        minimumHours,
+        hourlyRate,
+        setupFee,
+        travelFee,
+        washoutFee,
+        hoseFee,
+        yardageSurcharge,
+        standbyHours,
+        standbyRate,
+        extraLaborCost,
+        result,
+      });
+
+    const scopeResult = createProjectScopeResult({
+      scopeId: PROJECT_SCOPE_ID,
+      result: calculationResult,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const updatedProject = setProjectScopeResult(
+      project,
+      scopeResult,
+    );
+
+    saveProjectSession(updatedProject);
+    setHasSavedProjectResult(true);
+    setProjectSaveMessage(
+      isUpdate
+        ? "Pumping result updated in project."
+        : "Pumping result added to project.",
+    );
+  }
 
   function copyResults() {
     const summary = [
@@ -438,6 +511,26 @@ export default function ConcretePumpTruckCostCalculatorClient() {
             ))}
           </ul>
         </div>
+
+        {projectMode ? (
+          <>
+            <button
+              type="button"
+              onClick={saveCalculationToProject}
+              className="mt-6 w-full rounded-2xl border border-orange-400 px-5 py-4 text-sm font-bold text-orange-400 transition hover:bg-orange-400/10"
+            >
+              {hasSavedProjectResult
+                ? "Update Project"
+                : "Add to Project"}
+            </button>
+
+            {projectSaveMessage ? (
+              <p className="mt-3 text-sm leading-6 text-[#A0AEC0]">
+                {projectSaveMessage}
+              </p>
+            ) : null}
+          </>
+        ) : null}
 
         <button
           type="button"
