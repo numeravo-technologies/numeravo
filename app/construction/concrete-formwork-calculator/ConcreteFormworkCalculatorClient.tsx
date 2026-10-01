@@ -2,6 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { buildFormworkCalculationResult } from "@/data/formworkCalculationResult";
+import { setProjectScopeResult } from "@/data/projectContext";
+import { createProjectScopeResult } from "@/data/projectScopeResult";
+import {
+  loadProjectSession,
+  saveProjectSession,
+} from "@/data/projectSession";
+
+const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
+const PROJECT_SCOPE_ID = "formwork";
+
 type PresetType =
   | "Slab"
   | "Driveway"
@@ -152,16 +163,26 @@ export default function ConcreteFormworkCalculatorClient() {
   const [laborHours, setLaborHours] = useState(5);
   const [laborRate, setLaborRate] = useState(65);
   const [copied, setCopied] = useState(false);
+  const [projectMode, setProjectMode] = useState(false);
+  const [hasSavedProjectResult, setHasSavedProjectResult] = useState(false);
+  const [projectSaveMessage, setProjectSaveMessage] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
     if (
       params.get("fromProject") !==
-      "concrete-slab-equipment-pad"
+      PROJECT_RECIPE_ID
     ) {
       return;
     }
+
+    setProjectMode(true);
+
+    const project = loadProjectSession(PROJECT_RECIPE_ID);
+    setHasSavedProjectResult(
+      Boolean(project?.scopeResults[PROJECT_SCOPE_ID]),
+    );
 
     const readNonNegativeNumber = (key: string) => {
       const rawValue = params.get(key);
@@ -312,6 +333,60 @@ export default function ConcreteFormworkCalculatorClient() {
     });
   }
 
+  function saveCalculationToProject() {
+    const project = loadProjectSession(PROJECT_RECIPE_ID);
+
+    if (!project) {
+      setProjectSaveMessage(
+        "Project session not found. Return to the project and reopen this calculator.",
+      );
+      return;
+    }
+
+    const isUpdate = Boolean(
+      project.scopeResults[PROJECT_SCOPE_ID],
+    );
+
+    const calculationResult = buildFormworkCalculationResult({
+      presetType,
+      length,
+      width,
+      formRuns,
+      extraFormRuns,
+      boardLength,
+      boardCost,
+      stakeSpacing,
+      stakeCost,
+      braceSpacing,
+      braceCost,
+      fastenerCostPerBoard,
+      formOilCostPerFoot,
+      wastePercent,
+      laborHours,
+      laborRate,
+      results,
+    });
+
+    const scopeResult = createProjectScopeResult({
+      scopeId: PROJECT_SCOPE_ID,
+      result: calculationResult,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const updatedProject = setProjectScopeResult(
+      project,
+      scopeResult,
+    );
+
+    saveProjectSession(updatedProject);
+    setHasSavedProjectResult(true);
+    setProjectSaveMessage(
+      isUpdate
+        ? "Formwork result updated in project."
+        : "Formwork result added to project.",
+    );
+  }
+
   async function copyResults() {
     const text = `Concrete Formwork Calculator
 Preset: ${presetType}
@@ -432,6 +507,26 @@ Notes: ${results.notes.join(" ")}`;
             ))}
           </ul>
         </div>
+
+        {projectMode ? (
+          <>
+            <button
+              type="button"
+              onClick={saveCalculationToProject}
+              className="mt-5 w-full rounded-xl border border-[#F97316] px-5 py-3 font-semibold text-[#F97316] transition hover:bg-[#F97316]/10"
+            >
+              {hasSavedProjectResult
+                ? "Update Project"
+                : "Add to Project"}
+            </button>
+
+            {projectSaveMessage ? (
+              <p className="mt-3 text-sm leading-6 text-[#A0AEC0]">
+                {projectSaveMessage}
+              </p>
+            ) : null}
+          </>
+        ) : null}
 
         <button
           onClick={copyResults}
