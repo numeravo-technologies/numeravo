@@ -9,13 +9,8 @@ import {
   setProjectInput,
   toggleScopeComponent,
 } from "@/data/projectContext";
-import {
-  getProjectCalculatorHref,
-} from "@/data/projectHandoff";
-import {
-  loadProjectSession,
-  saveProjectSession,
-} from "@/data/projectSession";
+import { getProjectCalculatorHref } from "@/data/projectHandoff";
+import { loadProjectSession, saveProjectSession } from "@/data/projectSession";
 import type {
   ProjectInputKey,
   ProjectRecipeId,
@@ -46,9 +41,7 @@ export default function ProjectWorkflowClient({
   coreInputs,
   scope,
 }: ProjectWorkflowClientProps) {
-  const [project, setProject] = useState(() =>
-    createProjectContext(recipeId),
-  );
+  const [project, setProject] = useState(() => createProjectContext(recipeId));
   const [sessionRestored, setSessionRestored] = useState(false);
 
   useEffect(() => {
@@ -77,10 +70,7 @@ export default function ProjectWorkflowClient({
     return getProjectCalculatorHref(item, project);
   }
 
-  const updateInput = (
-    key: ProjectInputKey,
-    rawValue: string,
-  ) => {
+  const updateInput = (key: ProjectInputKey, rawValue: string) => {
     if (rawValue === "") {
       setProject((current) => ({
         ...current,
@@ -99,15 +89,11 @@ export default function ProjectWorkflowClient({
       return;
     }
 
-    setProject((current) =>
-      setProjectInput(current, key, value),
-    );
+    setProject((current) => setProjectInput(current, key, value));
   };
 
   const toggleScope = (item: WorkflowScopeItem) => {
-    setProject((current) =>
-      toggleScopeComponent(current, item.id),
-    );
+    setProject((current) => toggleScopeComponent(current, item.id));
   };
 
   return (
@@ -218,10 +204,7 @@ export default function ProjectWorkflowClient({
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {scope.map((item) => {
-                const selected = isScopeComponentSelected(
-                  project,
-                  item.id,
-                );
+                const selected = isScopeComponentSelected(project, item.id);
 
                 return (
                   <button
@@ -294,9 +277,7 @@ export default function ProjectWorkflowClient({
 
             <div className="mt-6 border-t border-[#1F2937] pt-5">
               <div className="flex items-center justify-between gap-4">
-                <h3 className="font-semibold text-white">
-                  Selected scope
-                </h3>
+                <h3 className="font-semibold text-white">Selected scope</h3>
 
                 <span className="text-sm font-semibold text-[#F97316]">
                   {selectedScope.length}
@@ -340,31 +321,373 @@ export default function ProjectWorkflowClient({
               )}
             </div>
 
-            <div className="mt-6 rounded-xl border border-[#263041] bg-[#0B0F19] p-4">
-              <p className="text-sm font-semibold text-white">
-                Prototype behavior
-              </p>
+            <div className="mt-6 border-t border-[#1F2937] pt-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-semibold text-white">
+                    Calculation progress
+                  </h3>
+                  <p className="mt-1 text-xs leading-5 text-[#7F8A9B]">
+                    Saved results from the calculators selected for this
+                    project.
+                  </p>
+                </div>
 
-              <p className="mt-2 text-xs leading-5 text-[#A0AEC0]">
-                Project inputs and scope selections currently stay on this page
-                only. Opening a calculator does not yet transfer these values
-                automatically.
-              </p>
+                <span className="text-sm font-semibold text-[#F97316]">
+                  {
+                    selectedScope.filter(
+                      (item) => project.scopeResults[item.id],
+                    ).length
+                  }
+                  /{selectedScope.length}
+                </span>
+              </div>
+
+              {selectedScope.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {selectedScope.map((item) => {
+                    const saved = project.scopeResults[item.id];
+
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-[#263041] bg-[#0B0F19] px-3 py-3"
+                      >
+                        <span className="text-sm font-medium text-white">
+                          {item.label}
+                        </span>
+
+                        <span
+                          className={
+                            saved
+                              ? "text-xs font-semibold uppercase tracking-[0.12em] text-emerald-400"
+                              : "text-xs font-semibold uppercase tracking-[0.12em] text-[#6B7280]"
+                          }
+                        >
+                          {saved ? "Saved" : "Not calculated"}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </aside>
       </div>
+
+      <ProjectResultsWorkspace
+        project={project}
+        selectedScope={selectedScope}
+        getCalculatorHref={getCalculatorHref}
+      />
     </div>
   );
 }
 
-function SummaryValue({
-  label,
-  value,
+function ProjectResultsWorkspace({
+  project,
+  selectedScope,
+  getCalculatorHref,
 }: {
-  label: string;
-  value: string;
+  project: ReturnType<typeof createProjectContext>;
+  selectedScope: WorkflowScopeItem[];
+  getCalculatorHref: (item: WorkflowScopeItem) => string;
 }) {
+  const savedScope = selectedScope
+    .map((item) => ({
+      item,
+      scopeResult: project.scopeResults[item.id],
+    }))
+    .filter(
+      (
+        entry,
+      ): entry is {
+        item: WorkflowScopeItem;
+        scopeResult: NonNullable<(typeof project.scopeResults)[string]>;
+      } => Boolean(entry.scopeResult),
+    );
+
+  const savedTotalCost = savedScope.reduce(
+    (total, { scopeResult }) => total + (scopeResult.result.totalCost ?? 0),
+    0,
+  );
+
+  const savedCostCount = savedScope.filter(
+    ({ scopeResult }) => scopeResult.result.totalCost !== undefined,
+  ).length;
+
+  return (
+    <section className="mt-8 rounded-3xl border border-[#1F2937] bg-[#121826] p-5 sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#F97316]">
+            Project results
+          </p>
+
+          <h2 className="mt-2 text-2xl font-bold text-white">
+            Calculation workspace
+          </h2>
+
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-[#A0AEC0]">
+            Review the individual calculations saved to this project. Results
+            remain separated by scope so the estimate can be traced back to each
+            calculator.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-[#3A2A20] bg-[#0B0F19] px-4 py-3 sm:min-w-56">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#7F8A9B]">
+            Saved cost total
+          </p>
+          <p className="mt-1 text-2xl font-bold text-white">
+            {formatCurrency(savedTotalCost)}
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[#7F8A9B]">
+            From {savedCostCount} saved calculation
+            {savedCostCount === 1 ? "" : "s"} with cost totals.
+          </p>
+        </div>
+      </div>
+
+      {selectedScope.length === 0 ? (
+        <div className="mt-6 rounded-2xl border border-dashed border-[#2A3444] bg-[#0B0F19] p-5">
+          <p className="text-sm text-[#A0AEC0]">
+            Select project scope items above to build the calculation workspace.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-6 space-y-4">
+          {selectedScope.map((item) => {
+            const scopeResult = project.scopeResults[item.id];
+
+            if (!scopeResult) {
+              return (
+                <article
+                  key={item.id}
+                  className="rounded-2xl border border-[#263041] bg-[#0B0F19] p-5"
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h3 className="text-lg font-bold text-white">
+                          {item.label}
+                        </h3>
+                        <span className="rounded-full border border-[#374151] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#7F8A9B]">
+                          Not calculated
+                        </span>
+                      </div>
+
+                      <p className="mt-2 text-sm leading-6 text-[#A0AEC0]">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    <Link
+                      href={getCalculatorHref(item)}
+                      className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-[#F97316] px-4 py-2 text-sm font-semibold text-[#FDBA74] transition hover:bg-[#2A170D]"
+                    >
+                      Open Calculator
+                    </Link>
+                  </div>
+                </article>
+              );
+            }
+
+            const result = scopeResult.result;
+
+            return (
+              <article
+                key={item.id}
+                className="overflow-hidden rounded-2xl border border-[#3A2A20] bg-[#0B0F19]"
+              >
+                <div className="flex flex-col gap-4 border-b border-[#263041] p-5 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h3 className="text-lg font-bold text-white">
+                        {item.label}
+                      </h3>
+                      <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-emerald-400">
+                        Saved
+                      </span>
+                    </div>
+
+                    <p className="mt-1 text-sm text-[#A0AEC0]">
+                      {scopeResult.calculatorTitle}
+                    </p>
+
+                    <p className="mt-2 text-xs text-[#6B7280]">
+                      Updated {formatUpdatedAt(scopeResult.updatedAt)}
+                    </p>
+                  </div>
+
+                  <Link
+                    href={getCalculatorHref(item)}
+                    className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-[#F97316] px-4 py-2 text-sm font-semibold text-[#FDBA74] transition hover:bg-[#2A170D]"
+                  >
+                    Open / Update
+                  </Link>
+                </div>
+
+                <div className="grid gap-6 p-5 lg:grid-cols-3">
+                  <ResultGroup
+                    title="Inputs"
+                    rows={result.inputSummary.map((field) => ({
+                      key: field.key,
+                      label: field.label,
+                      value: formatResultValue(field.value, field.unit),
+                    }))}
+                  />
+
+                  <ResultGroup
+                    title="Results"
+                    rows={result.metrics.map((metric) => ({
+                      key: metric.key,
+                      label: metric.label,
+                      value: formatResultNumber(metric.value, metric.unit),
+                    }))}
+                  />
+
+                  <ResultGroup
+                    title="Costs"
+                    rows={
+                      result.costs && result.costs.length > 0
+                        ? [
+                            ...result.costs.map((cost) => ({
+                              key: cost.key,
+                              label: cost.label,
+                              value: formatCurrency(cost.amount),
+                            })),
+                            ...(result.totalCost !== undefined
+                              ? [
+                                  {
+                                    key: "totalCost",
+                                    label: "Saved Total",
+                                    value: formatCurrency(result.totalCost),
+                                  },
+                                ]
+                              : []),
+                          ]
+                        : [
+                            {
+                              key: "no-cost",
+                              label: "Cost result",
+                              value: "Not provided",
+                            },
+                          ]
+                    }
+                  />
+                </div>
+
+                {result.notes && result.notes.length > 0 && (
+                  <div className="border-t border-[#263041] px-5 py-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#7F8A9B]">
+                      Notes
+                    </p>
+                    <div className="mt-2 space-y-1">
+                      {result.notes.map((note, index) => (
+                        <p
+                          key={`${item.id}-note-${index}`}
+                          className="text-sm leading-6 text-[#A0AEC0]"
+                        >
+                          {note}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ResultGroup({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: Array<{
+    key: string;
+    label: string;
+    value: string;
+  }>;
+}) {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#F97316]">
+        {title}
+      </p>
+
+      <dl className="mt-3 space-y-3">
+        {rows.map((row) => (
+          <div
+            key={row.key}
+            className="border-b border-[#1F2937] pb-3 last:border-b-0 last:pb-0"
+          >
+            <dt className="text-xs leading-5 text-[#7F8A9B]">{row.label}</dt>
+            <dd className="mt-1 break-words text-sm font-semibold text-white">
+              {row.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
+}
+
+function formatResultValue(
+  value: string | number | boolean | null,
+  unit?: string,
+) {
+  if (value === null) {
+    return "—";
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+
+  if (typeof value === "number") {
+    return formatResultNumber(value, unit);
+  }
+
+  return unit ? `${value} ${unit}` : value;
+}
+
+function formatResultNumber(value: number, unit?: string) {
+  const formatted = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 2,
+  }).format(value);
+
+  return unit ? `${formatted} ${unit}` : formatted;
+}
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function formatUpdatedAt(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function SummaryValue({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-[#263041] bg-[#0B0F19] p-3">
       <p className="text-xs text-[#6B7280]">{label}</p>
@@ -373,10 +696,7 @@ function SummaryValue({
   );
 }
 
-function formatProjectValue(
-  value: number | undefined,
-  suffix: string,
-) {
+function formatProjectValue(value: number | undefined, suffix: string) {
   if (value === undefined) {
     return "—";
   }
