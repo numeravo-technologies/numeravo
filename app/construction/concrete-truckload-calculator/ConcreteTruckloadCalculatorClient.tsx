@@ -2,6 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { buildConcreteTruckloadCalculationResult } from "@/data/concreteTruckloadCalculationResult";
+import { setProjectScopeResult } from "@/data/projectContext";
+import { createProjectScopeResult } from "@/data/projectScopeResult";
+import {
+  loadProjectSession,
+  saveProjectSession,
+} from "@/data/projectSession";
+
+const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
+const PROJECT_SCOPE_ID = "delivery";
+
 type InputMode = "Known cubic yards" | "Calculate from dimensions";
 type ProjectType = "Slab / pad" | "Driveway" | "Patio" | "Sidewalk" | "Footing";
 
@@ -29,16 +40,25 @@ export default function ConcreteTruckloadCalculatorClient() {
   const [concreteWeightPerYard, setConcreteWeightPerYard] = useState(4050);
 
   const [copied, setCopied] = useState(false);
+  const [projectMode, setProjectMode] = useState(false);
+  const [hasSavedProjectResult, setHasSavedProjectResult] = useState(false);
+  const [projectSaveMessage, setProjectSaveMessage] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
     if (
       params.get("fromProject") !==
-      "concrete-slab-equipment-pad"
+      PROJECT_RECIPE_ID
     ) {
       return;
     }
+
+    setProjectMode(true);
+    const project = loadProjectSession(PROJECT_RECIPE_ID);
+    setHasSavedProjectResult(
+      Boolean(project?.scopeResults[PROJECT_SCOPE_ID]),
+    );
 
     const readNonNegativeNumber = (key: string) => {
       const rawValue = params.get(key);
@@ -208,6 +228,61 @@ export default function ConcreteTruckloadCalculatorClient() {
     }
   }
 
+  function saveCalculationToProject() {
+    const project = loadProjectSession(PROJECT_RECIPE_ID);
+
+    if (!project) {
+      setProjectSaveMessage(
+        "Project session not found. Return to the project and reopen this calculator.",
+      );
+      return;
+    }
+
+    const isUpdate = Boolean(
+      project.scopeResults[PROJECT_SCOPE_ID],
+    );
+
+    const calculationResult = buildConcreteTruckloadCalculationResult({
+      inputMode,
+      projectType,
+      knownYards,
+      length,
+      width,
+      thicknessInches,
+      wastePercent,
+      truckCapacityYards,
+      minimumDeliveryYards,
+      roundToNearestYard,
+      concretePricePerYard,
+      deliveryFeePerTruck,
+      shortLoadFee,
+      fuelSurcharge,
+      environmentalFee,
+      waitingTimeFee,
+      concreteWeightPerYard,
+      results,
+    });
+
+    const scopeResult = createProjectScopeResult({
+      scopeId: PROJECT_SCOPE_ID,
+      result: calculationResult,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const updatedProject = setProjectScopeResult(
+      project,
+      scopeResult,
+    );
+
+    saveProjectSession(updatedProject);
+    setHasSavedProjectResult(true);
+    setProjectSaveMessage(
+      isUpdate
+        ? "Delivery result updated in project."
+        : "Delivery result added to project.",
+    );
+  }
+
   async function copyResults() {
     const text = `Concrete Truckload Estimate
 Input mode: ${inputMode}
@@ -345,6 +420,26 @@ Estimated concrete weight: ${formatNumber(results.totalWeight, 0)} lb`;
           <ResultRow label="Other fees" value={formatCurrency(fuelSurcharge + environmentalFee + waitingTimeFee)} />
           <ResultRow label="Cost per ordered yard" value={formatCurrency(results.costPerYard)} />
         </div>
+
+        {projectMode ? (
+          <>
+            <button
+              type="button"
+              onClick={saveCalculationToProject}
+              className="mt-5 w-full rounded-xl border border-[#F97316] px-5 py-3 font-semibold text-[#F97316] transition hover:bg-[#F97316]/10"
+            >
+              {hasSavedProjectResult
+                ? "Update Project"
+                : "Add to Project"}
+            </button>
+
+            {projectSaveMessage ? (
+              <p className="mt-3 text-sm leading-6 text-[#A0AEC0]">
+                {projectSaveMessage}
+              </p>
+            ) : null}
+          </>
+        ) : null}
 
         <button
           onClick={copyResults}
