@@ -4,18 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import BackToProjectButton from "@/components/projects/BackToProjectButton";
 import { getCalculatorById } from "@/data/calculators";
-import {
-  getProjectConcreteYards,
-  type ProjectContext,
-} from "@/data/projectContext";
+import { type ProjectContext } from "@/data/projectContext";
+import { getProjectCalculatorHref } from "@/data/projectHandoff";
 import { loadProjectSession } from "@/data/projectSession";
 import { getProjectRecipeById } from "@/data/projectRecipes";
 
 const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
-
-const PROJECT_HREF =
-  "/construction/project/concrete-slab-equipment-pad";
 
 export default function ProjectWorkflowNavigator() {
   const pathname = usePathname();
@@ -54,80 +50,6 @@ export default function ProjectWorkflowNavigator() {
     return null;
   }
 
-  function getCalculatorHref(
-    calculatorId: string,
-    calculatorHref: string,
-  ) {
-    const supportedCalculatorIds = new Set([
-      "concrete-calculator",
-      "gravel-calculator",
-      "rebar-spacing-for-concrete-slab",
-      "concrete-formwork-calculator",
-      "concrete-truckload-calculator",
-      "concrete-pump-truck-cost-calculator",
-      "concrete-labor-cost-calculator",
-      "concrete-finishing-cost-calculator",
-    ]);
-
-    if (!supportedCalculatorIds.has(calculatorId)) {
-      return calculatorHref;
-    }
-
-    const params = new URLSearchParams({
-      fromProject: activeProject.recipeId,
-    });
-
-    const length = activeProject.inputs.length;
-    const width = activeProject.inputs.width;
-    const thickness = activeProject.inputs.thickness;
-    const wastePercent = activeProject.inputs.wastePercent;
-
-    const usesDimensions =
-      calculatorId !==
-      "concrete-pump-truck-cost-calculator";
-
-    if (usesDimensions && length !== undefined) {
-      params.set("length", String(length));
-    }
-
-    if (usesDimensions && width !== undefined) {
-      params.set("width", String(width));
-    }
-
-    if (
-      (calculatorId === "concrete-calculator" ||
-        calculatorId === "concrete-truckload-calculator" ||
-        calculatorId === "concrete-labor-cost-calculator") &&
-      thickness !== undefined
-    ) {
-      params.set("thickness", String(thickness));
-    }
-
-    if (
-      (calculatorId === "concrete-calculator" ||
-        calculatorId === "gravel-calculator" ||
-        calculatorId === "concrete-formwork-calculator" ||
-        calculatorId === "concrete-truckload-calculator") &&
-      wastePercent !== undefined
-    ) {
-      params.set("waste", String(wastePercent));
-    }
-
-    if (
-      calculatorId ===
-      "concrete-pump-truck-cost-calculator"
-    ) {
-      const concreteYards =
-        getProjectConcreteYards(activeProject);
-
-      if (concreteYards !== null) {
-        params.set("yards", String(concreteYards));
-      }
-    }
-
-    return `${calculatorHref}?${params.toString()}`;
-  }
-
   const length = activeProject.inputs.length;
   const width = activeProject.inputs.width;
   const thickness = activeProject.inputs.thickness;
@@ -145,12 +67,7 @@ export default function ProjectWorkflowNavigator() {
       <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0">
-            <Link
-              href={PROJECT_HREF}
-              className="inline-flex items-center text-sm font-semibold text-[#F97316] transition hover:text-[#FDBA74]"
-            >
-              ← Back to project
-            </Link>
+            <BackToProjectButton compact />
 
             <p className="mt-2 truncate text-lg font-bold text-white">
               {activeProject.projectName.trim() ||
@@ -205,9 +122,12 @@ export default function ProjectWorkflowNavigator() {
               return (
                 <Link
                   key={component.id}
-                  href={getCalculatorHref(
-                    component.calculatorId,
-                    calculator.href,
+                  href={getProjectCalculatorHref(
+                    {
+                      calculatorId: component.calculatorId,
+                      calculatorHref: calculator.href,
+                    },
+                    activeProject,
                   )}
                   aria-current={current ? "page" : undefined}
                   className={

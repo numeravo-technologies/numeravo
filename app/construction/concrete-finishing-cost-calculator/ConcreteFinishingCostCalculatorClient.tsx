@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import BackToProjectButton from "@/components/projects/BackToProjectButton";
+
 import { buildConcreteFinishingCostCalculationResult } from "@/data/concreteFinishingCostCalculationResult";
 import { setProjectScopeResult } from "@/data/projectContext";
 import { createProjectScopeResult } from "@/data/projectScopeResult";
@@ -596,7 +598,7 @@ export default function ConcreteFinishingCostCalculatorClient() {
             <button
               type="button"
               onClick={saveCalculationToProject}
-              className="mt-5 w-full rounded-xl border border-[#F97316] px-5 py-3 font-semibold text-[#F97316] transition hover:bg-[#F97316]/10"
+              className="mt-5 w-full rounded-xl bg-[#F97316] px-5 py-3 font-semibold text-white transition hover:bg-[#EA580C]"
             >
               {hasSavedProjectResult
                 ? "Update Project"
@@ -611,10 +613,20 @@ export default function ConcreteFinishingCostCalculatorClient() {
           </>
         ) : null}
 
+        {projectMode ? (
+          <div className="mt-2 [&>a]:w-full">
+            <BackToProjectButton />
+          </div>
+        ) : null}
+
         <button
           type="button"
           onClick={copyResults}
-          className="mt-6 w-full rounded-2xl bg-orange-400 px-5 py-4 text-sm font-bold text-[#0B0F19] transition hover:bg-orange-300"
+          className={
+            projectMode
+              ? "mt-2 w-full rounded-xl border border-[#1F2937] px-5 py-3 font-semibold text-[#A0AEC0] transition hover:border-[#F97316] hover:text-white"
+              : "mt-6 w-full rounded-2xl bg-orange-400 px-5 py-4 text-sm font-bold text-[#0B0F19] transition hover:bg-orange-300"
+          }
         >
           Copy results
         </button>

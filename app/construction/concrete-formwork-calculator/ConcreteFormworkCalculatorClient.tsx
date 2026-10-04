@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import BackToProjectButton from "@/components/projects/BackToProjectButton";
+
 import { buildFormworkCalculationResult } from "@/data/formworkCalculationResult";
 import { setProjectScopeResult } from "@/data/projectContext";
 import { createProjectScopeResult } from "@/data/projectScopeResult";
@@ -513,7 +515,7 @@ Notes: ${results.notes.join(" ")}`;
             <button
               type="button"
               onClick={saveCalculationToProject}
-              className="mt-5 w-full rounded-xl border border-[#F97316] px-5 py-3 font-semibold text-[#F97316] transition hover:bg-[#F97316]/10"
+              className="mt-5 w-full rounded-xl bg-[#F97316] px-5 py-3 font-semibold text-white transition hover:bg-[#EA580C]"
             >
               {hasSavedProjectResult
                 ? "Update Project"
@@ -528,9 +530,19 @@ Notes: ${results.notes.join(" ")}`;
           </>
         ) : null}
 
+        {projectMode ? (
+          <div className="mt-2 [&>a]:w-full">
+            <BackToProjectButton />
+          </div>
+        ) : null}
+
         <button
           onClick={copyResults}
-          className="mt-5 w-full rounded-xl bg-[#F97316] px-5 py-3 font-semibold text-white transition hover:opacity-90"
+          className={
+            projectMode
+              ? "mt-2 w-full rounded-xl border border-[#1F2937] px-5 py-3 font-semibold text-[#A0AEC0] transition hover:border-[#F97316] hover:text-white"
+              : "mt-5 w-full rounded-xl bg-[#F97316] px-5 py-3 font-semibold text-white transition hover:opacity-90"
+          }
         >
           {copied ? "Copied!" : "Copy Results"}
         </button>

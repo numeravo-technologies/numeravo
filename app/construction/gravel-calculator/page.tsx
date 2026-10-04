@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
+import BackToProjectButton from "@/components/projects/BackToProjectButton";
 import { buildGravelCalculationResult } from "@/data/gravelCalculationResult";
 import { setProjectScopeResult } from "@/data/projectContext";
 import { createProjectScopeResult } from "@/data/projectScopeResult";
@@ -693,26 +694,32 @@ Estimated Material Cost: ${formatCurrency(results.estimatedCost)}`;
           </section>
 
           <section className="rounded-2xl border border-[#1F2937] bg-[#121826] p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-col gap-4">
               <h2 className="text-2xl font-semibold">Results</h2>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col gap-2">
                 {projectRecipeId === CONCRETE_PROJECT_RECIPE_ID && (
-                  <button
-                    type="button"
-                    onClick={saveCalculationToProject}
-                    className="rounded-xl border border-[#F97316] bg-[#F97316] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#EA580C]"
-                  >
-                    {hasSavedProjectResult
-                      ? "Update Project"
-                      : "Add to Project"}
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={saveCalculationToProject}
+                      className="w-full rounded-xl bg-[#F97316] px-5 py-3 font-semibold text-white transition hover:bg-[#EA580C]"
+                    >
+                      {hasSavedProjectResult
+                        ? "Update Project"
+                        : "Add to Project"}
+                    </button>
+
+                    <div className="[&>a]:w-full">
+                      <BackToProjectButton />
+                    </div>
+                  </>
                 )}
 
                 <button
                   type="button"
                   onClick={copyResults}
-                  className="rounded-xl border border-[#1F2937] px-3 py-2 text-xs font-semibold text-[#A0AEC0] hover:border-[#F97316] hover:text-white"
+                  className="w-full rounded-xl border border-[#1F2937] px-5 py-3 font-semibold text-[#A0AEC0] transition hover:border-[#F97316] hover:text-white"
                 >
                   {copied ? "Copied" : "Copy Results"}
                 </button>
