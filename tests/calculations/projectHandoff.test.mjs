@@ -124,12 +124,12 @@ test("finishing calculator receives slab dimensions only", () => {
   );
 });
 
-test("saw cut calculator remains outside project prefill handoff", () => {
+test("saw cut calculator receives dimensions and thickness", () => {
   assert.equal(
     href(
       "concrete-saw-cut-calculator",
       "/construction/concrete-saw-cut-calculator",
     ),
-    "/construction/concrete-saw-cut-calculator",
+    "/construction/concrete-saw-cut-calculator?fromProject=concrete-slab-equipment-pad&length=40&width=60&thickness=6",
   );
 });

@@ -17,6 +17,7 @@ const supportedCalculatorIds = new Set([
   "concrete-pump-truck-cost-calculator",
   "concrete-labor-cost-calculator",
   "concrete-finishing-cost-calculator",
+  "concrete-saw-cut-calculator",
 ]);
 
 export function getProjectCalculatorHref(
@@ -51,7 +52,8 @@ export function getProjectCalculatorHref(
   if (
     (item.calculatorId === "concrete-calculator" ||
       item.calculatorId === "concrete-truckload-calculator" ||
-      item.calculatorId === "concrete-labor-cost-calculator") &&
+      item.calculatorId === "concrete-labor-cost-calculator" ||
+      item.calculatorId === "concrete-saw-cut-calculator") &&
     thickness !== undefined
   ) {
     params.set("thickness", String(thickness));
