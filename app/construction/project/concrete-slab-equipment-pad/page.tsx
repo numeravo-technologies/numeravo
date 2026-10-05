@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import CalculatorPageShell from "@/components/calculators/CalculatorPageShell";
 import { getCalculatorById } from "@/data/calculators";
-import { getProjectRecipeById } from "@/data/projectRecipes";
+import { concreteSlabEquipmentPadWorkflowDefinition } from "@/data/workflowDefinitions/concreteSlabEquipmentPad";
 
 import ProjectWorkflowClient from "./ProjectWorkflowClient";
 
@@ -21,13 +21,13 @@ export const metadata = {
 };
 
 export default function ConcreteSlabEquipmentPadProjectPage() {
-  const recipe = getProjectRecipeById("concrete-slab-equipment-pad");
+  const definition = concreteSlabEquipmentPadWorkflowDefinition;
 
-  if (!recipe) {
+  if (!definition) {
     notFound();
   }
 
-  const scope = recipe.scope
+  const scope = definition.steps
     .map((component) => {
       const calculator = getCalculatorById(component.calculatorId);
 
@@ -49,10 +49,10 @@ export default function ConcreteSlabEquipmentPadProjectPage() {
   return (
     <CalculatorPageShell>
       <ProjectWorkflowClient
-        recipeId={recipe.id}
-        title={recipe.title}
-        description={recipe.description}
-        coreInputs={recipe.coreInputs}
+        definitionId={definition.id}
+        title={definition.title}
+        description={definition.description}
+        coreInputs={definition.inputs}
         scope={scope}
       />
     </CalculatorPageShell>

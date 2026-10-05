@@ -3,19 +3,21 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import type { ProjectUnitSystem } from "@/data/projectContext";
 import {
-  createProjectContext,
-  isScopeComponentSelected,
-  setProjectInput,
-  toggleScopeComponent,
-} from "@/data/projectContext";
+  createWorkflowContext,
+  isWorkflowStepSelected,
+  setWorkflowInput,
+  toggleWorkflowStep,
+  type WorkflowContext,
+} from "@/data/workflowContext";
+import {
+  concreteProjectToWorkflowContext,
+  workflowContextToConcreteProject,
+} from "@/data/workflowAdapters/concreteProjectWorkflowAdapter";
 import { getProjectCalculatorHref } from "@/data/projectHandoff";
 import { loadProjectSession, saveProjectSession } from "@/data/projectSession";
-import type {
-  ProjectInputKey,
-  ProjectRecipeId,
-  ProjectRecipeInput,
-} from "@/data/projectRecipes";
+import type { WorkflowInputDefinition } from "@/data/workflowDefinition";
 
 type WorkflowScopeItem = {
   id: string;
@@ -27,58 +29,59 @@ type WorkflowScopeItem = {
 };
 
 type ProjectWorkflowClientProps = {
-  recipeId: ProjectRecipeId;
+  definitionId: string;
   title: string;
   description: string;
-  coreInputs: ProjectRecipeInput[];
+  coreInputs: WorkflowInputDefinition[];
   scope: WorkflowScopeItem[];
 };
 
 export default function ProjectWorkflowClient({
-  recipeId,
+  definitionId,
   title,
   description,
   coreInputs,
   scope,
 }: ProjectWorkflowClientProps) {
-  const [project, setProject] = useState(() => createProjectContext(recipeId));
+  const [workflow, setWorkflow] = useState(() =>
+    createWorkflowContext(definitionId),
+  );
+  const [unitSystem, setUnitSystem] = useState<ProjectUnitSystem>("imperial");
   const [sessionRestored, setSessionRestored] = useState(false);
 
   useEffect(() => {
-    const storedProject = loadProjectSession(recipeId);
+    const storedProject = loadProjectSession("concrete-slab-equipment-pad");
 
     if (storedProject) {
-      setProject(storedProject);
+      setWorkflow(concreteProjectToWorkflowContext(storedProject));
+      setUnitSystem(storedProject.unitSystem);
     }
 
     setSessionRestored(true);
-  }, [recipeId]);
+  }, [definitionId]);
 
   useEffect(() => {
     if (!sessionRestored) {
       return;
     }
 
-    saveProjectSession(project);
-  }, [project, sessionRestored]);
+    saveProjectSession(workflowContextToConcreteProject(workflow, unitSystem));
+  }, [workflow, unitSystem, sessionRestored]);
 
   const selectedScope = scope.filter((item) =>
-    project.selectedScopeIds.includes(item.id),
+    workflow.selectedStepIds.includes(item.id),
   );
 
   function getCalculatorHref(item: WorkflowScopeItem) {
-    return getProjectCalculatorHref(item, project);
+    return getProjectCalculatorHref(
+      item,
+      workflowContextToConcreteProject(workflow, unitSystem),
+    );
   }
 
-  const updateInput = (key: ProjectInputKey, rawValue: string) => {
+  const updateInput = (key: string, rawValue: string) => {
     if (rawValue === "") {
-      setProject((current) => ({
-        ...current,
-        inputs: {
-          ...current.inputs,
-          [key]: undefined,
-        },
-      }));
+      setWorkflow((current) => setWorkflowInput(current, key, null));
 
       return;
     }
@@ -89,11 +92,11 @@ export default function ProjectWorkflowClient({
       return;
     }
 
-    setProject((current) => setProjectInput(current, key, value));
+    setWorkflow((current) => setWorkflowInput(current, key, value));
   };
 
   const toggleScope = (item: WorkflowScopeItem) => {
-    setProject((current) => toggleScopeComponent(current, item.id));
+    setWorkflow((current) => toggleWorkflowStep(current, item.id));
   };
 
   return (
@@ -132,11 +135,11 @@ export default function ProjectWorkflowClient({
 
               <input
                 type="text"
-                value={project.projectName}
+                value={workflow.name}
                 onChange={(event) =>
-                  setProject((current) => ({
+                  setWorkflow((current) => ({
                     ...current,
-                    projectName: event.target.value,
+                    name: event.target.value,
                   }))
                 }
                 placeholder="Example: North equipment pad"
@@ -164,7 +167,9 @@ export default function ProjectWorkflowClient({
                         type="number"
                         min="0"
                         inputMode="decimal"
-                        value={project.inputs[input.key] ?? ""}
+                        value={
+                          numericWorkflowInput(workflow.inputs[input.key]) ?? ""
+                        }
                         onChange={(event) =>
                           updateInput(input.key, event.target.value)
                         }
@@ -204,7 +209,7 @@ export default function ProjectWorkflowClient({
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {scope.map((item) => {
-                const selected = isScopeComponentSelected(project, item.id);
+                const selected = isWorkflowStepSelected(workflow, item.id);
 
                 return (
                   <button
@@ -253,25 +258,37 @@ export default function ProjectWorkflowClient({
             </p>
 
             <h2 className="mt-2 text-2xl font-bold text-white">
-              {project.projectName.trim() || "Untitled project"}
+              {workflow.name.trim() || "Untitled project"}
             </h2>
 
             <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
               <SummaryValue
                 label="Length"
-                value={formatProjectValue(project.inputs.length, "ft")}
+                value={formatProjectValue(
+                  numericWorkflowInput(workflow.inputs.length),
+                  "ft",
+                )}
               />
               <SummaryValue
                 label="Width"
-                value={formatProjectValue(project.inputs.width, "ft")}
+                value={formatProjectValue(
+                  numericWorkflowInput(workflow.inputs.width),
+                  "ft",
+                )}
               />
               <SummaryValue
                 label="Thickness"
-                value={formatProjectValue(project.inputs.thickness, "in")}
+                value={formatProjectValue(
+                  numericWorkflowInput(workflow.inputs.thickness),
+                  "in",
+                )}
               />
               <SummaryValue
                 label="Waste"
-                value={formatProjectValue(project.inputs.wastePercent, "%")}
+                value={formatProjectValue(
+                  numericWorkflowInput(workflow.inputs.wastePercent),
+                  "%",
+                )}
               />
             </div>
 
@@ -335,9 +352,8 @@ export default function ProjectWorkflowClient({
 
                 <span className="text-sm font-semibold text-[#F97316]">
                   {
-                    selectedScope.filter(
-                      (item) => project.scopeResults[item.id],
-                    ).length
+                    selectedScope.filter((item) => workflow.results[item.id])
+                      .length
                   }
                   /{selectedScope.length}
                 </span>
@@ -346,7 +362,7 @@ export default function ProjectWorkflowClient({
               {selectedScope.length > 0 && (
                 <div className="mt-4 space-y-2">
                   {selectedScope.map((item) => {
-                    const saved = project.scopeResults[item.id];
+                    const saved = workflow.results[item.id];
 
                     return (
                       <div
@@ -377,7 +393,7 @@ export default function ProjectWorkflowClient({
       </div>
 
       <ProjectResultsWorkspace
-        project={project}
+        workflow={workflow}
         selectedScope={selectedScope}
         getCalculatorHref={getCalculatorHref}
       />
@@ -386,25 +402,25 @@ export default function ProjectWorkflowClient({
 }
 
 function ProjectResultsWorkspace({
-  project,
+  workflow,
   selectedScope,
   getCalculatorHref,
 }: {
-  project: ReturnType<typeof createProjectContext>;
+  workflow: WorkflowContext;
   selectedScope: WorkflowScopeItem[];
   getCalculatorHref: (item: WorkflowScopeItem) => string;
 }) {
   const savedScope = selectedScope
     .map((item) => ({
       item,
-      scopeResult: project.scopeResults[item.id],
+      scopeResult: workflow.results[item.id],
     }))
     .filter(
       (
         entry,
       ): entry is {
         item: WorkflowScopeItem;
-        scopeResult: NonNullable<(typeof project.scopeResults)[string]>;
+        scopeResult: NonNullable<(typeof workflow.results)[string]>;
       } => Boolean(entry.scopeResult),
     );
 
@@ -459,7 +475,7 @@ function ProjectResultsWorkspace({
       ) : (
         <div className="mt-6 space-y-4">
           {selectedScope.map((item) => {
-            const scopeResult = project.scopeResults[item.id];
+            const scopeResult = workflow.results[item.id];
 
             if (!scopeResult) {
               return (
@@ -694,6 +710,12 @@ function SummaryValue({ label, value }: { label: string; value: string }) {
       <p className="mt-1 font-semibold text-white">{value}</p>
     </div>
   );
+}
+
+function numericWorkflowInput(
+  value: WorkflowContext["inputs"][string],
+): number | undefined {
+  return typeof value === "number" ? value : undefined;
 }
 
 function formatProjectValue(value: number | undefined, suffix: string) {
