@@ -7,12 +7,8 @@ import {
   calculateConcreteLabor,
 } from "@/lib/calculations/concreteLabor";
 import { buildConcreteLaborCalculationResult } from "@/data/concreteLaborCalculationResult";
-import { setProjectScopeResult } from "@/data/projectContext";
-import { createProjectScopeResult } from "@/data/projectScopeResult";
-import {
-  loadProjectSession,
-  saveProjectSession,
-} from "@/data/projectSession";
+import { loadProjectSession } from "@/data/projectSession";
+import { saveConcreteWorkflowResult } from "@/data/workflowPersistence/concreteWorkflowResultPersistence";
 
 const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
 const PROJECT_SCOPE_ID = "labor";
@@ -356,18 +352,11 @@ export default function ConcreteLaborCostCalculatorClient() {
         result,
       });
 
-    const scopeResult = createProjectScopeResult({
-      scopeId: PROJECT_SCOPE_ID,
+    saveConcreteWorkflowResult({
+      stepId: PROJECT_SCOPE_ID,
       result: calculationResult,
       updatedAt: new Date().toISOString(),
     });
-
-    const updatedProject = setProjectScopeResult(
-      project,
-      scopeResult,
-    );
-
-    saveProjectSession(updatedProject);
     setHasSavedProjectResult(true);
     setProjectSaveMessage(
       isUpdate

@@ -5,12 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 
 import { buildConcreteTruckloadCalculationResult } from "@/data/concreteTruckloadCalculationResult";
-import { setProjectScopeResult } from "@/data/projectContext";
-import { createProjectScopeResult } from "@/data/projectScopeResult";
-import {
-  loadProjectSession,
-  saveProjectSession,
-} from "@/data/projectSession";
+import { loadProjectSession } from "@/data/projectSession";
+import { saveConcreteWorkflowResult } from "@/data/workflowPersistence/concreteWorkflowResultPersistence";
 
 const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
 const PROJECT_SCOPE_ID = "delivery";
@@ -265,18 +261,11 @@ export default function ConcreteTruckloadCalculatorClient() {
       results,
     });
 
-    const scopeResult = createProjectScopeResult({
-      scopeId: PROJECT_SCOPE_ID,
+    saveConcreteWorkflowResult({
+      stepId: PROJECT_SCOPE_ID,
       result: calculationResult,
       updatedAt: new Date().toISOString(),
     });
-
-    const updatedProject = setProjectScopeResult(
-      project,
-      scopeResult,
-    );
-
-    saveProjectSession(updatedProject);
     setHasSavedProjectResult(true);
     setProjectSaveMessage(
       isUpdate

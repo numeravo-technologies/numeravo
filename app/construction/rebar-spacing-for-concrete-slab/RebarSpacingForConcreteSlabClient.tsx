@@ -4,12 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 
-import { setProjectScopeResult } from "@/data/projectContext";
-import { createProjectScopeResult } from "@/data/projectScopeResult";
-import {
-  loadProjectSession,
-  saveProjectSession,
-} from "@/data/projectSession";
+import { loadProjectSession } from "@/data/projectSession";
+import { saveConcreteWorkflowResult } from "@/data/workflowPersistence/concreteWorkflowResultPersistence";
 import { buildRebarSpacingCalculationResult } from "@/data/rebarSpacingCalculationResult";
 
 const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
@@ -180,18 +176,11 @@ export default function RebarSpacingForConcreteSlabClient() {
       results,
     });
 
-    const scopeResult = createProjectScopeResult({
-      scopeId: PROJECT_SCOPE_ID,
+    saveConcreteWorkflowResult({
+      stepId: PROJECT_SCOPE_ID,
       result: calculationResult,
       updatedAt: new Date().toISOString(),
     });
-
-    const updatedProject = setProjectScopeResult(
-      project,
-      scopeResult,
-    );
-
-    saveProjectSession(updatedProject);
     setHasSavedProjectResult(true);
     setProjectSaveMessage(
       isUpdate

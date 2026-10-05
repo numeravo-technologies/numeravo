@@ -7,12 +7,8 @@ import CalculatorNextSteps from "@/components/calculators/CalculatorNextSteps";
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 import CalculatorSearch from "@/components/calculators/CalculatorSearch";
 import { buildConcreteCalculationResult } from "@/data/concreteCalculationResult";
-import { setProjectScopeResult } from "@/data/projectContext";
-import { createProjectScopeResult } from "@/data/projectScopeResult";
-import {
-  loadProjectSession,
-  saveProjectSession,
-} from "@/data/projectSession";
+import { loadProjectSession } from "@/data/projectSession";
+import { saveConcreteWorkflowResult } from "@/data/workflowPersistence/concreteWorkflowResultPersistence";
 import type { ProjectRecipeId } from "@/data/projectRecipes";
 import { calculateConcreteOrder } from "@/lib/calculations/concreteOrder";
 import {
@@ -858,18 +854,11 @@ export default function ConcreteCalculatorPage() {
       project.scopeResults[CONCRETE_PROJECT_SCOPE_ID],
     );
 
-    const scopeResult = createProjectScopeResult({
-      scopeId: CONCRETE_PROJECT_SCOPE_ID,
+    saveConcreteWorkflowResult({
+      stepId: CONCRETE_PROJECT_SCOPE_ID,
       result: calculationResult,
       updatedAt: new Date().toISOString(),
     });
-
-    const updatedProject = setProjectScopeResult(
-      project,
-      scopeResult,
-    );
-
-    saveProjectSession(updatedProject);
 
     setHasSavedProjectResult(true);
     setProjectSaveMessage(

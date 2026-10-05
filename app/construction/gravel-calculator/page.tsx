@@ -5,12 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 import { buildGravelCalculationResult } from "@/data/gravelCalculationResult";
-import { setProjectScopeResult } from "@/data/projectContext";
-import { createProjectScopeResult } from "@/data/projectScopeResult";
-import {
-  loadProjectSession,
-  saveProjectSession,
-} from "@/data/projectSession";
+import { loadProjectSession } from "@/data/projectSession";
+import { saveConcreteWorkflowResult } from "@/data/workflowPersistence/concreteWorkflowResultPersistence";
 import type { ProjectRecipeId } from "@/data/projectRecipes";
 import {
   calculateImperialGravel,
@@ -333,18 +329,11 @@ export default function GravelCalculatorPage() {
       project.scopeResults[BASE_PROJECT_SCOPE_ID],
     );
 
-    const scopeResult = createProjectScopeResult({
-      scopeId: BASE_PROJECT_SCOPE_ID,
+    saveConcreteWorkflowResult({
+      stepId: BASE_PROJECT_SCOPE_ID,
       result: calculationResult,
       updatedAt: new Date().toISOString(),
     });
-
-    const updatedProject = setProjectScopeResult(
-      project,
-      scopeResult,
-    );
-
-    saveProjectSession(updatedProject);
 
     setHasSavedProjectResult(true);
     setProjectSaveMessage(
