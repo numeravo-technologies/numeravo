@@ -2,7 +2,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  createProjectScopeResult,
   isProjectScopeResult,
 } from "../../data/projectScopeResult.ts";
 
@@ -34,40 +33,16 @@ const calculationResult = {
   totalCost: 7350,
 };
 
-test("creates a project scope result from a calculation result", () => {
-  const scopeResult = createProjectScopeResult({
-    scopeId: "concrete",
-    result: calculationResult,
-    updatedAt: "2026-09-20T04:30:00.000Z",
-  });
-
-  assert.equal(scopeResult.scopeId, "concrete");
-  assert.equal(
-    scopeResult.calculatorId,
-    "concrete-calculator",
-  );
-  assert.equal(
-    scopeResult.calculatorTitle,
-    "Concrete Calculator",
-  );
-  assert.equal(scopeResult.result.totalCost, 7350);
-  assert.equal(
-    scopeResult.updatedAt,
-    "2026-09-20T04:30:00.000Z",
-  );
-});
-
 test("accepts a valid project scope result", () => {
-  const scopeResult = createProjectScopeResult({
+  const scopeResult = {
     scopeId: "concrete",
+    calculatorId: calculationResult.calculatorId,
+    calculatorTitle: calculationResult.calculatorTitle,
     result: calculationResult,
     updatedAt: "2026-09-20T04:30:00.000Z",
-  });
+  };
 
-  assert.equal(
-    isProjectScopeResult(scopeResult),
-    true,
-  );
+  assert.equal(isProjectScopeResult(scopeResult), true);
 });
 
 test("rejects a project scope result without scope identity", () => {

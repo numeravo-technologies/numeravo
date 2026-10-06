@@ -11,24 +11,6 @@ export type ProjectScopeResult = {
   updatedAt: string;
 };
 
-export function createProjectScopeResult({
-  scopeId,
-  result,
-  updatedAt,
-}: {
-  scopeId: string;
-  result: CalculationResult;
-  updatedAt: string;
-}): ProjectScopeResult {
-  return {
-    scopeId,
-    calculatorId: result.calculatorId,
-    calculatorTitle: result.calculatorTitle,
-    result,
-    updatedAt,
-  };
-}
-
 export function isProjectScopeResult(
   value: unknown,
 ): value is ProjectScopeResult {

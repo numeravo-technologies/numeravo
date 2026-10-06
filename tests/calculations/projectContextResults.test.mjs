@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 
 import {
   createProjectContext,
-  setProjectScopeResult,
 } from "../../data/projectContext.ts";
 
 const calculationResult = {
@@ -35,45 +34,4 @@ test("new project context starts with empty scope results", () => {
   );
 
   assert.deepEqual(project.scopeResults, {});
-});
-
-test("setProjectScopeResult stores a result by scope id", () => {
-  const project = createProjectContext(
-    "concrete-slab-equipment-pad",
-  );
-
-  const updated = setProjectScopeResult(
-    project,
-    scopeResult,
-  );
-
-  assert.deepEqual(
-    updated.scopeResults.concrete,
-    scopeResult,
-  );
-});
-
-test("setProjectScopeResult preserves existing project state", () => {
-  const project = {
-    ...createProjectContext(
-      "concrete-slab-equipment-pad",
-    ),
-    projectName: "North equipment pad",
-    selectedScopeIds: ["concrete"],
-  };
-
-  const updated = setProjectScopeResult(
-    project,
-    scopeResult,
-  );
-
-  assert.equal(
-    updated.projectName,
-    "North equipment pad",
-  );
-
-  assert.deepEqual(
-    updated.selectedScopeIds,
-    ["concrete"],
-  );
 });

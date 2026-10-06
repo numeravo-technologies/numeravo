@@ -33,54 +33,6 @@ export function createProjectContext(
   };
 }
 
-export function isScopeComponentSelected(
-  project: ProjectContext,
-  componentId: string,
-) {
-  return project.selectedScopeIds.includes(componentId);
-}
-
-export function toggleScopeComponent(
-  project: ProjectContext,
-  componentId: string,
-): ProjectContext {
-  const isSelected = project.selectedScopeIds.includes(componentId);
-
-  return {
-    ...project,
-    selectedScopeIds: isSelected
-      ? project.selectedScopeIds.filter((id) => id !== componentId)
-      : [...project.selectedScopeIds, componentId],
-  };
-}
-
-export function setProjectInput(
-  project: ProjectContext,
-  key: ProjectInputKey,
-  value: number,
-): ProjectContext {
-  return {
-    ...project,
-    inputs: {
-      ...project.inputs,
-      [key]: value,
-    },
-  };
-}
-
-export function setProjectScopeResult(
-  project: ProjectContext,
-  scopeResult: ProjectScopeResult,
-): ProjectContext {
-  return {
-    ...project,
-    scopeResults: {
-      ...project.scopeResults,
-      [scopeResult.scopeId]: scopeResult,
-    },
-  };
-}
-
 export function getProjectConcreteYards(
   project: ProjectContext,
 ): number | null {
