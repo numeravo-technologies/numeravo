@@ -6,38 +6,21 @@ import { useEffect, useState } from "react";
 
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 import { getCalculatorById } from "@/data/calculators";
-import type { ProjectUnitSystem } from "@/data/projectContext";
 import { getProjectCalculatorHref } from "@/data/projectHandoff";
-import { loadProjectSession } from "@/data/projectSession";
-import {
-  concreteProjectToWorkflowContext,
-  workflowContextToConcreteProject,
-} from "@/data/workflowAdapters/concreteProjectWorkflowAdapter";
+import { workflowContextToConcreteProject } from "@/data/workflowAdapters/concreteProjectWorkflowAdapter";
 import type { WorkflowContext } from "@/data/workflowContext";
 import { concreteSlabEquipmentPadWorkflowDefinition } from "@/data/workflowDefinitions/concreteSlabEquipmentPad";
-
-const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
-
-type NavigatorWorkflowState = {
-  workflow: WorkflowContext;
-  unitSystem: ProjectUnitSystem;
-};
+import {
+  type ConcreteWorkflowSession,
+  loadConcreteWorkflowSession,
+} from "@/data/workflowPersistence/concreteWorkflowSession";
 
 export default function ProjectWorkflowNavigator() {
   const pathname = usePathname();
-  const [project, setProject] = useState<NavigatorWorkflowState | null>(null);
+  const [project, setProject] = useState<ConcreteWorkflowSession | null>(null);
 
   useEffect(() => {
-    const storedProject = loadProjectSession(PROJECT_RECIPE_ID);
-
-    setProject(
-      storedProject
-        ? {
-            workflow: concreteProjectToWorkflowContext(storedProject),
-            unitSystem: storedProject.unitSystem,
-          }
-        : null,
-    );
+    setProject(loadConcreteWorkflowSession());
   }, [pathname]);
 
   if (!project) {

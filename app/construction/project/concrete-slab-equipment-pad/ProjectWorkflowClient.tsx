@@ -11,13 +11,11 @@ import {
   toggleWorkflowStep,
   type WorkflowContext,
 } from "@/data/workflowContext";
-import {
-  concreteProjectToWorkflowContext,
-  workflowContextToConcreteProject,
-} from "@/data/workflowAdapters/concreteProjectWorkflowAdapter";
+import { workflowContextToConcreteProject } from "@/data/workflowAdapters/concreteProjectWorkflowAdapter";
 import { getProjectCalculatorHref } from "@/data/projectHandoff";
-import { loadProjectSession, saveProjectSession } from "@/data/projectSession";
+import { saveProjectSession } from "@/data/projectSession";
 import type { WorkflowInputDefinition } from "@/data/workflowDefinition";
+import { loadConcreteWorkflowSession } from "@/data/workflowPersistence/concreteWorkflowSession";
 
 type WorkflowScopeItem = {
   id: string;
@@ -50,11 +48,11 @@ export default function ProjectWorkflowClient({
   const [sessionRestored, setSessionRestored] = useState(false);
 
   useEffect(() => {
-    const storedProject = loadProjectSession("concrete-slab-equipment-pad");
+    const session = loadConcreteWorkflowSession();
 
-    if (storedProject) {
-      setWorkflow(concreteProjectToWorkflowContext(storedProject));
-      setUnitSystem(storedProject.unitSystem);
+    if (session) {
+      setWorkflow(session.workflow);
+      setUnitSystem(session.unitSystem);
     }
 
     setSessionRestored(true);
