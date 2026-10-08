@@ -1,6 +1,9 @@
 import type { ProjectUnitSystem } from "../projectContext";
-import { loadProjectSession } from "../projectSession";
-import { concreteProjectToWorkflowContext } from "../workflowAdapters/concreteProjectWorkflowAdapter";
+import { loadProjectSession, saveProjectSession } from "../projectSession";
+import {
+  concreteProjectToWorkflowContext,
+  workflowContextToConcreteProject,
+} from "../workflowAdapters/concreteProjectWorkflowAdapter";
 import type { WorkflowContext } from "../workflowContext";
 
 const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
@@ -21,4 +24,26 @@ export function loadConcreteWorkflowSession(): ConcreteWorkflowSession | null {
     workflow: concreteProjectToWorkflowContext(project),
     unitSystem: project.unitSystem,
   };
+}
+
+
+export function saveConcreteWorkflowSession({
+  workflow,
+  unitSystem,
+}: ConcreteWorkflowSession): void {
+  const existing = loadProjectSession(PROJECT_RECIPE_ID);
+
+  const project = workflowContextToConcreteProject(
+    workflow,
+    unitSystem,
+  );
+
+  if (existing) {
+    project.scopeResults = {
+      ...project.scopeResults,
+      ...existing.scopeResults,
+    };
+  }
+
+  saveProjectSession(project);
 }

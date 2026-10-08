@@ -11,11 +11,12 @@ import {
   toggleWorkflowStep,
   type WorkflowContext,
 } from "@/data/workflowContext";
-import { workflowContextToConcreteProject } from "@/data/workflowAdapters/concreteProjectWorkflowAdapter";
 import { getConcreteWorkflowCalculatorHref } from "@/data/workflowHandoff/concreteWorkflowHandoff";
-import { saveProjectSession } from "@/data/projectSession";
 import type { WorkflowInputDefinition } from "@/data/workflowDefinition";
-import { loadConcreteWorkflowSession } from "@/data/workflowPersistence/concreteWorkflowSession";
+import {
+  loadConcreteWorkflowSession,
+  saveConcreteWorkflowSession,
+} from "@/data/workflowPersistence/concreteWorkflowSession";
 
 type WorkflowScopeItem = {
   id: string;
@@ -63,7 +64,10 @@ export default function ProjectWorkflowClient({
       return;
     }
 
-    saveProjectSession(workflowContextToConcreteProject(workflow, unitSystem));
+    saveConcreteWorkflowSession({
+      workflow,
+      unitSystem,
+    });
   }, [workflow, unitSystem, sessionRestored]);
 
   const selectedScope = scope.filter((item) =>

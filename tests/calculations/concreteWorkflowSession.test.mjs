@@ -6,7 +6,10 @@ import {
   loadProjectSession,
   saveProjectSession,
 } from "../../data/projectSession.ts";
-import { loadConcreteWorkflowSession } from "../../data/workflowPersistence/concreteWorkflowSession.ts";
+import {
+  loadConcreteWorkflowSession,
+  saveConcreteWorkflowSession,
+} from "../../data/workflowPersistence/concreteWorkflowSession.ts";
 
 const recipeId = "concrete-slab-equipment-pad";
 
@@ -65,15 +68,20 @@ test("loads the concrete project session as workflow runtime state", () => {
       result: {
         calculatorId: "concrete-calculator",
         calculatorTitle: "Concrete Calculator",
-        inputs: {
-          length: 40,
-          width: 60,
-          thickness: 6,
-          wastePercent: 10,
-        },
-        outputs: {
-          volumeWithWaste: 48.88888888888889,
-        },
+        inputSummary: [
+          { key: "length", label: "Length", value: 40, unit: "ft" },
+          { key: "width", label: "Width", value: 60, unit: "ft" },
+          { key: "thickness", label: "Thickness", value: 6, unit: "in" },
+          { key: "wastePercent", label: "Waste", value: 10, unit: "%" },
+        ],
+        metrics: [
+          {
+            key: "volumeWithWaste",
+            label: "Volume With Waste",
+            value: 48.88888888888889,
+            unit: "yd³",
+          },
+        ],
       },
       updatedAt: "2026-10-05T20:00:00.000Z",
     },
@@ -169,4 +177,172 @@ test("inherits legacy project-session normalization before conversion", () => {
     "labor",
   ]);
   assert.deepEqual(session.workflow.results, {});
+});
+
+
+test("saves a new workflow session using the legacy storage key", () => {
+  const storage = installSessionStorage();
+
+  const workflow = {
+    definitionId: "construction.concrete-slab-equipment-pad",
+    name: "New equipment pad",
+    inputs: {
+      length: 30,
+      width: 40,
+      thickness: 6,
+      wastePercent: 5,
+    },
+    selectedStepIds: ["concrete", "labor"],
+    results: {},
+  };
+
+  saveConcreteWorkflowSession({
+    workflow,
+    unitSystem: "imperial",
+  });
+
+  const key = "numeravo:project:concrete-slab-equipment-pad";
+
+  assert.equal(storage.has(key), true);
+
+  const stored = JSON.parse(storage.get(key));
+
+  assert.equal(stored.recipeId, recipeId);
+  assert.equal(stored.projectName, workflow.name);
+  assert.deepEqual(stored.selectedScopeIds, workflow.selectedStepIds);
+  assert.deepEqual(stored.scopeResults, {});
+});
+
+test("restores workflow state after saving", () => {
+  installSessionStorage();
+
+  const workflow = {
+    definitionId: "construction.concrete-slab-equipment-pad",
+    name: "Round trip project",
+    inputs: {
+      length: 25,
+      width: 35,
+      thickness: 8,
+      wastePercent: 7,
+    },
+    selectedStepIds: ["concrete", "base"],
+    results: {},
+  };
+
+  saveConcreteWorkflowSession({
+    workflow,
+    unitSystem: "metric",
+  });
+
+  const restored = loadConcreteWorkflowSession();
+
+  assert.ok(restored);
+  assert.equal(restored.unitSystem, "metric");
+  assert.deepEqual(restored.workflow, workflow);
+});
+
+test("preserves newer stored results during workspace saves", () => {
+  installSessionStorage();
+
+  const project = createProjectContext(recipeId);
+
+  project.projectName = "Original";
+  project.scopeResults = {
+    concrete: {
+      scopeId: "concrete",
+      calculatorId: "concrete-calculator",
+      calculatorTitle: "Concrete Calculator",
+      result: {
+        calculatorId: "concrete-calculator",
+        calculatorTitle: "Concrete Calculator",
+        inputSummary: [],
+        metrics: [],
+        totalCost: 9000,
+      },
+      updatedAt: "2026-10-07T12:00:00.000Z",
+    },
+  };
+
+  saveProjectSession(project);
+
+  const workflow = {
+    definitionId: "construction.concrete-slab-equipment-pad",
+    name: "Updated workspace",
+    inputs: { length: 50 },
+    selectedStepIds: ["concrete"],
+    results: {
+      concrete: {
+        stepId: "concrete",
+        calculatorId: "concrete-calculator",
+        calculatorTitle: "Concrete Calculator",
+        result: {
+          calculatorId: "concrete-calculator",
+          calculatorTitle: "Concrete Calculator",
+          inputSummary: [],
+          metrics: [],
+          totalCost: 1000,
+        },
+        updatedAt: "2026-10-06T12:00:00.000Z",
+      },
+    },
+  };
+
+  saveConcreteWorkflowSession({
+    workflow,
+    unitSystem: "imperial",
+  });
+
+  const restored = loadProjectSession(recipeId);
+
+  assert.equal(restored.projectName, "Updated workspace");
+  assert.equal(restored.scopeResults.concrete.result.totalCost, 9000);
+  assert.equal(
+    restored.scopeResults.concrete.updatedAt,
+    "2026-10-07T12:00:00.000Z",
+  );
+});
+
+test("persists workflow unit-system changes", () => {
+  installSessionStorage();
+
+  const workflow = {
+    definitionId: "construction.concrete-slab-equipment-pad",
+    name: "Units project",
+    inputs: { length: 20 },
+    selectedStepIds: [],
+    results: {},
+  };
+
+  saveConcreteWorkflowSession({
+    workflow,
+    unitSystem: "imperial",
+  });
+
+  saveConcreteWorkflowSession({
+    workflow,
+    unitSystem: "metric",
+  });
+
+  assert.equal(loadConcreteWorkflowSession().unitSystem, "metric");
+});
+
+test("does not mutate the supplied workflow state", () => {
+  installSessionStorage();
+
+  const workflow = {
+    definitionId: "construction.concrete-slab-equipment-pad",
+    name: "Immutable project",
+    inputs: { length: 15, width: 20 },
+    selectedStepIds: ["concrete"],
+    results: {},
+  };
+
+  const snapshot = structuredClone(workflow);
+
+  saveConcreteWorkflowSession({
+    workflow,
+    unitSystem: "imperial",
+  });
+
+  assert.deepEqual(workflow, snapshot);
 });
