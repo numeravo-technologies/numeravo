@@ -117,6 +117,38 @@ test("returns false when workflow result storage write fails", () => {
   assert.equal(restored.scopeResults.concrete, undefined);
 });
 
+test("refuses result save when project storage cannot be read", () => {
+  const store = installSessionStorage();
+  const original = makeProject();
+
+  assert.equal(saveProjectSession(original), true);
+
+  const originalStoredValue = store.get(storageKey);
+  const originalGetItem = globalThis.window.sessionStorage.getItem;
+
+  try {
+    globalThis.window.sessionStorage.getItem = () => {
+      throw new Error("Storage read unavailable");
+    };
+
+    const saved = saveConcreteWorkflowResult({
+      stepId: "concrete",
+      result: makeCalculationResult(8100),
+      updatedAt: "2026-10-08T00:00:00.000Z",
+    });
+
+    assert.equal(saved, false);
+    assert.equal(store.get(storageKey), originalStoredValue);
+  } finally {
+    globalThis.window.sessionStorage.getItem = originalGetItem;
+  }
+
+  const restored = loadProjectSession(recipeId);
+
+  assert.ok(restored);
+  assert.deepEqual(restored, original);
+});
+
 test("returns false and does not create a project when no session exists", () => {
   const store = installSessionStorage();
 
