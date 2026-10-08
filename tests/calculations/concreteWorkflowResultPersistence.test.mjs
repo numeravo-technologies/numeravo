@@ -87,6 +87,36 @@ function makeProject() {
   };
 }
 
+test("returns false when workflow result storage write fails", () => {
+  const store = installSessionStorage();
+
+  const original = makeProject();
+
+  assert.equal(saveProjectSession(original), true);
+
+  const originalStoredValue = store.get(storageKey);
+
+  globalThis.window.sessionStorage.setItem = () => {
+    throw new Error("Storage write unavailable");
+  };
+
+  const saved = saveConcreteWorkflowResult({
+    stepId: "concrete",
+    result: makeCalculationResult(8100),
+    updatedAt: "2026-10-07T18:00:00.000Z",
+  });
+
+  assert.equal(saved, false);
+  assert.equal(store.get(storageKey), originalStoredValue);
+
+  const restored = loadProjectSession(recipeId);
+
+  assert.ok(restored);
+  assert.equal(restored.projectName, original.projectName);
+  assert.deepEqual(restored.scopeResults, original.scopeResults);
+  assert.equal(restored.scopeResults.concrete, undefined);
+});
+
 test("returns false and does not create a project when no session exists", () => {
   const store = installSessionStorage();
 

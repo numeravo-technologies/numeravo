@@ -30,15 +30,20 @@ function getProjectSessionKey(recipeId: ProjectRecipeId) {
   return `${PROJECT_SESSION_PREFIX}${recipeId}`;
 }
 
-export function saveProjectSession(project: ProjectContext) {
+export function saveProjectSession(project: ProjectContext): boolean {
   if (typeof window === "undefined") {
-    return;
+    return false;
   }
 
-  window.sessionStorage.setItem(
-    getProjectSessionKey(project.recipeId),
-    JSON.stringify(project),
-  );
+  try {
+    window.sessionStorage.setItem(
+      getProjectSessionKey(project.recipeId),
+      JSON.stringify(project),
+    );
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function loadProjectSession(

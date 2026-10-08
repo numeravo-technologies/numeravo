@@ -361,7 +361,7 @@ export default function ConcreteLaborCostCalculatorClient() {
     if (!saved) {
       setHasSavedProjectResult(false);
       setProjectSaveMessage(
-        "Project session not found. Return to the project and reopen this calculator.",
+        "Unable to save this result to the project. Check browser storage and try again. If the problem continues, reopen the project.",
       );
       return;
     }

@@ -36,6 +36,75 @@ function installSessionStorage() {
   return values;
 }
 
+test("workflow session save returns true after successful storage write", () => {
+  const storage = installSessionStorage();
+
+  const workflow = {
+    definitionId: "construction.concrete-slab-equipment-pad",
+    name: "Successful workflow save",
+    inputs: { length: 30 },
+    selectedStepIds: ["concrete"],
+    results: {},
+  };
+
+  const saved = saveConcreteWorkflowSession({
+    workflow,
+    unitSystem: "imperial",
+  });
+
+  assert.equal(saved, true);
+  assert.equal(
+    JSON.parse(
+      storage.get("numeravo:project:concrete-slab-equipment-pad"),
+    ).projectName,
+    workflow.name,
+  );
+});
+
+test("workflow session save returns false when storage write fails", () => {
+  const storage = installSessionStorage();
+
+  const workflow = {
+    definitionId: "construction.concrete-slab-equipment-pad",
+    name: "Original workflow",
+    inputs: { length: 30 },
+    selectedStepIds: ["concrete"],
+    results: {},
+  };
+
+  assert.equal(
+    saveConcreteWorkflowSession({
+      workflow,
+      unitSystem: "imperial",
+    }),
+    true,
+  );
+
+  const key = "numeravo:project:concrete-slab-equipment-pad";
+  const originalStoredValue = storage.get(key);
+
+  globalThis.window.sessionStorage.setItem = () => {
+    throw new Error("Storage write unavailable");
+  };
+
+  const saved = saveConcreteWorkflowSession({
+    workflow: {
+      ...workflow,
+      name: "Unsaved workflow update",
+    },
+    unitSystem: "metric",
+  });
+
+  assert.equal(saved, false);
+  assert.equal(storage.get(key), originalStoredValue);
+
+  const restored = loadConcreteWorkflowSession();
+
+  assert.ok(restored);
+  assert.equal(restored.workflow.name, "Original workflow");
+  assert.equal(restored.unitSystem, "imperial");
+});
+
 test("returns null when the concrete project session does not exist", () => {
   installSessionStorage();
 

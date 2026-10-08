@@ -47,6 +47,7 @@ export default function ProjectWorkflowClient({
   );
   const [unitSystem, setUnitSystem] = useState<ProjectUnitSystem>("imperial");
   const [sessionRestored, setSessionRestored] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     const session = loadConcreteWorkflowSession();
@@ -64,10 +65,12 @@ export default function ProjectWorkflowClient({
       return;
     }
 
-    saveConcreteWorkflowSession({
+    const saved = saveConcreteWorkflowSession({
       workflow,
       unitSystem,
     });
+
+    setSaveError(!saved);
   }, [workflow, unitSystem, sessionRestored]);
 
   const selectedScope = scope.filter((item) =>
@@ -108,6 +111,12 @@ export default function ProjectWorkflowClient({
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">
           {title}
         </h1>
+
+        {saveError && (
+          <p role="alert" className="mt-4 rounded-xl border border-red-500/40 bg-red-950/30 px-4 py-3 text-sm text-red-200">
+            Project changes could not be saved in this browser session. Check your browser storage settings and try editing the project again.
+          </p>
+        )}
 
         <p className="mt-5 max-w-3xl text-base leading-8 text-[#A0AEC0] sm:text-lg">
           {description}

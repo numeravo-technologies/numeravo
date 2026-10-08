@@ -32,6 +32,75 @@ function installSessionStorage() {
   return store;
 }
 
+test("successful project session write returns true", () => {
+  const store = installSessionStorage();
+
+  const project = {
+    recipeId,
+    projectName: "Write success",
+    unitSystem: "imperial",
+    inputs: {},
+    selectedScopeIds: [],
+    scopeResults: {},
+  };
+
+  assert.equal(saveProjectSession(project), true);
+  assert.equal(JSON.parse(store.get(storageKey)).projectName, "Write success");
+});
+
+test("project session write returns false without browser storage", () => {
+  const previousWindow = globalThis.window;
+
+  try {
+    delete globalThis.window;
+
+    const project = {
+      recipeId,
+      projectName: "Unavailable browser",
+      unitSystem: "imperial",
+      inputs: {},
+      selectedScopeIds: [],
+      scopeResults: {},
+    };
+
+    assert.equal(saveProjectSession(project), false);
+  } finally {
+    globalThis.window = previousWindow;
+  }
+});
+
+test("project session write returns false when storage throws and preserves data", () => {
+  const store = installSessionStorage();
+
+  const project = {
+    recipeId,
+    projectName: "Original project",
+    unitSystem: "imperial",
+    inputs: {},
+    selectedScopeIds: [],
+    scopeResults: {},
+  };
+
+  assert.equal(saveProjectSession(project), true);
+
+  const originalStoredValue = store.get(storageKey);
+
+  globalThis.window.sessionStorage.setItem = () => {
+    throw new Error("Storage write unavailable");
+  };
+
+  assert.equal(
+    saveProjectSession({
+      ...project,
+      projectName: "Unsaved update",
+    }),
+    false,
+  );
+
+  assert.equal(store.get(storageKey), originalStoredValue);
+  assert.equal(loadProjectSession(recipeId).projectName, "Original project");
+});
+
 test("older stored project without scopeResults restores with empty scopeResults", () => {
   const store = installSessionStorage();
 

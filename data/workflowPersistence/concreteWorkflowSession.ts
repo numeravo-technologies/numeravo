@@ -30,7 +30,7 @@ export function loadConcreteWorkflowSession(): ConcreteWorkflowSession | null {
 export function saveConcreteWorkflowSession({
   workflow,
   unitSystem,
-}: ConcreteWorkflowSession): void {
+}: ConcreteWorkflowSession): boolean {
   const existing = loadProjectSession(PROJECT_RECIPE_ID);
 
   const project = workflowContextToConcreteProject(
@@ -45,5 +45,5 @@ export function saveConcreteWorkflowSession({
     };
   }
 
-  saveProjectSession(project);
+  return saveProjectSession(project);
 }

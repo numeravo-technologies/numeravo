@@ -34,9 +34,7 @@ export function saveConcreteWorkflowResult({
 
   const updatedWorkflow = setWorkflowResult(workflow, workflowResult);
 
-  saveProjectSession(
+  return saveProjectSession(
     workflowContextToConcreteProject(updatedWorkflow, project.unitSystem),
   );
-
-  return true;
 }
