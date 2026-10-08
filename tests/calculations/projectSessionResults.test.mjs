@@ -101,6 +101,40 @@ test("project session write returns false when storage throws and preserves data
   assert.equal(loadProjectSession(recipeId).projectName, "Original project");
 });
 
+test("project session read returns null when storage throws and preserves data", () => {
+  const store = installSessionStorage();
+
+  const project = {
+    recipeId,
+    projectName: "Original project",
+    unitSystem: "imperial",
+    inputs: {},
+    selectedScopeIds: [],
+    scopeResults: {},
+  };
+
+  assert.equal(saveProjectSession(project), true);
+
+  const originalStoredValue = store.get(storageKey);
+  const originalGetItem = globalThis.window.sessionStorage.getItem;
+
+  try {
+    globalThis.window.sessionStorage.getItem = () => {
+      throw new Error("Storage read unavailable");
+    };
+
+    assert.equal(loadProjectSession(recipeId), null);
+    assert.equal(store.get(storageKey), originalStoredValue);
+  } finally {
+    globalThis.window.sessionStorage.getItem = originalGetItem;
+  }
+
+  assert.equal(
+    loadProjectSession(recipeId).projectName,
+    "Original project",
+  );
+});
+
 test("older stored project without scopeResults restores with empty scopeResults", () => {
   const store = installSessionStorage();
 

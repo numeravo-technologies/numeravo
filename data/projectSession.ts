@@ -53,15 +53,15 @@ export function loadProjectSession(
     return null;
   }
 
-  const stored = window.sessionStorage.getItem(
-    getProjectSessionKey(recipeId),
-  );
-
-  if (!stored) {
-    return null;
-  }
-
   try {
+    const stored = window.sessionStorage.getItem(
+      getProjectSessionKey(recipeId),
+    );
+
+    if (!stored) {
+      return null;
+    }
+
     const parsed = JSON.parse(stored) as Partial<ProjectContext>;
 
     if (parsed.recipeId !== recipeId) {
