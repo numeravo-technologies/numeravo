@@ -352,11 +352,19 @@ export default function ConcreteLaborCostCalculatorClient() {
         result,
       });
 
-    saveConcreteWorkflowResult({
+    const saved = saveConcreteWorkflowResult({
       stepId: PROJECT_SCOPE_ID,
       result: calculationResult,
       updatedAt: new Date().toISOString(),
     });
+
+    if (!saved) {
+      setHasSavedProjectResult(false);
+      setProjectSaveMessage(
+        "Project session not found. Return to the project and reopen this calculator.",
+      );
+      return;
+    }
     setHasSavedProjectResult(true);
     setProjectSaveMessage(
       isUpdate

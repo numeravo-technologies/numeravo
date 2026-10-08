@@ -852,11 +852,19 @@ export default function ConcreteCalculatorPage() {
       session.workflow.results[CONCRETE_PROJECT_SCOPE_ID],
     );
 
-    saveConcreteWorkflowResult({
+    const saved = saveConcreteWorkflowResult({
       stepId: CONCRETE_PROJECT_SCOPE_ID,
       result: calculationResult,
       updatedAt: new Date().toISOString(),
     });
+
+    if (!saved) {
+      setHasSavedProjectResult(false);
+      setProjectSaveMessage(
+        "Project session not found. Return to the project and reopen this calculator.",
+      );
+      return;
+    }
 
     setHasSavedProjectResult(true);
     setProjectSaveMessage(
