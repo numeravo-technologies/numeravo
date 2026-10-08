@@ -7,7 +7,7 @@ import CalculatorNextSteps from "@/components/calculators/CalculatorNextSteps";
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 import CalculatorSearch from "@/components/calculators/CalculatorSearch";
 import { buildConcreteCalculationResult } from "@/data/concreteCalculationResult";
-import { loadProjectSession } from "@/data/projectSession";
+import { loadConcreteWorkflowSession } from "@/data/workflowPersistence/concreteWorkflowSession";
 import { saveConcreteWorkflowResult } from "@/data/workflowPersistence/concreteWorkflowResultPersistence";
 import type { ProjectRecipeId } from "@/data/projectRecipes";
 import { calculateConcreteOrder } from "@/lib/calculations/concreteOrder";
@@ -278,12 +278,10 @@ export default function ConcreteCalculatorPage() {
 
     setProjectRecipeId(CONCRETE_PROJECT_RECIPE_ID);
 
-    const storedProject = loadProjectSession(
-      CONCRETE_PROJECT_RECIPE_ID,
-    );
+    const storedSession = loadConcreteWorkflowSession();
 
     const storedScopeResult =
-      storedProject?.scopeResults[
+      storedSession?.workflow.results[
         CONCRETE_PROJECT_SCOPE_ID
       ];
 
@@ -841,9 +839,9 @@ export default function ConcreteCalculatorPage() {
       return;
     }
 
-    const project = loadProjectSession(projectRecipeId);
+    const session = loadConcreteWorkflowSession();
 
-    if (!project) {
+    if (!session) {
       setProjectSaveMessage(
         "Project session not found. Return to the project and reopen this calculator.",
       );
@@ -851,7 +849,7 @@ export default function ConcreteCalculatorPage() {
     }
 
     const isUpdate = Boolean(
-      project.scopeResults[CONCRETE_PROJECT_SCOPE_ID],
+      session.workflow.results[CONCRETE_PROJECT_SCOPE_ID],
     );
 
     saveConcreteWorkflowResult({

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import ConstructionCalculatorSearchSection from "@/components/calculators/ConstructionCalculatorSearchSection";
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 import { buildGravelCalculationResult } from "@/data/gravelCalculationResult";
-import { loadProjectSession } from "@/data/projectSession";
+import { loadConcreteWorkflowSession } from "@/data/workflowPersistence/concreteWorkflowSession";
 import { saveConcreteWorkflowResult } from "@/data/workflowPersistence/concreteWorkflowResultPersistence";
 import type { ProjectRecipeId } from "@/data/projectRecipes";
 import {
@@ -152,12 +152,10 @@ export default function GravelCalculatorPage() {
 
     setProjectRecipeId(CONCRETE_PROJECT_RECIPE_ID);
 
-    const storedProject = loadProjectSession(
-      CONCRETE_PROJECT_RECIPE_ID,
-    );
+    const storedSession = loadConcreteWorkflowSession();
 
     const storedScopeResult =
-      storedProject?.scopeResults[BASE_PROJECT_SCOPE_ID];
+      storedSession?.workflow.results[BASE_PROJECT_SCOPE_ID];
 
     setHasSavedProjectResult(Boolean(storedScopeResult));
 
@@ -316,9 +314,9 @@ export default function GravelCalculatorPage() {
       return;
     }
 
-    const project = loadProjectSession(projectRecipeId);
+    const session = loadConcreteWorkflowSession();
 
-    if (!project) {
+    if (!session) {
       setProjectSaveMessage(
         "Project session not found. Return to the project and reopen this calculator.",
       );
@@ -326,7 +324,7 @@ export default function GravelCalculatorPage() {
     }
 
     const isUpdate = Boolean(
-      project.scopeResults[BASE_PROJECT_SCOPE_ID],
+      session.workflow.results[BASE_PROJECT_SCOPE_ID],
     );
 
     saveConcreteWorkflowResult({

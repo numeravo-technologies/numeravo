@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 
 import { buildFormworkCalculationResult } from "@/data/formworkCalculationResult";
-import { loadProjectSession } from "@/data/projectSession";
+import { loadConcreteWorkflowSession } from "@/data/workflowPersistence/concreteWorkflowSession";
 import { saveConcreteWorkflowResult } from "@/data/workflowPersistence/concreteWorkflowResultPersistence";
 
 const PROJECT_RECIPE_ID = "concrete-slab-equipment-pad";
@@ -177,9 +177,9 @@ export default function ConcreteFormworkCalculatorClient() {
 
     setProjectMode(true);
 
-    const project = loadProjectSession(PROJECT_RECIPE_ID);
+    const session = loadConcreteWorkflowSession();
     setHasSavedProjectResult(
-      Boolean(project?.scopeResults[PROJECT_SCOPE_ID]),
+      Boolean(session?.workflow.results[PROJECT_SCOPE_ID]),
     );
 
     const readNonNegativeNumber = (key: string) => {
@@ -332,9 +332,9 @@ export default function ConcreteFormworkCalculatorClient() {
   }
 
   function saveCalculationToProject() {
-    const project = loadProjectSession(PROJECT_RECIPE_ID);
+    const session = loadConcreteWorkflowSession();
 
-    if (!project) {
+    if (!session) {
       setProjectSaveMessage(
         "Project session not found. Return to the project and reopen this calculator.",
       );
@@ -342,7 +342,7 @@ export default function ConcreteFormworkCalculatorClient() {
     }
 
     const isUpdate = Boolean(
-      project.scopeResults[PROJECT_SCOPE_ID],
+      session.workflow.results[PROJECT_SCOPE_ID],
     );
 
     const calculationResult = buildFormworkCalculationResult({
