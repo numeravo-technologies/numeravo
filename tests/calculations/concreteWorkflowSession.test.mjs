@@ -8,6 +8,7 @@ import {
 } from "../../data/projectSession.ts";
 import {
   loadConcreteWorkflowSession,
+  inspectConcreteWorkflowSession,
   saveConcreteWorkflowSession,
 } from "../../data/workflowPersistence/concreteWorkflowSession.ts";
 
@@ -369,6 +370,101 @@ test("preserves newer stored results during workspace saves", () => {
     restored.scopeResults.concrete.updatedAt,
     "2026-10-07T12:00:00.000Z",
   );
+});
+
+test("refuses workflow save when existing project cannot be read", () => {
+  const storage = installSessionStorage();
+  const key = `numeravo:project:${recipeId}`;
+
+  const project = createProjectContext(recipeId);
+  project.projectName = "Original project";
+  project.scopeResults = {
+    concrete: {
+      scopeId: "concrete",
+      calculatorId: "concrete-calculator",
+      calculatorTitle: "Concrete Calculator",
+      result: {
+        calculatorId: "concrete-calculator",
+        calculatorTitle: "Concrete Calculator",
+        inputSummary: [],
+        metrics: [],
+        totalCost: 9000,
+      },
+      updatedAt: "2026-10-07T12:00:00.000Z",
+    },
+  };
+
+  assert.equal(saveProjectSession(project), true);
+
+  const originalStoredValue = storage.get(key);
+  const originalGetItem = globalThis.window.sessionStorage.getItem;
+
+  const workflow = {
+    definitionId: "construction.concrete-slab-equipment-pad",
+    name: "Unsaved workspace update",
+    inputs: { length: 50 },
+    selectedStepIds: ["concrete"],
+    results: {},
+  };
+
+  try {
+    globalThis.window.sessionStorage.getItem = () => {
+      throw new Error("Storage read unavailable");
+    };
+
+    assert.equal(
+      saveConcreteWorkflowSession({
+        workflow,
+        unitSystem: "imperial",
+      }),
+      false,
+    );
+
+    assert.equal(storage.get(key), originalStoredValue);
+  } finally {
+    globalThis.window.sessionStorage.getItem = originalGetItem;
+  }
+
+  const restored = loadProjectSession(recipeId);
+
+  assert.ok(restored);
+  assert.equal(restored.projectName, "Original project");
+  assert.equal(restored.scopeResults.concrete.result.totalCost, 9000);
+});
+
+
+test("reports restoration failure without treating it as missing", () => {
+  const storage = installSessionStorage();
+
+  const project = createProjectContext(recipeId);
+  project.projectName = "Protected project";
+
+  assert.equal(saveProjectSession(project), true);
+
+  const key = `numeravo:project:${recipeId}`;
+  const originalValue = storage.get(key);
+  const originalGetItem = globalThis.window.sessionStorage.getItem;
+
+  try {
+    globalThis.window.sessionStorage.getItem = () => {
+      throw new Error("Storage read unavailable");
+    };
+
+    const result = inspectConcreteWorkflowSession();
+
+    assert.equal(result.status, "error");
+    assert.equal(result.session, null);
+    assert.equal(storage.get(key), originalValue);
+  } finally {
+    globalThis.window.sessionStorage.getItem = originalGetItem;
+  }
+
+  const missingStorage = installSessionStorage();
+  const missing = inspectConcreteWorkflowSession();
+
+  assert.equal(missing.status, "missing");
+  assert.equal(missing.session, null);
+  assert.equal(missingStorage.size, 0);
 });
 
 test("persists workflow unit-system changes", () => {

@@ -46,11 +46,14 @@ export function saveProjectSession(project: ProjectContext): boolean {
   }
 }
 
-export function loadProjectSession(
+function readProjectSession(
   recipeId: ProjectRecipeId,
-): ProjectContext | null {
+): {
+  status: "missing" | "readable" | "error";
+  project: ProjectContext | null;
+} {
   if (typeof window === "undefined") {
-    return null;
+    return { status: "error", project: null };
   }
 
   try {
@@ -58,41 +61,63 @@ export function loadProjectSession(
       getProjectSessionKey(recipeId),
     );
 
+    if (stored === null) {
+      return { status: "missing", project: null };
+    }
+
     if (!stored) {
-      return null;
+      return { status: "error", project: null };
     }
 
     const parsed = JSON.parse(stored) as Partial<ProjectContext>;
 
     if (parsed.recipeId !== recipeId) {
-      return null;
+      return { status: "error", project: null };
     }
 
     const fallback = createProjectContext(recipeId);
 
     return {
-      ...fallback,
-      ...parsed,
-      recipeId,
-      projectName:
-        typeof parsed.projectName === "string"
-          ? parsed.projectName
-          : fallback.projectName,
-      unitSystem:
-        parsed.unitSystem === "metric" ? "metric" : "imperial",
-      inputs:
-        parsed.inputs &&
-        typeof parsed.inputs === "object"
-          ? parsed.inputs
-          : {},
-      selectedScopeIds: Array.isArray(parsed.selectedScopeIds)
-        ? parsed.selectedScopeIds.filter(
-            (id): id is string => typeof id === "string",
-          )
-        : [],
-      scopeResults: normalizeScopeResults(parsed.scopeResults),
+      status: "readable",
+      project: {
+        ...fallback,
+        ...parsed,
+        recipeId,
+        projectName:
+          typeof parsed.projectName === "string"
+            ? parsed.projectName
+            : fallback.projectName,
+        unitSystem:
+          parsed.unitSystem === "metric" ? "metric" : "imperial",
+        inputs:
+          parsed.inputs &&
+          typeof parsed.inputs === "object"
+            ? parsed.inputs
+            : {},
+        selectedScopeIds: Array.isArray(parsed.selectedScopeIds)
+          ? parsed.selectedScopeIds.filter(
+              (id): id is string => typeof id === "string",
+            )
+          : [],
+        scopeResults: normalizeScopeResults(parsed.scopeResults),
+      },
     };
   } catch {
-    return null;
+    return { status: "error", project: null };
   }
+}
+
+export function inspectProjectSession(
+  recipeId: ProjectRecipeId,
+): {
+  status: "missing" | "readable" | "error";
+  project: ProjectContext | null;
+} {
+  return readProjectSession(recipeId);
+}
+
+export function loadProjectSession(
+  recipeId: ProjectRecipeId,
+): ProjectContext | null {
+  return readProjectSession(recipeId).project;
 }

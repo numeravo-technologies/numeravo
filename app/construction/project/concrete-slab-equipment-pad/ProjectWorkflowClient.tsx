@@ -14,7 +14,7 @@ import {
 import { getConcreteWorkflowCalculatorHref } from "@/data/workflowHandoff/concreteWorkflowHandoff";
 import type { WorkflowInputDefinition } from "@/data/workflowDefinition";
 import {
-  loadConcreteWorkflowSession,
+  inspectConcreteWorkflowSession,
   saveConcreteWorkflowSession,
 } from "@/data/workflowPersistence/concreteWorkflowSession";
 
@@ -50,13 +50,20 @@ export default function ProjectWorkflowClient({
   const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
-    const session = loadConcreteWorkflowSession();
+    const { status, session } = inspectConcreteWorkflowSession();
+
+    if (status === "error") {
+      setSessionRestored(false);
+      setSaveError(true);
+      return;
+    }
 
     if (session) {
       setWorkflow(session.workflow);
       setUnitSystem(session.unitSystem);
     }
 
+    setSaveError(false);
     setSessionRestored(true);
   }, [definitionId]);
 

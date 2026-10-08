@@ -1,5 +1,5 @@
 import type { ProjectUnitSystem } from "../projectContext";
-import { loadProjectSession, saveProjectSession } from "../projectSession";
+import { inspectProjectSession, loadProjectSession, saveProjectSession } from "../projectSession";
 import {
   concreteProjectToWorkflowContext,
   workflowContextToConcreteProject,
@@ -27,11 +27,43 @@ export function loadConcreteWorkflowSession(): ConcreteWorkflowSession | null {
 }
 
 
+export function inspectConcreteWorkflowSession(): {
+  status: "missing" | "readable" | "error";
+  session: ConcreteWorkflowSession | null;
+} {
+  const { status, project } =
+    inspectProjectSession(PROJECT_RECIPE_ID);
+
+  if (status !== "readable" || !project) {
+    return {
+      status: status === "readable" ? "error" : status,
+      session: null,
+    };
+  }
+
+  try {
+    return {
+      status: "readable",
+      session: {
+        workflow: concreteProjectToWorkflowContext(project),
+        unitSystem: project.unitSystem,
+      },
+    };
+  } catch {
+    return { status: "error", session: null };
+  }
+}
+
 export function saveConcreteWorkflowSession({
   workflow,
   unitSystem,
 }: ConcreteWorkflowSession): boolean {
-  const existing = loadProjectSession(PROJECT_RECIPE_ID);
+  const { status, project: existing } =
+    inspectProjectSession(PROJECT_RECIPE_ID);
+
+  if (status === "error") {
+    return false;
+  }
 
   const project = workflowContextToConcreteProject(
     workflow,
