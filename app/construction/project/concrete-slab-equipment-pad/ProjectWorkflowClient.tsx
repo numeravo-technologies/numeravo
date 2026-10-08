@@ -12,7 +12,7 @@ import {
   type WorkflowContext,
 } from "@/data/workflowContext";
 import { workflowContextToConcreteProject } from "@/data/workflowAdapters/concreteProjectWorkflowAdapter";
-import { getProjectCalculatorHref } from "@/data/projectHandoff";
+import { getConcreteWorkflowCalculatorHref } from "@/data/workflowHandoff/concreteWorkflowHandoff";
 import { saveProjectSession } from "@/data/projectSession";
 import type { WorkflowInputDefinition } from "@/data/workflowDefinition";
 import { loadConcreteWorkflowSession } from "@/data/workflowPersistence/concreteWorkflowSession";
@@ -71,10 +71,7 @@ export default function ProjectWorkflowClient({
   );
 
   function getCalculatorHref(item: WorkflowScopeItem) {
-    return getProjectCalculatorHref(
-      item,
-      workflowContextToConcreteProject(workflow, unitSystem),
-    );
+    return getConcreteWorkflowCalculatorHref(item, workflow);
   }
 
   const updateInput = (key: string, rawValue: string) => {

@@ -6,8 +6,7 @@ import { useEffect, useState } from "react";
 
 import BackToProjectButton from "@/components/projects/BackToProjectButton";
 import { getCalculatorById } from "@/data/calculators";
-import { getProjectCalculatorHref } from "@/data/projectHandoff";
-import { workflowContextToConcreteProject } from "@/data/workflowAdapters/concreteProjectWorkflowAdapter";
+import { getConcreteWorkflowCalculatorHref } from "@/data/workflowHandoff/concreteWorkflowHandoff";
 import type { WorkflowContext } from "@/data/workflowContext";
 import { concreteSlabEquipmentPadWorkflowDefinition } from "@/data/workflowDefinitions/concreteSlabEquipmentPad";
 import {
@@ -61,11 +60,6 @@ export default function ProjectWorkflowNavigator() {
     length !== undefined && width !== undefined && thickness !== undefined
       ? `${length} × ${width} × ${thickness}" slab`
       : null;
-
-  const handoffProject = workflowContextToConcreteProject(
-    activeWorkflow,
-    project.unitSystem,
-  );
 
   return (
     <div className="border-b border-[#1F2937] bg-[#090D14] text-white">
@@ -121,12 +115,12 @@ export default function ProjectWorkflowNavigator() {
               return (
                 <Link
                   key={step.id}
-                  href={getProjectCalculatorHref(
+                  href={getConcreteWorkflowCalculatorHref(
                     {
                       calculatorId: step.calculatorId,
                       calculatorHref: calculator.href,
                     },
-                    handoffProject,
+                    activeWorkflow,
                   )}
                   aria-current={current ? "page" : undefined}
                   className={
