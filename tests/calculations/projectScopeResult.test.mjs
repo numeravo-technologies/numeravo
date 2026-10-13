@@ -5,6 +5,27 @@ import {
   isProjectScopeResult,
 } from "../../data/projectScopeResult.ts";
 
+const validProvenance = {
+  version: 1,
+  workflowDefinitionId:
+    "construction.concrete-slab-equipment-pad",
+  stepId: "concrete",
+  calculatorId: "concrete-calculator",
+  unitSystem: "imperial",
+  projectInputs: {
+    length: 40,
+    width: 60,
+    thickness: 6,
+    wastePercent: 10,
+  },
+  effectiveInputs: {
+    length: 40,
+    width: 60,
+    thickness: 6,
+    wastePercent: 10,
+  },
+};
+
 const calculationResult = {
   calculatorId: "concrete-calculator",
   calculatorTitle: "Concrete Calculator",
@@ -82,4 +103,85 @@ test("rejects malformed nested calculation result", () => {
     }),
     false,
   );
+});
+
+test("accepts valid project scope provenance", () => {
+  const scopeResult = {
+    scopeId: "concrete",
+    calculatorId: calculationResult.calculatorId,
+    calculatorTitle: calculationResult.calculatorTitle,
+    result: calculationResult,
+    updatedAt: "2026-09-20T04:30:00.000Z",
+    provenance: validProvenance,
+  };
+
+  assert.equal(isProjectScopeResult(scopeResult), true);
+});
+
+test("rejects malformed project scope provenance", () => {
+  const scopeResult = {
+    scopeId: "concrete",
+    calculatorId: calculationResult.calculatorId,
+    calculatorTitle: calculationResult.calculatorTitle,
+    result: calculationResult,
+    updatedAt: "2026-09-20T04:30:00.000Z",
+    provenance: { ...validProvenance, version: 99 },
+  };
+
+  assert.equal(isProjectScopeResult(scopeResult), false);
+});
+
+test("rejects provenance with mismatched scope identity", () => {
+  const scopeResult = {
+    scopeId: "base",
+    calculatorId: calculationResult.calculatorId,
+    calculatorTitle: calculationResult.calculatorTitle,
+    result: calculationResult,
+    updatedAt: "2026-09-20T04:30:00.000Z",
+    provenance: validProvenance,
+  };
+
+  assert.equal(isProjectScopeResult(scopeResult), false);
+});
+
+test("rejects provenance with mismatched calculator identity", () => {
+  const scopeResult = {
+    scopeId: "base",
+    calculatorId: calculationResult.calculatorId,
+    calculatorTitle: calculationResult.calculatorTitle,
+    result: calculationResult,
+    updatedAt: "2026-09-20T04:30:00.000Z",
+    provenance: {
+      ...validProvenance,
+      stepId: "base",
+      calculatorId: "gravel-calculator",
+    },
+  };
+
+  assert.equal(isProjectScopeResult(scopeResult), false);
+});
+
+test("rejects explicitly undefined project scope provenance", () => {
+  const scopeResult = {
+    scopeId: "concrete",
+    calculatorId: calculationResult.calculatorId,
+    calculatorTitle: calculationResult.calculatorTitle,
+    result: calculationResult,
+    updatedAt: "2026-09-20T04:30:00.000Z",
+    provenance: undefined,
+  };
+
+  assert.equal(isProjectScopeResult(scopeResult), false);
+});
+
+test("rejects mismatched nested calculator identity", () => {
+  const scopeResult = {
+    scopeId: "concrete",
+    calculatorId: "gravel-calculator",
+    calculatorTitle: calculationResult.calculatorTitle,
+    result: calculationResult,
+    updatedAt: "2026-09-20T04:30:00.000Z",
+  };
+
+  assert.equal(isProjectScopeResult(scopeResult), false);
 });

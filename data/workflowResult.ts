@@ -2,6 +2,10 @@ import {
   isCalculationResult,
   type CalculationResult,
 } from "./calculationResult";
+import {
+  isWorkflowResultProvenanceV1,
+  type WorkflowResultProvenanceV1,
+} from "./workflowResultProvenance";
 
 export type WorkflowResult = {
   stepId: string;
@@ -9,16 +13,19 @@ export type WorkflowResult = {
   calculatorTitle: string;
   result: CalculationResult;
   updatedAt: string;
+  provenance?: WorkflowResultProvenanceV1;
 };
 
 export function createWorkflowResult({
   stepId,
   result,
   updatedAt,
+  provenance,
 }: {
   stepId: string;
   result: CalculationResult;
   updatedAt: string;
+  provenance?: WorkflowResultProvenanceV1;
 }): WorkflowResult {
   return {
     stepId,
@@ -26,6 +33,7 @@ export function createWorkflowResult({
     calculatorTitle: result.calculatorTitle,
     result,
     updatedAt,
+    ...(provenance !== undefined ? { provenance } : {}),
   };
 }
 
@@ -48,10 +56,23 @@ export function isWorkflowResult(
     return false;
   }
 
-  return (
-    workflowResult.calculatorId ===
-      workflowResult.result.calculatorId &&
-    workflowResult.calculatorTitle ===
+  if (
+    workflowResult.calculatorId !==
+      workflowResult.result.calculatorId ||
+    workflowResult.calculatorTitle !==
       workflowResult.result.calculatorTitle
-  );
+  ) {
+    return false;
+  }
+
+  if ("provenance" in workflowResult) {
+    return (
+      isWorkflowResultProvenanceV1(workflowResult.provenance) &&
+      workflowResult.provenance.stepId === workflowResult.stepId &&
+      workflowResult.provenance.calculatorId ===
+        workflowResult.calculatorId
+    );
+  }
+
+  return true;
 }

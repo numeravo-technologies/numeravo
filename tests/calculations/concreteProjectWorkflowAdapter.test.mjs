@@ -30,6 +30,27 @@ const calculationResult = {
   totalCost: 7350,
 };
 
+const validProvenance = {
+  version: 1,
+  workflowDefinitionId:
+    "construction.concrete-slab-equipment-pad",
+  stepId: "concrete",
+  calculatorId: "concrete-calculator",
+  unitSystem: "metric",
+  projectInputs: {
+    length: 40,
+    width: 60,
+    thickness: 6,
+    wastePercent: 10,
+  },
+  effectiveInputs: {
+    length: 40,
+    width: 60,
+    thickness: 6,
+    wastePercent: 10,
+  },
+};
+
 const projectScopeResult = {
   scopeId: "concrete",
   calculatorId: "concrete-calculator",
@@ -193,4 +214,86 @@ test("adapter conversion does not mutate project state", () => {
     project.scopeResults,
     originalResults,
   );
+});
+
+test("scope to workflow conversion preserves provenance", () => {
+  const scopeResult = {
+    ...projectScopeResult,
+    provenance: validProvenance,
+  };
+
+  const converted =
+    projectScopeResultToWorkflowResult(scopeResult);
+
+  assert.deepEqual(converted.provenance, validProvenance);
+  assert.equal(converted.stepId, "concrete");
+});
+
+test("workflow to scope conversion preserves provenance", () => {
+  const workflowResult = {
+    ...projectScopeResultToWorkflowResult(projectScopeResult),
+    provenance: validProvenance,
+  };
+
+  const converted =
+    workflowResultToProjectScopeResult(workflowResult);
+
+  assert.deepEqual(converted.provenance, validProvenance);
+  assert.equal(converted.scopeId, "concrete");
+});
+
+test("project round trip preserves result provenance", () => {
+  const original = makeProject();
+
+  original.scopeResults.concrete = {
+    ...projectScopeResult,
+    provenance: validProvenance,
+  };
+
+  const restored = workflowContextToConcreteProject(
+    concreteProjectToWorkflowContext(original),
+    original.unitSystem,
+  );
+
+  assert.deepEqual(restored, original);
+  assert.deepEqual(
+    restored.scopeResults.concrete.provenance,
+    validProvenance,
+  );
+});
+
+test("legacy conversions do not add provenance properties", () => {
+  const workflowResult =
+    projectScopeResultToWorkflowResult(projectScopeResult);
+
+  assert.equal(
+    Object.hasOwn(workflowResult, "provenance"),
+    false,
+  );
+
+  const restored =
+    workflowResultToProjectScopeResult(workflowResult);
+
+  assert.equal(
+    Object.hasOwn(restored, "provenance"),
+    false,
+  );
+
+  assert.deepEqual(restored, projectScopeResult);
+});
+
+test("provenance conversion does not mutate its source", () => {
+  const scopeResult = {
+    ...projectScopeResult,
+    provenance: structuredClone(validProvenance),
+  };
+
+  const before = structuredClone(scopeResult);
+  const workflowResult =
+    projectScopeResultToWorkflowResult(scopeResult);
+  const restored =
+    workflowResultToProjectScopeResult(workflowResult);
+
+  assert.deepEqual(scopeResult, before);
+  assert.deepEqual(restored, before);
 });

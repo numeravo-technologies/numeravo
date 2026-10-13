@@ -19,6 +19,9 @@ export function projectScopeResultToWorkflowResult(
     calculatorTitle: scopeResult.calculatorTitle,
     result: scopeResult.result,
     updatedAt: scopeResult.updatedAt,
+    ...(scopeResult.provenance !== undefined
+      ? { provenance: scopeResult.provenance }
+      : {}),
   };
 }
 
@@ -31,6 +34,9 @@ export function workflowResultToProjectScopeResult(
     calculatorTitle: workflowResult.calculatorTitle,
     result: workflowResult.result,
     updatedAt: workflowResult.updatedAt,
+    ...(workflowResult.provenance !== undefined
+      ? { provenance: workflowResult.provenance }
+      : {}),
   };
 }
 
