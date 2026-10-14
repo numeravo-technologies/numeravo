@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import type { ProjectUnitSystem } from "@/data/projectContext";
+import { getWorkflowResultFreshnessPresentation } from "@/data/workflowFreshnessPresentation";
 import {
   createWorkflowContext,
   isWorkflowStepSelected,
@@ -409,6 +410,7 @@ export default function ProjectWorkflowClient({
 
       <ProjectResultsWorkspace
         workflow={workflow}
+        unitSystem={unitSystem}
         selectedScope={selectedScope}
         getCalculatorHref={getCalculatorHref}
       />
@@ -418,10 +420,12 @@ export default function ProjectWorkflowClient({
 
 function ProjectResultsWorkspace({
   workflow,
+  unitSystem,
   selectedScope,
   getCalculatorHref,
 }: {
   workflow: WorkflowContext;
+  unitSystem: ProjectUnitSystem;
   selectedScope: WorkflowScopeItem[];
   getCalculatorHref: (item: WorkflowScopeItem) => string;
 }) {
@@ -526,6 +530,11 @@ function ProjectResultsWorkspace({
             }
 
             const result = scopeResult.result;
+            const freshness = getWorkflowResultFreshnessPresentation({
+              result: scopeResult,
+              currentProjectInputs: workflow.inputs,
+              currentUnitSystem: unitSystem,
+            });
 
             return (
               <article
@@ -541,6 +550,17 @@ function ProjectResultsWorkspace({
                       <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-emerald-400">
                         Saved
                       </span>
+                      <span
+                        className={
+                          freshness.status === "current"
+                            ? "rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-emerald-400"
+                            : freshness.status === "needs-recalculation"
+                              ? "rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-amber-300"
+                              : "rounded-full border border-[#374151] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#A0AEC0]"
+                        }
+                      >
+                        {freshness.label}
+                      </span>
                     </div>
 
                     <p className="mt-1 text-sm text-[#A0AEC0]">
@@ -549,6 +569,10 @@ function ProjectResultsWorkspace({
 
                     <p className="mt-2 text-xs text-[#6B7280]">
                       Updated {formatUpdatedAt(scopeResult.updatedAt)}
+                    </p>
+
+                    <p className="mt-2 text-xs leading-5 text-[#A0AEC0]">
+                      {freshness.description}
                     </p>
                   </div>
 
