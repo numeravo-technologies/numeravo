@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import type { ProjectUnitSystem } from "@/data/projectContext";
+import { summarizeWorkflowCosts } from "@/data/workflowCostSummary";
 import { getWorkflowResultFreshnessPresentation } from "@/data/workflowFreshnessPresentation";
 import {
   createWorkflowContext,
@@ -452,6 +453,17 @@ function ProjectResultsWorkspace({
     ({ scopeResult }) => scopeResult.result.totalCost !== undefined,
   ).length;
 
+  const costSummary = summarizeWorkflowCosts(
+    savedScope.map(({ scopeResult }) => ({
+      result: scopeResult,
+      freshnessStatus: getWorkflowResultFreshnessPresentation({
+        result: scopeResult,
+        currentProjectInputs: workflow.inputs,
+        currentUnitSystem: unitSystem,
+      }).status,
+    })),
+  );
+
   return (
     <section className="mt-8 rounded-3xl border border-[#1F2937] bg-[#121826] p-5 sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -484,6 +496,52 @@ function ProjectResultsWorkspace({
           </p>
         </div>
       </div>
+
+      {savedCostCount > 0 && (
+        <div className="mt-5 rounded-2xl border border-[#263041] bg-[#0B0F19] p-4 sm:p-5">
+          <h3 className="text-sm font-semibold text-white">
+            Saved cost freshness breakdown
+          </h3>
+          <p className="mt-1 text-xs leading-5 text-[#A0AEC0]">
+            Cost totals are grouped by their relationship to the current project inputs.
+          </p>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {([
+              ["Current", costSummary.current],
+              ["Needs recalculation", costSummary.needsRecalculation],
+              ["Unverified", costSummary.unverified],
+            ] as const).map(([label, bucket]) => (
+              <div
+                key={label}
+                className="rounded-xl border border-[#263041] bg-[#121826] p-3"
+              >
+                <p className="text-xs font-semibold text-[#A0AEC0]">
+                  {label}
+                </p>
+                <p className="mt-1 text-lg font-bold text-white">
+                  {formatCurrency(bucket.totalCost)}
+                </p>
+                <p className="mt-1 text-xs text-[#7F8A9B]">
+                  {bucket.count} saved calculation
+                  {bucket.count === 1 ? "" : "s"}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {costSummary.hasNonCurrentCosts && (
+            <p
+              role="status"
+              className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm leading-6 text-amber-200"
+            >
+              The saved cost total includes calculations that need recalculation
+              or whose freshness cannot be verified. Review the affected
+              calculations before relying on this total for an estimate.
+            </p>
+          )}
+        </div>
+      )}
 
       {selectedScope.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-[#2A3444] bg-[#0B0F19] p-5">
